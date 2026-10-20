@@ -1,7 +1,7 @@
 <meta charset="utf-8">
 <title>unpovdiferente</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
-<link rel="preload" href="assets/fonts/unpovdiferente-semibold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/unpovdiferente-bold.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;500;600;700&display=swap">
@@ -78,18 +78,18 @@ body {
   background: var(--bg); color: var(--ink);
   font-family: var(--f-body); font-size: var(--step-0); line-height: var(--lh); letter-spacing: var(--ls);
 }
-/* Fuente propia del proyecto, solo para títulos. Tiene un único grosor:
+/* Fuente propia del proyecto (Bold), solo para títulos. Tiene un único grosor:
    el rango de pesos evita que el navegador le invente una negrita.
    Le faltan los números y algunos signos; esos caen en Lexend.
    Sus letras son más chicas que las de Lexend: size-adjust las empareja. */
 @font-face {
   font-family: "Unpovdiferente";
-  src: url("assets/fonts/unpovdiferente-semibold.woff2") format("woff2"),
-       url("assets/fonts/unpovdiferente-semibold.ttf") format("truetype");
+  src: url("assets/fonts/unpovdiferente-bold.woff2") format("woff2"),
+       url("assets/fonts/unpovdiferente-bold.ttf") format("truetype");
   font-weight: 100 900; font-style: normal; font-display: swap;
   size-adjust: 130%; ascent-override: 72%; descent-override: 4%;
 }
-h1, h2, h3, h4 { font-family: var(--f-title); line-height: 1.2; text-wrap: balance; margin: 0; font-weight: 600; letter-spacing: -0.09em; }
+h1, h2, h3, h4 { font-family: var(--f-title); line-height: 1.2; text-wrap: balance; margin: 0; font-weight: 600; letter-spacing: -0.02em; }
 /* Los títulos van 4 puntos más grandes que la escala del texto. */
 h1 { font-size: calc(var(--step-3) + 4pt); }
 h2 { font-size: calc(var(--step-2) + 4pt); }
