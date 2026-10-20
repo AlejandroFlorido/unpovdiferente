@@ -44,7 +44,10 @@
   --step-2: 1.5rem;
   --step-3: 2.1rem;
   --radius: 10px;
-  --lh: 1.6;
+  /* Interlineado por bloque: títulos, subtítulos (bajadas, citas) y texto corrido. */
+  --lh-title: 1.05;
+  --lh-sub: 1.35;
+  --lh: 1.45;
   --ls: 0;
 
   /* Espacios: pocos valores, siempre los mismos. Más aire entre bloques
@@ -71,7 +74,7 @@
 }
 html.t-lg { font-size: 112.5%; }
 html.t-xl { font-size: 125%; }
-html.spaced { --lh: 1.85; --ls: 0.03em; --space-section: clamp(4.5rem, 9vw, 8rem); --space-sub: clamp(3.75rem, 6vw, 5.5rem); --space-block: 2.25rem; --space-grid: clamp(1.5rem, 3vw, 2.25rem); }
+html.spaced { --lh-title: 1.2; --lh-sub: 1.6; --lh: 1.85; --ls: 0.03em; --space-section: clamp(4.5rem, 9vw, 8rem); --space-sub: clamp(3.75rem, 6vw, 5.5rem); --space-block: 2.25rem; --space-grid: clamp(1.5rem, 3vw, 2.25rem); }
 
 * { box-sizing: border-box; }
 body {
@@ -89,7 +92,7 @@ body {
   font-weight: 100 900; font-style: normal; font-display: swap;
   size-adjust: 130%; ascent-override: 72%; descent-override: 4%;
 }
-h1, h2, h3, h4 { font-family: var(--f-title); line-height: 1.2; text-wrap: balance; margin: 0; font-weight: 600; letter-spacing: -0.02em; }
+h1, h2, h3, h4 { font-family: var(--f-title); line-height: var(--lh-title); text-wrap: balance; margin: 0; font-weight: 600; letter-spacing: -0.02em; }
 /* Los títulos van 4 puntos más grandes que la escala del texto. */
 h1 { font-size: calc(var(--step-3) + 4pt); }
 h2 { font-size: calc(var(--step-2) + 4pt); }
@@ -148,7 +151,7 @@ main > section + section { margin-top: var(--space-section); padding-top: var(--
 main > section > .lead:not(:first-child), main > section > .eyebrow + .lead { margin-top: calc(var(--space-sub) - var(--space-block)); }
 main > section > .note { margin-top: calc(var(--space-sub) - var(--space-block)); }
 .lead { display: flex; flex-direction: column; gap: 0.75rem; }
-.lead p { font-size: var(--step-1); color: var(--muted); }
+.lead p { font-size: var(--step-1); line-height: var(--lh-sub); color: var(--muted); }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--pad-card); display: flex; flex-direction: column; gap: 1.25rem; min-width: 0; }
 .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--space-grid); align-items: start; }
 .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: var(--space-grid); }
@@ -180,7 +183,7 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .hero .lead p { font-size: var(--step-1); }
 
 .carousel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--pad-card); display: flex; flex-direction: column; gap: 1.25rem; }
-.quote { font-family: var(--f-display); font-size: clamp(1.3rem, 3vw, 1.7rem); font-weight: 500; line-height: 1.3; text-wrap: balance; }
+.quote { font-family: var(--f-display); font-size: clamp(1.3rem, 3vw, 1.7rem); font-weight: 500; line-height: var(--lh-sub); text-wrap: balance; }
 .quote::before { content: "“"; color: var(--accent-text); }
 .quote::after { content: "”"; color: var(--accent-text); }
 .behind { display: flex; flex-direction: column; gap: 0.4rem; border-top: 1px solid var(--line); padding-top: 0.9rem; }
