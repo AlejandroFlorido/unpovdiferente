@@ -389,6 +389,8 @@ input[type="email"] { font: inherit; font-weight: 400; font-size: var(--step-0);
 .copyright { border-top: 1px solid var(--line); padding-top: 1.5rem; margin-top: 1.5rem; }
 
 footer { max-width: 72rem; margin: 0 auto; padding-inline: 16px; padding-block: 0 3rem; color: var(--muted); font-size: var(--step--1); }
+/* El pie usa todo el ancho: sin el límite de 65 caracteres de los párrafos, la frase no se corta a la mitad. */
+footer p { max-width: none; }
 
 /* "Sin animaciones" manda: arranca prendido si el sistema pide menos movimiento, pero se puede cambiar. */
 html.calm *, html.calm *::before, html.calm *::after { transition: none !important; animation: none !important; }
