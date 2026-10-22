@@ -203,7 +203,8 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
    y después vienen las tres líneas. Sin recuadros. --top-h es la altura de la
    cabecera fija (la mide el script). */
 .screen { min-height: calc(100svh - var(--top-h, 9rem)); display: flex; flex-direction: column; justify-content: center; }
-#te-pasa { scroll-margin-top: var(--top-h, 9rem); }
+#te-pasa { scroll-margin-top: var(--top-h, 9rem); position: relative; padding-bottom: 3.5rem; }
+#tres-formas { scroll-margin-top: calc(var(--top-h, 9rem) + var(--main-pt)); }
 .hero.screen { min-height: calc(100svh - var(--top-h, 9rem) - var(--main-pt)); position: relative; padding-bottom: 3.5rem; }
 /* Interlineado del h1 más cerrado que el de los demás títulos; "Espaciado amplio" lo sigue abriendo. */
 .hero h1 { font-size: calc(clamp(2.6rem, 8vw, 5.6rem) + 4pt); font-weight: 700; max-width: 18ch; text-wrap: balance; line-height: calc(var(--lh-title) * 0.9); }
@@ -459,7 +460,7 @@ html.calm *, html.calm *::before, html.calm *::after { transition: none !importa
           <button class="btn second" type="button" data-go="consignas">Tengo una consigna confusa</button>
         </div>
       </div>
-      <button class="scroll-cue" type="button" data-cue="car">¿Te pasa? <span aria-hidden="true">↓</span></button>
+      <button class="scroll-cue" type="button" data-cue="te-pasa">¿Te pasa? <span aria-hidden="true">↓</span></button>
     </div>
 
     <div class="carousel screen" id="te-pasa" aria-roledescription="carrusel" aria-label="Situaciones de la cursada">
@@ -475,9 +476,10 @@ html.calm *, html.calm *::before, html.calm *::after { transition: none !importa
         <div class="dots" id="car-dots"></div>
         <button class="btn ghost" type="button" id="car-next" aria-label="Situación siguiente">→</button>
       </div>
+      <button class="scroll-cue" type="button" data-cue="tres-formas">Tres formas <span aria-hidden="true">↓</span></button>
     </div>
 
-    <div class="lead">
+    <div class="lead" id="tres-formas">
       <h2>Tres formas de usar este sitio</h2>
       <p class="small muted">El proyecto se organiza en tres líneas: informar sobre el TDAH, orientar en la información académica y acompañar con herramientas.</p>
     </div>
@@ -1040,7 +1042,8 @@ Entrega</textarea></label>
   const setTopH = () => root.style.setProperty("--top-h", topEl.offsetHeight + "px");
   setTopH();
   if ("ResizeObserver" in window) new ResizeObserver(setTopH).observe(topEl); else window.addEventListener("resize", setTopH);
-  $("[data-cue]").onclick = () => $("#te-pasa").scrollIntoView({ behavior: isCalm() ? "auto" : "smooth", block: "start" });
+  // "¿Te pasa? ↓" y "Tres formas ↓" bajan a la parte siguiente del Inicio (de una con "Sin animaciones").
+  $$("[data-cue]").forEach((b) => { b.onclick = () => document.getElementById(b.dataset.cue).scrollIntoView({ behavior: isCalm() ? "auto" : "smooth", block: "start" }); });
   $("#car-prev").onclick = () => { car = (car - 1 + situations.length) % situations.length; renderCar(-1); };
   $("#car-next").onclick = () => { car = (car + 1) % situations.length; renderCar(1); };
   renderCar();
