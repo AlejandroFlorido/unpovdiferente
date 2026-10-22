@@ -139,14 +139,19 @@ a { color: var(--accent-text); }
   display: block; text-decoration: none;
 }
 .tab small { display: block; font-family: var(--f-body); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 400; }
-.tab[aria-current="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.tab[aria-current] { color: var(--ink); border-bottom-color: var(--accent); }
 
 /* ---------- Estructura ---------- */
 main { max-width: 72rem; margin: 0 auto; padding-inline: 16px; padding-block: clamp(2rem, 5vw, 3.5rem) var(--space-section); }
 [hidden] { display: none !important; }
-main > section { scroll-margin-top: calc(var(--header-h, 9rem) + 16px); display: flex; flex-direction: column; gap: var(--space-block); }
-/* Cada sección empieza separada por aire y una línea fina: se ve dónde termina una y empieza otra. */
-main > section + section { margin-top: var(--space-section); padding-top: var(--space-section); border-top: 1px solid var(--line); }
+/* Cada bloque es su propia pestaña: se ve una sección por vez. */
+main > section { display: flex; flex-direction: column; gap: var(--space-block); }
+main > section:focus { outline: none; }
+/* Al final de cada pestaña, un enlace a la siguiente para seguir sin volver arriba. */
+.next-tab { margin-top: calc(var(--space-sub) - var(--space-block)); padding-top: var(--space-block); border-top: 1px solid var(--line); display: flex; justify-content: flex-end; }
+.next-tab a { color: var(--ink); text-decoration: none; font-family: var(--f-display); font-weight: 500; text-align: right; }
+.next-tab a small { display: block; color: var(--muted); font-family: var(--f-body); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.next-tab a span { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: 4px; }
 /* Un subtema nuevo dentro de la sección se aleja del bloque anterior. */
 main > section > .lead:not(:first-child), main > section > .eyebrow + .lead { margin-top: calc(var(--space-sub) - var(--space-block)); }
 main > section > .note { margin-top: calc(var(--space-sub) - var(--space-block)); }
@@ -340,7 +345,6 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .note .btn { font-size: var(--step--1); min-height: 36px; padding: 0.4rem 0.85rem; }
 
 /* ---------- Contacto (pie) ---------- */
-.contact { max-width: 72rem; margin: 0 auto; padding-inline: 16px; padding-block: 0 var(--space-section); scroll-margin-top: calc(var(--header-h, 9rem) + 16px); }
 .contact > .panel { border-top: 4px solid var(--brand-2); }
 .checks { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; border: 0; margin: 0; padding: 0; }
 .checks legend { font-weight: 700; font-size: var(--step--1); padding: 0; margin-bottom: 0.3rem; }
@@ -350,9 +354,7 @@ input[type="email"] { font: inherit; font-weight: 400; font-size: var(--step-0);
 .preview { white-space: pre-wrap; background: var(--bg); border: 1px dashed var(--line); border-radius: 8px; padding: 0.9rem; font-size: var(--step--1); overflow-wrap: anywhere; margin: 0; font-family: var(--f-body); }
 
 /* ---------- Equipo ---------- */
-.team { max-width: 72rem; margin: 0 auto; padding-inline: 16px; padding-block: var(--space-section) var(--space-section);
-  background: linear-gradient(var(--line), var(--line)) top center / calc(100% - 32px) 1px no-repeat; }
-.team .lead { margin-bottom: var(--space-block); align-items: center; text-align: center; }
+.team .lead { align-items: center; text-align: center; }
 .team-list { list-style: none; margin: 0 auto; padding: 0; max-width: 46rem; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-grid); }
 /* Tres cuadrados en fila con los directores; el desarrollo web va solo, abajo y al medio. */
 .team-list .person.solo { grid-column: 2; }
@@ -386,12 +388,14 @@ html.calm *, html.calm *::before, html.calm *::after { transition: none !importa
       </div>
     </div>
     <nav class="tabs" aria-label="Secciones">
-      <a class="tab" href="#inicio" id="tab-inicio" aria-current="true">Inicio<small>Empezar acá</small></a>
+      <a class="tab" href="#inicio" id="tab-inicio" aria-current="page">Inicio<small>Empezar acá</small></a>
       <a class="tab" href="#entender" id="tab-entender">Entender<small>Informar</small></a>
       <a class="tab" href="#consignas" id="tab-consignas">Consignas<small>Orientar</small></a>
       <a class="tab" href="#herramientas" id="tab-herramientas">Herramientas<small>Acompañar</small></a>
       <a class="tab" href="#docentes" id="tab-docentes">Docentes<small>Comunicar claro</small></a>
       <a class="tab" href="#apoyo" id="tab-apoyo">Apoyo<small>Áreas pedagógicas</small></a>
+      <a class="tab" href="#contacto" id="tab-contacto">Contacto<small>Psicopedagogía</small></a>
+      <a class="tab" href="#equipo" id="tab-equipo">Equipo<small>Quiénes somos</small></a>
     </nav>
   </div>
 </header>
@@ -718,9 +722,6 @@ Entrega</textarea></label>
       <div class="row"><a class="btn second" href="#contacto" data-scroll="contacto">Armar un mensaje</a></div>
     </div>
   </section>
-</main>
-
-<!-- ================= CONTACTO (pie) ================= -->
 <section class="contact" id="contacto" aria-labelledby="ct-title">
   <div class="panel">
     <div class="lead">
@@ -780,6 +781,10 @@ Entrega</textarea></label>
     <li class="person solo"><span class="initials" aria-hidden="true">AF</span><div><b>Alejandro Gabriel Florido</b><span>Desarrollo web · programador freelancer externo</span></div></li>
   </ul>
 </section>
+</main>
+
+<!-- ================= CONTACTO (pie) ================= -->
+
 
 <footer>
   <p>unpovdiferente es un prototipo de un proyecto de Diseño Gráfico sobre TDAH en la universidad. Los datos que cargues quedan solo en tu navegador.</p>
@@ -858,14 +863,17 @@ Entrega</textarea></label>
     });
   }
   /* ---------- Navegación del encabezado ----------
-     Todas las secciones están en una sola página: cada botón lleva a su sección
-     y el botón marcado sigue a la sección que se está leyendo. */
+     Cada bloque es una pestaña: se muestra una sección por vez y el resto queda oculto.
+     La dirección (#seccion) cambia con cada pestaña, así funcionan Atrás y los enlaces. */
   const mainTabs = $$(".tabs .tab");
   const sectionIds = mainTabs.map((t) => t.getAttribute("href").slice(1));
+  const sections = sectionIds.map((id) => document.getElementById(id));
+  sections.forEach((sec) => { sec.tabIndex = -1; });
+  let currentTab = null;
   function markTab(id) {
     mainTabs.forEach((t) => {
       const on = t.getAttribute("href") === "#" + id;
-      if (on) t.setAttribute("aria-current", "true"); else t.removeAttribute("aria-current");
+      if (on) t.setAttribute("aria-current", "page"); else t.removeAttribute("aria-current");
       if (on) {
         const nav = t.parentElement;
         if (t.offsetLeft < nav.scrollLeft) nav.scrollLeft = t.offsetLeft - 16;
@@ -873,63 +881,39 @@ Entrega</textarea></label>
       }
     });
   }
-  function goTab(id, scroll) {
+  // Muestra la pestaña y vuelve al comienzo de la página (sin desplazamiento animado).
+  // Con focus, el lector de pantalla y el teclado arrancan desde la sección nueva.
+  function goTab(id, focus) {
     if (!sectionIds.includes(id)) return;
+    sections.forEach((sec) => { sec.hidden = sec.id !== id; });
     markTab(id);
-    if (scroll) scrollToPanel(id);
+    window.scrollTo(0, 0);
+    if (focus) document.getElementById(id).focus({ preventScroll: true });
+    if (currentTab && currentTab !== id && location.hash.slice(1) !== id) history.pushState(null, "", "#" + id);
+    currentTab = id;
+    document.title = id === "inicio" ? baseTitle : mainTabs[sectionIds.indexOf(id)].firstChild.textContent.trim() + " · " + baseTitle;
   }
-  // Lleva la página al comienzo de la sección, justo debajo del encabezado fijo.
-  // El desplazamiento suave lo hace el propio sitio (no depende de que el navegador
-  // o el sistema lo tengan activado), así "Sin animaciones" siempre se nota.
-  // Con "Sin animaciones" el salto es directo.
-  let scrollAnim = 0;
-  function stopScrollAnim() { if (scrollAnim) { cancelAnimationFrame(scrollAnim); scrollAnim = 0; } }
-  ["wheel", "touchstart", "keydown", "mousedown"].forEach((ev) => window.addEventListener(ev, stopScrollAnim, { passive: true }));
-  function scrollToY(target) {
-    stopScrollAnim();
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    target = Math.max(0, Math.min(target, max));
-    const start = window.scrollY, dist = target - start;
-    if (isCalm() || Math.abs(dist) < 2) { window.scrollTo(0, target); return; }
-    // Duración según la distancia, pero siempre corta y con frenado suave.
-    const dur = Math.min(900, 380 + Math.abs(dist) * 0.08);
-    const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-    let t0 = 0;
-    const step = (now) => {
-      if (!t0) t0 = now;
-      const t = Math.min(1, (now - t0) / dur);
-      window.scrollTo(0, start + dist * ease(t));
-      scrollAnim = t < 1 ? requestAnimationFrame(step) : 0;
-    };
-    scrollAnim = requestAnimationFrame(step);
-  }
-  function scrollToPanel(id) {
-    const panel = document.getElementById(id);
-    if (!panel) return;
-    const headerH = $(".top").offsetHeight;
-    scrollToY(panel.getBoundingClientRect().top + window.scrollY - headerH - 16);
-  }
+  const baseTitle = document.title;
   mainTabs.forEach((t) => t.addEventListener("click", (e) => {
     e.preventDefault();
-    const id = t.getAttribute("href").slice(1);
-    goTab(id, true);
-    history.replaceState(null, "", "#" + id);
+    goTab(t.getAttribute("href").slice(1), true);
   }));
-  // Alto del encabezado fijo, para que los enlaces con #seccion no queden tapados.
-  function setHeaderH() { document.documentElement.style.setProperty("--header-h", $(".top").offsetHeight + "px"); }
-  setHeaderH();
-  window.addEventListener("resize", setHeaderH);
-  // Marca la sección cuyo comienzo ya pasó por debajo del encabezado.
-  let spyQueued = false;
-  function spy() {
-    spyQueued = false;
-    const line = $(".top").offsetHeight + window.innerHeight * 0.25;
-    let current = sectionIds[0];
-    sectionIds.forEach((id) => { if (document.getElementById(id).getBoundingClientRect().top <= line) current = id; });
-    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) current = sectionIds[sectionIds.length - 1];
-    markTab(current);
+  // Atrás / Adelante del navegador y enlaces con #seccion.
+  function fromHash() {
+    const h = (location.hash || "").slice(1);
+    if (!h || sectionIds.includes(h)) goTab(h || "inicio", false);
   }
-  window.addEventListener("scroll", () => { if (!spyQueued) { spyQueued = true; requestAnimationFrame(spy); } }, { passive: true });
+  window.addEventListener("popstate", fromHash);
+  window.addEventListener("hashchange", fromHash);
+  // Enlace a la pestaña siguiente al final de cada sección.
+  sections.forEach((sec, i) => {
+    const next = mainTabs[i + 1];
+    if (!next) return;
+    const box = document.createElement("div");
+    box.className = "next-tab";
+    box.innerHTML = '<a href="' + next.getAttribute("href") + '" data-go="' + sectionIds[i + 1] + '"><small>Siguiente</small><span>' + esc(next.firstChild.textContent.trim()) + ' →</span></a>';
+    sec.appendChild(box);
+  });
 
   const subTabs = $$(".subtabs .subtab");
   function goSub(key) {
@@ -1395,21 +1379,21 @@ Entrega</textarea></label>
     $("#ct-status").textContent = "Borrador borrado.";
   };
   ctRender();
-  // Botones que bajan al formulario del pie (y eligen el área si corresponde).
+  // Botones que llevan al formulario (y eligen el área si corresponde): abren la pestaña Contacto.
   document.addEventListener("click", (e) => {
     const b = e.target.closest("[data-scroll]");
     if (!b) return;
     e.preventDefault();
     if (b.dataset.area) { $("#ct-area").value = b.dataset.area; ctRender(); }
-    scrollToPanel(b.dataset.scroll);
-    history.replaceState(null, "", "#" + b.dataset.scroll);
-    setTimeout(() => $("#ct-area").focus({ preventScroll: true }), isCalm() ? 0 : 950);
+    goTab(b.dataset.scroll, false);
+    $("#ct-area").focus({ preventScroll: true });
   });
 
   /* ---------- Estado inicial ---------- */
   const hash = (location.hash || "").slice(1);
   goSub(store.get("sub", "primer"));
-  if (sectionIds.includes(hash)) window.addEventListener("load", () => goTab(hash, true));
-  if (hash === "contacto") window.addEventListener("load", () => scrollToPanel("contacto"));
+  goTab(sectionIds.includes(hash) ? hash : "inicio", false);
+  // El navegador salta solo hasta el #ancla al cargar: la pestaña tiene que arrancar desde arriba.
+  if (hash) window.addEventListener("load", () => window.scrollTo(0, 0));
 })();
 </script>
