@@ -147,6 +147,11 @@ main { max-width: 72rem; margin: 0 auto; padding-inline: 16px; padding-block: cl
 /* Cada bloque es su propia pestaña: se ve una sección por vez. */
 main > section { display: flex; flex-direction: column; gap: var(--space-block); }
 main > section:focus { outline: none; }
+/* Cambio de pestaña: la sección nueva aparece con un fundido corto y sube apenas.
+   Con "Sin animaciones" (html.calm, más abajo) se muestra de una. */
+@keyframes tab-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+main > section.entering { animation: tab-in 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+.tab { transition: color 0.2s, border-color 0.25s; }
 /* Al final de cada pestaña, un enlace a la siguiente para seguir sin volver arriba. */
 .next-tab { margin-top: calc(var(--space-sub) - var(--space-block)); padding-top: var(--space-block); border-top: 1px solid var(--line); display: flex; justify-content: flex-end; }
 .next-tab a { color: var(--ink); text-decoration: none; font-family: var(--f-display); font-weight: 500; text-align: right; }
@@ -885,7 +890,13 @@ Entrega</textarea></label>
   // Con focus, el lector de pantalla y el teclado arrancan desde la sección nueva.
   function goTab(id, focus) {
     if (!sectionIds.includes(id)) return;
-    sections.forEach((sec) => { sec.hidden = sec.id !== id; });
+    sections.forEach((sec) => { sec.hidden = sec.id !== id; sec.classList.remove("entering"); });
+    // La transición solo corre al cambiar de pestaña (no al cargar) y nunca con "Sin animaciones".
+    if (currentTab && currentTab !== id && !isCalm()) {
+      const sec = document.getElementById(id);
+      void sec.offsetWidth;
+      sec.classList.add("entering");
+    }
     markTab(id);
     window.scrollTo(0, 0);
     if (focus) document.getElementById(id).focus({ preventScroll: true });
