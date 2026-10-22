@@ -211,6 +211,11 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .quote::after { content: "”"; color: var(--accent-text); }
 .behind { display: flex; flex-direction: column; gap: 0.4rem; border-top: 1px solid var(--line); padding-top: 0.9rem; }
 .behind b { font-family: var(--f-display); font-weight: 600; }
+/* Al cambiar de situación, la frase y el "detrás" entran con un fundido corto
+   que se desliza desde el lado de la flecha tocada. Con "Sin animaciones", de una. */
+@keyframes car-in { from { opacity: 0; transform: translateX(var(--car-from, 16px)); } to { opacity: 1; transform: none; } }
+.car-slide.entering { animation: car-in 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+.car-slide.from-prev { --car-from: -16px; }
 .car-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
 .dots { display: flex; gap: 0.4rem; }
 .dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--ink); background: transparent; padding: 0; cursor: pointer; }
@@ -443,8 +448,8 @@ html.calm *, html.calm *::before, html.calm *::after { transition: none !importa
 
       <div class="carousel" aria-roledescription="carrusel" aria-label="Situaciones de la cursada">
         <span class="eyebrow">¿Te pasa?</span>
-        <p class="quote" id="car-quote" aria-live="polite"></p>
-        <div class="behind">
+        <p class="quote car-slide" id="car-quote" aria-live="polite"></p>
+        <div class="behind car-slide">
           <b id="car-title"></b>
           <p class="muted" id="car-text"></p>
           <p><a href="#" id="car-link"></a></p>
@@ -993,10 +998,10 @@ Entrega</textarea></label>
   situations.forEach((s, i) => {
     const d = document.createElement("button");
     d.className = "dot"; d.type = "button"; d.setAttribute("aria-label", "Situación " + (i + 1));
-    d.onclick = () => { car = i; renderCar(); };
+    d.onclick = () => { if (i === car) return; const dir = i > car ? 1 : -1; car = i; renderCar(dir); };
     dotsEl.appendChild(d);
   });
-  function renderCar() {
+  function renderCar(dir) {
     const s = situations[car];
     $("#car-quote").textContent = s.q;
     $("#car-title").textContent = "Qué puede haber detrás: " + s.t.toLowerCase();
@@ -1006,9 +1011,16 @@ Entrega</textarea></label>
     a.dataset.go = s.l[1];
     if (s.l[2]) a.dataset.sub = s.l[2]; else delete a.dataset.sub;
     $$(".dot", dotsEl).forEach((d, i) => d.setAttribute("aria-current", i === car));
+    $$(".car-slide").forEach((el) => {
+      el.classList.remove("entering", "from-prev");
+      if (!dir || isCalm()) return;
+      void el.offsetWidth;
+      el.classList.add("entering");
+      if (dir < 0) el.classList.add("from-prev");
+    });
   }
-  $("#car-prev").onclick = () => { car = (car - 1 + situations.length) % situations.length; renderCar(); };
-  $("#car-next").onclick = () => { car = (car + 1) % situations.length; renderCar(); };
+  $("#car-prev").onclick = () => { car = (car - 1 + situations.length) % situations.length; renderCar(-1); };
+  $("#car-next").onclick = () => { car = (car + 1) % situations.length; renderCar(1); };
   renderCar();
 
   /* ---------- Mitos ---------- */
