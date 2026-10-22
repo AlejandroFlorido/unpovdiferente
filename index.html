@@ -205,11 +205,15 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .screen { min-height: calc(100svh - var(--top-h, 9rem)); display: flex; flex-direction: column; justify-content: center; }
 #te-pasa { scroll-margin-top: var(--top-h, 9rem); }
 .hero.screen { min-height: calc(100svh - var(--top-h, 9rem) - var(--main-pt)); position: relative; padding-bottom: 3.5rem; }
-.hero h1 { font-size: calc(clamp(2.6rem, 8vw, 5.6rem) + 4pt); font-weight: 700; max-width: 18ch; text-wrap: balance; }
+/* Interlineado del h1 más cerrado que el de los demás títulos; "Espaciado amplio" lo sigue abriendo. */
+.hero h1 { font-size: calc(clamp(2.6rem, 8vw, 5.6rem) + 4pt); font-weight: 700; max-width: 18ch; text-wrap: balance; line-height: calc(var(--lh-title) * 0.9); }
 .hero h1 em { font-style: normal; color: var(--accent-text); }
+/* Todo el Inicio va centrado. */
+.hero .lead, .carousel, #inicio > .lead { align-items: center; text-align: center; }
+.hero .lead .row, .car-nav { justify-content: center; }
 .hero .lead { gap: clamp(1rem, 2.5vw, 1.75rem); }
 .hero .lead p { font-size: calc(var(--step-1) + 2pt); max-width: 52ch; }
-.scroll-cue { position: absolute; left: 0; bottom: 1rem; font: inherit; font-family: var(--f-display); font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase;
+.scroll-cue { position: absolute; left: 50%; transform: translateX(-50%); bottom: 1rem; font: inherit; font-family: var(--f-display); font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--muted); background: none; border: 0; padding: 0.3rem 0; cursor: pointer; display: inline-flex; gap: 0.5rem; align-items: center; }
 .scroll-cue span { color: var(--accent-text); font-size: 1.2em; }
 .scroll-cue:hover { color: var(--ink); }
@@ -232,11 +236,11 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .dot[aria-current="true"] { background: var(--accent); border-color: var(--accent); }
 
 .lines { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: var(--space-grid); }
-.line-card { background: none; border: 0; border-radius: 0; padding: 0; display: flex; flex-direction: column; gap: 0.75rem; cursor: pointer; text-align: left; font: inherit; color: inherit; }
+.line-card { background: none; border: 0; border-radius: 0; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; cursor: pointer; text-align: center; font: inherit; color: inherit; }
 .line-card h3 { font-size: calc(var(--step-1) + 4pt); text-decoration: underline; text-decoration-color: transparent; text-decoration-thickness: 3px; text-underline-offset: 6px; transition: text-decoration-color 0.2s; }
 .line-card:hover h3, .line-card:focus-visible h3 { text-decoration-color: var(--accent); }
 .line-card .num { font-family: var(--f-display); font-weight: 700; color: var(--accent-text); font-size: var(--step--1); letter-spacing: 0.08em; }
-.line-card ul { margin: 0; padding-left: 1.1rem; color: var(--muted); font-size: var(--step--1); display: flex; flex-direction: column; gap: 0.3rem; }
+.line-card ul { margin: 0; padding-left: 1.1rem; color: var(--muted); font-size: var(--step--1); display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
 
 /* ---------- Entender ---------- */
 .myth { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); display: flex; flex-direction: column; }
