@@ -155,7 +155,7 @@ a { color: var(--accent-text); }
 .tab[aria-current] { color: var(--ink); border-bottom-color: var(--accent); }
 
 /* ---------- Estructura ---------- */
-main { max-width: 72rem; margin: 0 auto; padding-inline: 16px; padding-block: clamp(2rem, 5vw, 3.5rem) var(--space-section); }
+main { --main-pt: clamp(2rem, 5vw, 3.5rem); max-width: 72rem; margin: 0 auto; padding-inline: 16px; padding-block: var(--main-pt) var(--space-section); }
 [hidden] { display: none !important; }
 /* Cada bloque es su propia pestaña: se ve una sección por vez. */
 main > section { display: flex; flex-direction: column; gap: var(--space-block); }
@@ -199,34 +199,49 @@ input[type="text"], input[type="date"], input[type="time"], select, textarea {
 textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 
 /* ---------- Inicio ---------- */
-.hero { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: clamp(2rem, 5vw, 4rem); align-items: center; }
-.hero h1 { font-size: calc(clamp(1.9rem, 4.5vw, 2.8rem) + 4pt); font-weight: 700; }
+/* El Inicio se lee en pantallas: el lead ocupa la primera, el carrusel la segunda,
+   y después vienen las tres líneas. Sin recuadros. --top-h es la altura de la
+   cabecera fija (la mide el script). */
+.screen { min-height: calc(100svh - var(--top-h, 9rem)); display: flex; flex-direction: column; justify-content: center; }
+#te-pasa { scroll-margin-top: var(--top-h, 9rem); position: relative; padding-bottom: 3.5rem; }
+#tres-formas { scroll-margin-top: calc(var(--top-h, 9rem) + var(--main-pt)); }
+.hero.screen { min-height: calc(100svh - var(--top-h, 9rem) - var(--main-pt)); position: relative; padding-bottom: 3.5rem; }
+/* Interlineado del h1 más cerrado que el de los demás títulos; "Espaciado amplio" lo sigue abriendo. */
+.hero h1 { font-size: calc(clamp(2.6rem, 8vw, 5.6rem) + 4pt); font-weight: 700; max-width: 18ch; text-wrap: balance; line-height: calc(var(--lh-title) * 0.9); }
 .hero h1 em { font-style: normal; color: var(--accent-text); }
-.hero .lead { gap: 1rem; }
-.hero .lead p { font-size: var(--step-1); }
+/* Todo el Inicio va centrado. */
+.hero .lead, .carousel, #inicio > .lead { align-items: center; text-align: center; }
+.hero .lead .row, .car-nav { justify-content: center; }
+.hero .lead { gap: clamp(1rem, 2.5vw, 1.75rem); }
+.hero .lead p { font-size: calc(var(--step-1) + 2pt); max-width: 52ch; }
+.scroll-cue { position: absolute; left: 50%; transform: translateX(-50%); bottom: 1rem; font: inherit; font-family: var(--f-display); font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); background: none; border: 0; padding: 0.3rem 0; cursor: pointer; display: inline-flex; gap: 0.5rem; align-items: center; }
+.scroll-cue span { color: var(--accent-text); font-size: 1.2em; }
+.scroll-cue:hover { color: var(--ink); }
 
-.carousel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--pad-card); display: flex; flex-direction: column; gap: 1.25rem; }
-.quote { font-family: var(--f-display); font-size: clamp(1.3rem, 3vw, 1.7rem); font-weight: 500; line-height: var(--lh-sub); text-wrap: balance; }
+.carousel { display: flex; flex-direction: column; gap: clamp(1.25rem, 3vw, 2rem); }
+.quote { font-family: var(--f-display); font-size: calc(clamp(1.6rem, 4.5vw, 3rem) + 4pt); font-weight: 700; line-height: var(--lh-sub); text-wrap: balance; max-width: 26ch; }
 .quote::before { content: "“"; color: var(--accent-text); }
 .quote::after { content: "”"; color: var(--accent-text); }
-.behind { display: flex; flex-direction: column; gap: 0.4rem; border-top: 1px solid var(--line); padding-top: 0.9rem; }
+.behind { display: flex; flex-direction: column; gap: 0.4rem; border-top: 1px solid var(--line); padding-top: 1.1rem; max-width: 60ch; }
+.behind p { font-size: var(--step-1); line-height: var(--lh-sub); }
 .behind b { font-family: var(--f-display); font-weight: 600; }
 /* Al cambiar de situación, la frase y el "detrás" entran con un fundido corto
    que se desliza desde el lado de la flecha tocada. Con "Sin animaciones", de una. */
 @keyframes car-in { from { opacity: 0; transform: translateX(var(--car-from, 16px)); } to { opacity: 1; transform: none; } }
 .car-slide.entering { animation: car-in 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
 .car-slide.from-prev { --car-from: -16px; }
-.car-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.car-nav { display: flex; align-items: center; gap: 1rem; }
 .dots { display: flex; gap: 0.4rem; }
 .dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--ink); background: transparent; padding: 0; cursor: pointer; }
 .dot[aria-current="true"] { background: var(--accent); border-color: var(--accent); }
 
 .lines { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: var(--space-grid); }
-.line-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--pad-card); display: flex; flex-direction: column; gap: 0.75rem; cursor: pointer; text-align: left; font: inherit; color: inherit; }
-.line-card:hover { border-color: var(--accent); }
+.line-card { background: none; border: 0; border-radius: 0; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; cursor: pointer; text-align: center; font: inherit; color: inherit; }
+.line-card h3 { font-size: calc(var(--step-1) + 4pt); text-decoration: underline; text-decoration-color: transparent; text-decoration-thickness: 3px; text-underline-offset: 6px; transition: text-decoration-color 0.2s; }
+.line-card:hover h3, .line-card:focus-visible h3 { text-decoration-color: var(--accent); }
 .line-card .num { font-family: var(--f-display); font-weight: 700; color: var(--accent-text); font-size: var(--step--1); letter-spacing: 0.08em; }
-.line-card h3 { font-size: calc(var(--step-1) + 4pt); }
-.line-card ul { margin: 0; padding-left: 1.1rem; color: var(--muted); font-size: var(--step--1); display: flex; flex-direction: column; gap: 0.3rem; }
+.line-card ul { margin: 0; padding-left: 1.1rem; color: var(--muted); font-size: var(--step--1); display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
 
 /* ---------- Entender ---------- */
 .myth { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); display: flex; flex-direction: column; }
@@ -435,7 +450,7 @@ html.calm *, html.calm *::before, html.calm *::after { transition: none !importa
 <main>
   <!-- ================= INICIO ================= -->
   <section id="inicio">
-    <div class="hero">
+    <div class="hero screen">
       <div class="lead">
         <span class="eyebrow">TDAH en la universidad</span>
         <h1>Sabés lo que tenés que hacer. <em>Te ayudamos a empezar.</em></h1>
@@ -445,24 +460,26 @@ html.calm *, html.calm *::before, html.calm *::after { transition: none !importa
           <button class="btn second" type="button" data-go="consignas">Tengo una consigna confusa</button>
         </div>
       </div>
-
-      <div class="carousel" aria-roledescription="carrusel" aria-label="Situaciones de la cursada">
-        <span class="eyebrow">¿Te pasa?</span>
-        <p class="quote car-slide" id="car-quote" aria-live="polite"></p>
-        <div class="behind car-slide">
-          <b id="car-title"></b>
-          <p class="muted" id="car-text"></p>
-          <p><a href="#" id="car-link"></a></p>
-        </div>
-        <div class="car-nav">
-          <button class="btn ghost" type="button" id="car-prev" aria-label="Situación anterior">←</button>
-          <div class="dots" id="car-dots"></div>
-          <button class="btn ghost" type="button" id="car-next" aria-label="Situación siguiente">→</button>
-        </div>
-      </div>
+      <button class="scroll-cue" type="button" data-cue="te-pasa">¿Te pasa? <span aria-hidden="true">↓</span></button>
     </div>
 
-    <div class="lead">
+    <div class="carousel screen" id="te-pasa" aria-roledescription="carrusel" aria-label="Situaciones de la cursada">
+      <span class="eyebrow">¿Te pasa?</span>
+      <p class="quote car-slide" id="car-quote" aria-live="polite"></p>
+      <div class="behind car-slide">
+        <b id="car-title"></b>
+        <p class="muted" id="car-text"></p>
+        <p><a href="#" id="car-link"></a></p>
+      </div>
+      <div class="car-nav">
+        <button class="btn ghost" type="button" id="car-prev" aria-label="Situación anterior">←</button>
+        <div class="dots" id="car-dots"></div>
+        <button class="btn ghost" type="button" id="car-next" aria-label="Situación siguiente">→</button>
+      </div>
+      <button class="scroll-cue" type="button" data-cue="tres-formas">Tres formas <span aria-hidden="true">↓</span></button>
+    </div>
+
+    <div class="lead" id="tres-formas">
       <h2>Tres formas de usar este sitio</h2>
       <p class="small muted">El proyecto se organiza en tres líneas: informar sobre el TDAH, orientar en la información académica y acompañar con herramientas.</p>
     </div>
@@ -1019,6 +1036,14 @@ Entrega</textarea></label>
       if (dir < 0) el.classList.add("from-prev");
     });
   }
+  // "¿Te pasa? ↓" baja hasta el carrusel (de una con "Sin animaciones").
+  // Las pantallas del Inicio descuentan la cabecera fija, que cambia de alto con el tamaño de letra.
+  const topEl = $(".top");
+  const setTopH = () => root.style.setProperty("--top-h", topEl.offsetHeight + "px");
+  setTopH();
+  if ("ResizeObserver" in window) new ResizeObserver(setTopH).observe(topEl); else window.addEventListener("resize", setTopH);
+  // "¿Te pasa? ↓" y "Tres formas ↓" bajan a la parte siguiente del Inicio (de una con "Sin animaciones").
+  $$("[data-cue]").forEach((b) => { b.onclick = () => document.getElementById(b.dataset.cue).scrollIntoView({ behavior: isCalm() ? "auto" : "smooth", block: "start" }); });
   $("#car-prev").onclick = () => { car = (car - 1 + situations.length) % situations.length; renderCar(-1); };
   $("#car-next").onclick = () => { car = (car + 1) % situations.length; renderCar(1); };
   renderCar();
