@@ -163,7 +163,7 @@ main > section:focus { outline: none; }
 /* Cambio de pestaña: la sección nueva aparece con un fundido corto y sube apenas.
    Con "Sin animaciones" (html.calm, más abajo) se muestra de una. */
 @keyframes tab-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-main > section.entering { animation: tab-in 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+main > section.entering, [role="tabpanel"].entering { animation: tab-in 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
 .tab { transition: color 0.2s, border-color 0.25s; }
 /* Al final de cada pestaña, un enlace a la siguiente para seguir sin volver arriba. */
 .next-tab { margin-top: calc(var(--space-sub) - var(--space-block)); padding-top: var(--space-block); border-top: 1px solid var(--line); display: flex; justify-content: flex-end; }
@@ -241,6 +241,7 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .subtabs { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 .subtab { font: inherit; font-family: var(--f-display); font-size: 0.92rem; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 0.55rem 0.9rem; cursor: pointer; display: flex; flex-direction: column; text-align: left; gap: 0.1rem; }
 .subtab span { font-family: var(--f-body); font-size: 0.75rem; color: var(--muted); }
+.subtab { transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s; }
 .subtab[aria-selected="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-soft); }
 
 /* Primer paso */
@@ -953,11 +954,17 @@ Entrega</textarea></label>
   });
 
   const subTabs = $$(".subtabs .subtab");
+  // Las herramientas usan la misma transición que las pestañas (nunca con "Sin animaciones").
+  let currentSub = null;
   function goSub(key) {
     const t = subTabs.find((x) => x.id === "st-" + key);
     if (!t) return;
     selectIn(subTabs, t);
     $("#tool-semana").style.display = key === "semana" ? "flex" : "none";
+    const panel = document.getElementById(t.getAttribute("aria-controls"));
+    subTabs.forEach((x) => document.getElementById(x.getAttribute("aria-controls")).classList.remove("entering"));
+    if (currentSub && currentSub !== key && !isCalm()) { void panel.offsetWidth; panel.classList.add("entering"); }
+    currentSub = key;
     store.set("sub", key);
   }
   setupTabs(subTabs, (t) => goSub(t.id.replace("st-", "")));
