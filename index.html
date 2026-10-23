@@ -946,11 +946,11 @@ Entrega</textarea></label>
   window.addEventListener("resize", sizeTrail);
   // Garabato en reposo: apenas el mouse se frena (el navegador avisa del movimiento cada ~16 ms, así que
   // 120 ms sin avisos ya es "quieto"), la punta garabatea rápido y sin patrón alrededor de ese punto
-  // durante unos 5 segundos. Rastro y garabato son un mismo trazo: cuando el garabato termina, o cuando
+  // durante 3,5 segundos. Rastro y garabato son un mismo trazo: cuando el garabato termina, o cuando
   // el mouse se vuelve a mover, la punta se levanta y la cola recorre el garabato hasta alcanzarla
   // (como un trazo que se termina de dibujar) y, si el mouse se movió, sigue de largo por el rastro nuevo.
   const IDLE_MS = 120, DOODLE_MS = 3500, DOODLE_R = 16, DOODLE_PX = 220;
-  let last = null, idleTimer = 0, doodle = null, capPx = TRAIL_PX;
+  let last = null, idleTimer = 0, doodle = null, capPx = TRAIL_PX, lastFrame = performance.now();
   function startDoodle() {
     if (!last || doodle || isCalm()) return;
     doodle = { x: last.x, y: last.y, t0: performance.now(), px: last.x, py: last.y, dir: Math.random() * Math.PI * 2, spin: 0 };
@@ -981,13 +981,19 @@ Entrega</textarea></label>
     if (doodle) stepDoodle(now);
     // La cola se come el trazo desde el principio, siempre de a poco para que no haya saltos:
     // mientras la punta garabatea, la cola la sigue a DOODLE_PX; cuando la punta se levanta,
-    // la cola avanza un punto por cuadro por el garabato y después sigue por el rastro.
+    // la cola avanza rápido por el garabato y después sigue por el rastro.
     if (doodle) { while (pts.length > 2 && pathLength(pts) > DOODLE_PX) pts.shift(); }
-    else if (pts.length && pts[0].doodle) pts.shift();
+    else if (pts.length && pts[0].doodle) {
+      // La cola recorre el garabato a ~900 px/s (unos 0,25 s en total), sin importar la frecuencia de la pantalla.
+      let eat = 0.9 * Math.min(now - lastFrame, 50);
+      while (eat > 0 && pts.length > 1 && pts[0].doodle) { eat -= Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y); pts.shift(); }
+      if (pts.length === 1 && pts[0].doodle) pts.shift();
+    }
     else for (let k = 0; k < 2 && pts.length && now - pts[0].t > TRAIL_MS; k++) pts.shift();
     // Largo máximo visible: el del garabato mientras quede algo de él; después baja de a poco al del rastro.
     const target = pts.some((p) => p.doodle) ? DOODLE_PX : TRAIL_PX;
-    capPx = target > capPx ? target : Math.max(target, capPx - 6);
+    capPx = target > capPx ? target : Math.max(target, capPx - 0.9 * Math.min(now - lastFrame, 50));
+    lastFrame = now;
     let len = 0, from = pts.length - 1;
     while (from > 0 && len < capPx) { len += Math.hypot(pts[from].x - pts[from - 1].x, pts[from].y - pts[from - 1].y); from--; }
     tctx.clearRect(0, 0, innerWidth, innerHeight);
