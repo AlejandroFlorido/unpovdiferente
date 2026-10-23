@@ -929,7 +929,8 @@ Entrega</textarea></label>
 
   /* ---------- Cursor ---------- */
   // Rastro: los últimos puntos del recorrido (menos de un quinto de segundo y, como mucho,
-  // unos 70px) se dibujan como una raya de marcador que se va borrando desde la cola. Con "Sin animaciones", no hay rastro.
+  // unos 70px) se dibujan como una raya de marcador que se va borrando desde la cola.
+  // Con "Sin animaciones" no hay rastro ni garabato.
   const trail = document.createElement("canvas");
   trail.className = "cur-trail"; trail.setAttribute("aria-hidden", "true");
   document.body.appendChild(trail);
@@ -944,69 +945,81 @@ Entrega</textarea></label>
   sizeTrail();
   window.addEventListener("resize", sizeTrail);
   // Garabato en reposo: apenas el mouse se frena (el navegador avisa del movimiento cada ~16 ms, así que
-  // 120 ms sin avisos ya es "quieto"), la punta garabatea rápido y sin patrón alrededor de donde quedó,
-  // unos 5 segundos, y para. Vuelve a pasar recién después de mover el mouse.
-  const IDLE_MS = 120, DOODLE_MS = 5000, DOODLE_R = 16, DOODLE_LIFE = 600, DOODLE_PX = 220, DOODLE_FADE = 700;
-  let last = null, idleTimer = 0, doodle = null;
+  // 120 ms sin avisos ya es "quieto"), la punta garabatea rápido y sin patrón alrededor de ese punto
+  // durante medio segundo. Rastro y garabato son un mismo trazo: cuando el garabato termina, o cuando
+  // el mouse se vuelve a mover, la punta se levanta y la cola recorre el garabato hasta alcanzarla
+  // (como un trazo que se termina de dibujar) y, si el mouse se movió, sigue de largo por el rastro nuevo.
+  const IDLE_MS = 120, DOODLE_MS = 500, DOODLE_R = 16, DOODLE_PX = 220;
+  let last = null, idleTimer = 0, doodle = null, capPx = TRAIL_PX, lastFrame = performance.now();
   function startDoodle() {
-    if (!last || isCalm()) return;
+    if (!last || doodle || isCalm()) return;
     doodle = { x: last.x, y: last.y, t0: performance.now(), px: last.x, py: last.y, dir: Math.random() * Math.PI * 2, spin: 0 };
     if (!trailRaf) trailRaf = requestAnimationFrame(drawTrail);
   }
+  function stepDoodle(now) {
+    if (now - doodle.t0 > DOODLE_MS) { doodle = null; return; }
+    // La punta avanza rápido y cambia de giro al azar: rulos, zigzags y vueltas atrás, como una birome
+    // nerviosa. Si se aleja demasiado, vuelve hacia donde quedó el mouse.
+    const d = doodle;
+    if (Math.random() < 0.12) d.spin = (Math.random() - 0.5) * 1.6;
+    if (Math.random() < 0.04) d.dir += Math.PI * (0.6 + Math.random() * 0.8);
+    d.dir += d.spin + (Math.random() - 0.5) * 0.5;
+    const dx = d.x - d.px, dy = d.y - d.py;
+    if (Math.hypot(dx, dy) > DOODLE_R) d.dir = Math.atan2(dy, dx) + (Math.random() - 0.5) * 1.2;
+    const step = 4 + Math.random() * 4;
+    d.px += Math.cos(d.dir) * step; d.py += Math.sin(d.dir) * step;
+    pts.push({ x: d.px, y: d.py, t: now, doodle: true });
+  }
+  const pathLength = (list, from = 0) => {
+    let len = 0;
+    for (let i = from + 1; i < list.length; i++) len += Math.hypot(list[i].x - list[i - 1].x, list[i].y - list[i - 1].y);
+    return len;
+  };
   function drawTrail() {
     const now = performance.now();
-    // Al final, el garabato no se frena de golpe: en el último tramo la punta va más lento
-    // y toda la raya se desvanece junto con ella, sin quedar quieta en pantalla.
-    let fade = 1;
-    if (doodle) {
-      const left = DOODLE_MS - (now - doodle.t0);
-      if (left <= 0) { doodle = null; pts = pts.filter((p) => !p.life); }
-      else {
-        fade = Math.min(1, left / DOODLE_FADE);
-        // La punta avanza rápido y cambia de giro al azar: rulos, zigzags y vueltas atrás, como una birome
-        // nerviosa. Si se aleja demasiado, la tira de vuelta hacia donde quedó el mouse.
-        const d = doodle;
-        if (Math.random() < 0.12) d.spin = (Math.random() - 0.5) * 1.6;
-        if (Math.random() < 0.04) d.dir += Math.PI * (0.6 + Math.random() * 0.8);
-        d.dir += d.spin + (Math.random() - 0.5) * 0.5;
-        const dx = d.x - d.px, dy = d.y - d.py, far = Math.hypot(dx, dy);
-        if (far > DOODLE_R) d.dir = Math.atan2(dy, dx) + (Math.random() - 0.5) * 1.2;
-        const step = (4 + Math.random() * 4) * (0.35 + 0.65 * fade);
-        d.px += Math.cos(d.dir) * step; d.py += Math.sin(d.dir) * step;
-        pts.push({ x: d.px, y: d.py, t: now, life: DOODLE_LIFE });
-      }
+    if (isCalm()) { pts = []; doodle = null; }
+    if (doodle) stepDoodle(now);
+    // La cola se come el trazo desde el principio, siempre de a poco para que no haya saltos:
+    // mientras la punta garabatea, la cola la sigue a DOODLE_PX; cuando la punta se levanta,
+    // la cola avanza rápido por el garabato y después sigue por el rastro.
+    if (doodle) { while (pts.length > 2 && pathLength(pts) > DOODLE_PX) pts.shift(); }
+    else if (pts.length && pts[0].doodle) {
+      // La cola recorre el garabato a ~900 px/s (unos 0,25 s en total), sin importar la frecuencia de la pantalla.
+      let eat = 0.9 * Math.min(now - lastFrame, 50);
+      while (eat > 0 && pts.length > 1 && pts[0].doodle) { eat -= Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y); pts.shift(); }
+      if (pts.length === 1 && pts[0].doodle) pts.shift();
     }
-    // El garabato dura más en pantalla que el rastro, para que se lean los rulos.
-    pts = pts.filter((p) => now - p.t < (p.life || TRAIL_MS));
-    const maxPx = pts.some((p) => p.life) ? DOODLE_PX : TRAIL_PX;
-    // Recorta desde la punta hacia atrás para que la raya nunca sea larga.
+    else for (let k = 0; k < 2 && pts.length && now - pts[0].t > TRAIL_MS; k++) pts.shift();
+    // Largo máximo visible: el del garabato mientras quede algo de él; después baja de a poco al del rastro.
+    const target = pts.some((p) => p.doodle) ? DOODLE_PX : TRAIL_PX;
+    capPx = target > capPx ? target : Math.max(target, capPx - 0.9 * Math.min(now - lastFrame, 50));
+    lastFrame = now;
     let len = 0, from = pts.length - 1;
-    while (from > 0 && len < maxPx) { len += Math.hypot(pts[from].x - pts[from - 1].x, pts[from].y - pts[from - 1].y); from--; }
+    while (from > 0 && len < capPx) { len += Math.hypot(pts[from].x - pts[from - 1].x, pts[from].y - pts[from - 1].y); from--; }
     tctx.clearRect(0, 0, innerWidth, innerHeight);
     tctx.strokeStyle = getComputedStyle(root).getPropertyValue("--brand-2").trim();
     tctx.lineCap = "round"; tctx.lineJoin = "round";
-    tctx.globalAlpha = 0.8 * fade; tctx.lineWidth = 3;
-    tctx.beginPath();
-    pts.slice(Math.max(from, 0)).forEach((p, i) => (i ? tctx.lineTo(p.x, p.y) : tctx.moveTo(p.x, p.y)));
-    tctx.stroke();
+    tctx.globalAlpha = 0.8; tctx.lineWidth = 3;
+    const shown = pts.slice(Math.max(from, 0));
+    if (shown.length > 1) {
+      tctx.beginPath();
+      shown.forEach((p, i) => (i ? tctx.lineTo(p.x, p.y) : tctx.moveTo(p.x, p.y)));
+      tctx.stroke();
+    }
     trailRaf = pts.length || doodle ? requestAnimationFrame(drawTrail) : 0;
   }
   document.addEventListener("pointermove", (e) => {
     // Solo con mouse o lápiz: en compus con pantalla táctil el mouse también cuenta, aunque el sistema diga "táctil".
     if (e.pointerType === "touch" || isCalm()) return;
     last = { x: e.clientX, y: e.clientY };
-    doodle = null;
-    pts = pts.filter((p) => !p.life);
+    doodle = null; // la punta se levanta del garabato y el trazo sigue con el mouse
     pts.push({ ...last, t: performance.now() });
     if (!trailRaf) trailRaf = requestAnimationFrame(drawTrail);
     clearTimeout(idleTimer);
     idleTimer = setTimeout(startDoodle, IDLE_MS);
   }, { passive: true });
-  // Al salir de la ventana, hacer clic o escribir, el garabato se corta.
-  const stopDoodle = () => { clearTimeout(idleTimer); doodle = null; };
-  document.addEventListener("mouseleave", () => { stopDoodle(); last = null; pts = []; });
-  document.addEventListener("pointerdown", stopDoodle);
-  document.addEventListener("keydown", stopDoodle);
+  // Al salir de la ventana no nace un garabato nuevo; lo que está dibujado se termina de recorrer.
+  document.addEventListener("mouseleave", () => { clearTimeout(idleTimer); last = null; doodle = null; });
 
   /* ---------- Pestañas ---------- */
   function setupTabs(tabs, onSelect) {
