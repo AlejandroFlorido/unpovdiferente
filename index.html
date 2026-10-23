@@ -946,10 +946,10 @@ Entrega</textarea></label>
   window.addEventListener("resize", sizeTrail);
   // Garabato en reposo: apenas el mouse se frena (el navegador avisa del movimiento cada ~16 ms, así que
   // 120 ms sin avisos ya es "quieto"), la punta garabatea rápido y sin patrón alrededor de ese punto
-  // durante 3,5 segundos. Rastro y garabato son un mismo trazo: cuando el garabato termina, o cuando
+  // durante 2 segundos. Rastro y garabato son un mismo trazo: cuando el garabato termina, o cuando
   // el mouse se vuelve a mover, la punta se levanta y la cola recorre el garabato hasta alcanzarla
   // (como un trazo que se termina de dibujar) y, si el mouse se movió, sigue de largo por el rastro nuevo.
-  const IDLE_MS = 120, DOODLE_MS = 3500, DOODLE_R = 16, DOODLE_PX = 220;
+  const IDLE_MS = 120, DOODLE_MS = 2000, DOODLE_R = 16, DOODLE_PX = 220;
   let last = null, idleTimer = 0, doodle = null, capPx = TRAIL_PX, lastFrame = performance.now();
   function startDoodle() {
     if (!last || doodle || isCalm()) return;
