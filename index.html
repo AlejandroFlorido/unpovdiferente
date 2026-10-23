@@ -58,7 +58,7 @@
   --space-grid: clamp(1.25rem, 2.5vw, 1.75rem);/* entre tarjetas */
   --pad-card: clamp(1.25rem, 3vw, 2rem);       /* relleno de tarjetas y paneles */
 
-  /* El punto garabateado del proyecto (favicon): viñeta y forma del cursor. */
+  /* El punto garabateado del proyecto (favicon), usado como viñeta. */
   --scribble: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAQAAAAm93DmAAADvklEQVRIx6XWWWxUVRzH8U9pC5alLIIWClJBVAiICxgMorIqiSIqPBAhasRoYiQhAaM88ISRJUH0QXlQo6gkpoCgRRIBFRJkh7KUJSCB1pKyTGGA0nV6fHCoLcNA6fzuw805955v/sv5n/PnZuqhQKWf9Zei2uqCNLPV2KtWoUnSUwHmGKW9Nn5z2nD5goixqQDTdZenk0J7ZevpE0cVGpOa2610td8JvZBmomp/G5IaMsc+1Z4FWRY6p0B2ao5/qd7E+CjTAlXG3dqx5IrZLs1j8fzW2iHTNFnNt6iDPnrrgIH6gEEi9uoM8ixWp9IMnWRrl2wbpcXfGSZ61/1iim0xQobpojpZYoC3RfU33SPgomPqVTljoxXKk1n3kvMq7bLPRUEQHFTklDJV/lERn2v61Plex2TAAy55Qwd3mmL7DZcHNeoEZQ7b43cRwVXPJAPW2qGzoeY5qjIBVS+o9ZH9go/lGu1TEUHUE9eDMuLvXw0y16u6JU1ZhXRrDTBSrjG6o8LnCpP9PlBRE5vO22S5q43ilW+zNWri4yvWmygzeZaZZqm2Ik4otd5WxwUr4nUCF7TWDjHFNshXpKMarY0UtcGZRHSWlYItxmvdMPeyKwnx/F4fbQyx2nE7/aVEkZ+Mu1YiaY2Q/czymrNmKNBKnmHGezFeGbUypCHYZq2HnLPLSfViosoN8IECSxKtbGu2ciW+slKxWCO7SpwUBLUuOmKGTk3WdfSDszdKTWcTbE7YvjWCWnudEQRRExISutol39wIOEFU3XXAy04LgjK/qBdcbHJ255njmMNmxiu+SQzpZpRechS511APy2n0LaZEb2n4w2QR5JnidVmWWu5k0v3bcIpk+UxwysEmsfwvjh8a7E2HnPejJzVTXe0RHLFbEBQ7qKoBeVXEFZuM0aa5uHvMVyOocMgy7xsm13bBaVFBxCqTrkWtObAFdqoU7DDa3aCvd5wWVNpvvsfd0VwYrSz2nRdsE8xClrG+VSIIqs2Re/PlGQkzbfS3wR49XJZlocGGy3TUCSOUy1d6u8CYMq+4S46Yt8QcschWhaZ6SqnzzXf1f/X1hWLBn0bqFc9jmq8Fy1ra4bQyTzCv0UwXuwXvNWfpjVTvkNDkRnvAfaJ2tBRITH0T90bKdsDhlgMflK57Q6V39jzWudxyYBn6NeyB5zwqYp1wa2AyDXPJ4XhDkmeXYNXtdDWJam+9YBF6Wik45+lUcDBVtTNm2iioNju1HhuyrYwfVhfM1TZVHAywRqlNJje6WG+pfwFLG5gJbp/7jwAAAABJRU5ErkJggg==");
 }
 @media (prefers-color-scheme: dark) {
@@ -416,14 +416,8 @@ footer { max-width: 72rem; margin: 0 auto; padding-inline: 16px; padding-block: 
 footer p { max-width: none; }
 
 /* ---------- Cursor ---------- */
-/* Con mouse, el cursor es el punto garabateado en azul (lo pinta el script según el modo claro u oscuro)
-   y deja un rastro corto, como una raya de marcador. Sobre lo que se puede tocar, el punto crece;
-   en los campos de texto queda la barrita de siempre. En pantallas táctiles no cambia nada. */
-@media (hover: hover) and (pointer: fine) {
-  html.cur-on, html.cur-on body { cursor: var(--cur), auto; }
-  html.cur-on :is(a, button, label, select, summary, [role="button"]) { cursor: var(--cur-link), pointer; }
-  html.cur-on :is(input[type="text"], input[type="email"], input[type="date"], input[type="time"], textarea) { cursor: text; }
-}
+/* El cursor es el de siempre; con mouse deja un rastro azul corto, como una raya de marcador,
+   y si se queda quieto hace un garabato. Lo dibuja el script en este lienzo, que no recibe clics. */
 .cur-trail { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
 
 /* "Sin animaciones" manda: arranca prendido si el sistema pide menos movimiento, pero se puede cambiar. */
@@ -891,7 +885,6 @@ Entrega</textarea></label>
   const darkSystem = window.matchMedia("(prefers-color-scheme: dark)");
   const isDark = () => (prefs.theme ? prefs.theme === "dark" : darkSystem.matches);
   darkSystem.addEventListener?.("change", () => applyPrefs());
-  let repaintCursor = () => {}; // lo completa la parte del cursor, más abajo
   function applyPrefs() {
     if (prefs.theme) root.dataset.theme = prefs.theme; else delete root.dataset.theme;
     $("#pref-theme").setAttribute("aria-checked", isDark());
@@ -903,7 +896,6 @@ Entrega</textarea></label>
     $("#pref-space").setAttribute("aria-pressed", prefs.spaced);
     $("#pref-calm").setAttribute("aria-pressed", isCalm());
     store.set("prefs", prefs);
-    repaintCursor();
   }
   $("#pref-size").onclick = () => { prefs.size = (prefs.size + 1) % sizes.length; applyPrefs(); };
   $("#pref-space").onclick = () => { prefs.spaced = !prefs.spaced; applyPrefs(); };
@@ -912,41 +904,7 @@ Entrega</textarea></label>
   applyPrefs();
 
   /* ---------- Cursor ---------- */
-  // El cursor es el punto garabateado teñido de azul, con un borde (blanco en modo claro,
-  // negro en oscuro) para que se vea también sobre los botones. Se vuelve a pintar al cambiar de modo.
   const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
-  const scribble = new Image();
-  scribble.src = getComputedStyle(root).getPropertyValue("--scribble").trim().replace(/^url\(["']?|["']?\)$/g, "");
-  function cursorURL(size, fill, edge) {
-    const c = document.createElement("canvas"), pad = 2, inner = size - pad * 2;
-    c.width = c.height = size;
-    const x = c.getContext("2d");
-    const tint = (color) => {
-      const t = document.createElement("canvas"); t.width = t.height = size;
-      const tx = t.getContext("2d");
-      tx.drawImage(scribble, pad, pad, inner, inner);
-      tx.globalCompositeOperation = "source-in"; tx.fillStyle = color; tx.fillRect(0, 0, size, size);
-      return t;
-    };
-    const e = tint(edge);
-    for (let a = 0; a < 8; a++) x.drawImage(e, Math.cos(a * Math.PI / 4) * 1.5, Math.sin(a * Math.PI / 4) * 1.5);
-    x.drawImage(tint(fill), 0, 0);
-    return 'url("' + c.toDataURL() + '") ' + size / 2 + " " + size / 2;
-  }
-  function paintCursor() {
-    if (!scribble.complete || !scribble.naturalWidth) return;
-    const css = getComputedStyle(root), blue = css.getPropertyValue("--brand-2").trim();
-    const edge = isDark() ? "#000000" : "#FFFFFF";
-    try {
-      root.style.setProperty("--cur", cursorURL(26, blue, edge));
-      root.style.setProperty("--cur-link", cursorURL(34, blue, edge));
-      root.classList.add("cur-on");
-    } catch (err) { root.classList.remove("cur-on"); }
-  }
-  scribble.onload = paintCursor;
-  repaintCursor = paintCursor;
-  paintCursor();
-
   // Rastro: los últimos puntos del recorrido (menos de un quinto de segundo y, como mucho,
   // unos 70px) se dibujan como una raya de marcador que se va borrando desde la cola. Con "Sin animaciones", no hay rastro.
   const trail = document.createElement("canvas");
@@ -962,12 +920,33 @@ Entrega</textarea></label>
   }
   sizeTrail();
   window.addEventListener("resize", sizeTrail);
+  // Garabato en reposo: si el mouse queda quieto un segundo, la punta da vueltas sueltas alrededor
+  // de donde quedó, unos segundos, y para. Vuelve a pasar recién después de mover el mouse.
+  const IDLE_MS = 1000, DOODLE_MS = 2600, DOODLE_R = 12, DOODLE_LIFE = 700, DOODLE_PX = 200;
+  let last = null, idleTimer = 0, doodle = null;
+  function startDoodle() {
+    if (!last || isCalm()) return;
+    doodle = { x: last.x, y: last.y, t0: performance.now(), a: 1 + Math.random() * 0.6, b: 2.3 + Math.random() * 0.8, ph: Math.random() * 6 };
+    if (!trailRaf) trailRaf = requestAnimationFrame(drawTrail);
+  }
   function drawTrail() {
     const now = performance.now();
-    pts = pts.filter((p) => now - p.t < TRAIL_MS);
+    if (doodle) {
+      const k = (now - doodle.t0) / 1000;
+      if (now - doodle.t0 > DOODLE_MS) doodle = null;
+      else {
+        // Dos giros a distinto ritmo: un trazo en rulos que no se repite igual, como un garabato a mano.
+        const ang = k * 9, wob = Math.sin(k * doodle.b * 4 + doodle.ph);
+        const r = DOODLE_R * (0.55 + 0.45 * Math.sin(k * doodle.a * 3 + doodle.ph));
+        pts.push({ x: doodle.x + Math.cos(ang) * r + wob * 3, y: doodle.y + Math.sin(ang * 1.12) * r * 0.8, t: now, life: DOODLE_LIFE });
+      }
+    }
+    // El garabato dura más en pantalla que el rastro, para que se lean los rulos.
+    pts = pts.filter((p) => now - p.t < (p.life || TRAIL_MS));
+    const maxPx = pts.some((p) => p.life) ? DOODLE_PX : TRAIL_PX;
     // Recorta desde la punta hacia atrás para que la raya nunca sea larga.
     let len = 0, from = pts.length - 1;
-    while (from > 0 && len < TRAIL_PX) { len += Math.hypot(pts[from].x - pts[from - 1].x, pts[from].y - pts[from - 1].y); from--; }
+    while (from > 0 && len < maxPx) { len += Math.hypot(pts[from].x - pts[from - 1].x, pts[from].y - pts[from - 1].y); from--; }
     tctx.clearRect(0, 0, innerWidth, innerHeight);
     tctx.strokeStyle = getComputedStyle(root).getPropertyValue("--brand-2").trim();
     tctx.lineCap = "round"; tctx.lineJoin = "round";
@@ -975,14 +954,23 @@ Entrega</textarea></label>
     tctx.beginPath();
     pts.slice(Math.max(from, 0)).forEach((p, i) => (i ? tctx.lineTo(p.x, p.y) : tctx.moveTo(p.x, p.y)));
     tctx.stroke();
-    trailRaf = pts.length ? requestAnimationFrame(drawTrail) : 0;
+    trailRaf = pts.length || doodle ? requestAnimationFrame(drawTrail) : 0;
   }
   document.addEventListener("pointermove", (e) => {
     if (e.pointerType !== "mouse" || !finePointer.matches || isCalm()) return;
-    pts.push({ x: e.clientX, y: e.clientY, t: performance.now() });
+    last = { x: e.clientX, y: e.clientY };
+    doodle = null;
+    pts = pts.filter((p) => !p.life);
+    pts.push({ ...last, t: performance.now() });
     if (!trailRaf) trailRaf = requestAnimationFrame(drawTrail);
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(startDoodle, IDLE_MS);
   }, { passive: true });
-  document.addEventListener("mouseleave", () => { pts = []; });
+  // Al salir de la ventana, hacer clic o escribir, el garabato se corta.
+  const stopDoodle = () => { clearTimeout(idleTimer); doodle = null; };
+  document.addEventListener("mouseleave", () => { stopDoodle(); last = null; pts = []; });
+  document.addEventListener("pointerdown", stopDoodle);
+  document.addEventListener("keydown", stopDoodle);
 
   /* ---------- Pestañas ---------- */
   function setupTabs(tabs, onSelect) {
