@@ -919,9 +919,10 @@ Entrega</textarea></label>
   }
   sizeTrail();
   window.addEventListener("resize", sizeTrail);
-  // Garabato en reposo: si el mouse queda quieto un segundo, la punta garabatea rápido y sin patrón
-  // alrededor de donde quedó, unos 5 segundos, y para. Vuelve a pasar recién después de mover el mouse.
-  const IDLE_MS = 1000, DOODLE_MS = 5000, DOODLE_R = 16, DOODLE_LIFE = 600, DOODLE_PX = 220;
+  // Garabato en reposo: apenas el mouse se frena (el navegador avisa del movimiento cada ~16 ms, así que
+  // 120 ms sin avisos ya es "quieto"), la punta garabatea rápido y sin patrón alrededor de donde quedó,
+  // unos 5 segundos, y para. Vuelve a pasar recién después de mover el mouse.
+  const IDLE_MS = 120, DOODLE_MS = 5000, DOODLE_R = 16, DOODLE_LIFE = 600, DOODLE_PX = 220;
   let last = null, idleTimer = 0, doodle = null;
   function startDoodle() {
     if (!last || isCalm()) return;
