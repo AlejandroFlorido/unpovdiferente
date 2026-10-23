@@ -58,6 +58,11 @@
   --space-grid: clamp(1.25rem, 2.5vw, 1.75rem);/* entre tarjetas */
   --pad-card: clamp(1.25rem, 3vw, 2rem);       /* relleno de tarjetas y paneles */
 
+  /* Brillo de los botones al pasar el mouse: blanco sobre los rellenos de color,
+     un azul muy suave sobre los botones sin fondo (en oscuro, blanco suave). */
+  --glow-fill: rgba(255, 255, 255, 0.42);
+  --glow-soft: rgba(29, 88, 254, 0.14);
+
   /* El punto garabateado del proyecto (favicon), usado como viñeta. */
   --scribble: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAQAAAAm93DmAAADvklEQVRIx6XWWWxUVRzH8U9pC5alLIIWClJBVAiICxgMorIqiSIqPBAhasRoYiQhAaM88ISRJUH0QXlQo6gkpoCgRRIBFRJkh7KUJSCB1pKyTGGA0nV6fHCoLcNA6fzuw805955v/sv5n/PnZuqhQKWf9Zei2uqCNLPV2KtWoUnSUwHmGKW9Nn5z2nD5goixqQDTdZenk0J7ZevpE0cVGpOa2610td8JvZBmomp/G5IaMsc+1Z4FWRY6p0B2ao5/qd7E+CjTAlXG3dqx5IrZLs1j8fzW2iHTNFnNt6iDPnrrgIH6gEEi9uoM8ixWp9IMnWRrl2wbpcXfGSZ61/1iim0xQobpojpZYoC3RfU33SPgomPqVTljoxXKk1n3kvMq7bLPRUEQHFTklDJV/lERn2v61Plex2TAAy55Qwd3mmL7DZcHNeoEZQ7b43cRwVXPJAPW2qGzoeY5qjIBVS+o9ZH9go/lGu1TEUHUE9eDMuLvXw0y16u6JU1ZhXRrDTBSrjG6o8LnCpP9PlBRE5vO22S5q43ilW+zNWri4yvWmygzeZaZZqm2Ik4otd5WxwUr4nUCF7TWDjHFNshXpKMarY0UtcGZRHSWlYItxmvdMPeyKwnx/F4fbQyx2nE7/aVEkZ+Mu1YiaY2Q/czymrNmKNBKnmHGezFeGbUypCHYZq2HnLPLSfViosoN8IECSxKtbGu2ciW+slKxWCO7SpwUBLUuOmKGTk3WdfSDszdKTWcTbE7YvjWCWnudEQRRExISutol39wIOEFU3XXAy04LgjK/qBdcbHJ255njmMNmxiu+SQzpZpRechS511APy2n0LaZEb2n4w2QR5JnidVmWWu5k0v3bcIpk+UxwysEmsfwvjh8a7E2HnPejJzVTXe0RHLFbEBQ7qKoBeVXEFZuM0aa5uHvMVyOocMgy7xsm13bBaVFBxCqTrkWtObAFdqoU7DDa3aCvd5wWVNpvvsfd0VwYrSz2nRdsE8xClrG+VSIIqs2Re/PlGQkzbfS3wR49XJZlocGGy3TUCSOUy1d6u8CYMq+4S46Yt8QcschWhaZ6SqnzzXf1f/X1hWLBn0bqFc9jmq8Fy1ra4bQyTzCv0UwXuwXvNWfpjVTvkNDkRnvAfaJ2tBRITH0T90bKdsDhlgMflK57Q6V39jzWudxyYBn6NeyB5zwqYp1wa2AyDXPJ4XhDkmeXYNXtdDWJam+9YBF6Wik45+lUcDBVtTNm2iioNju1HhuyrYwfVhfM1TZVHAywRqlNJje6WG+pfwFLG5gJbp/7jwAAAABJRU5ErkJggg==");
 }
@@ -66,6 +71,7 @@
     --bg: #111111; --surface: #1B1B1B; --sunken: #0A0A0A; --ink: #F5F5F5; --muted: #BDBDBD;
     --line: #353535; --accent: var(--brand); --accent-ink: #000000; --accent-text: var(--brand); --accent-soft: #3A2215; --focus: var(--brand);
     --c-entrega: #F0875C; --c-evaluacion: #EE7AA6; --c-correccion: #A994F2; --c-teorica: #73AEF0; --c-taller: #7CCB85; --c-aviso: #E3B84E;
+    --glow-soft: rgba(255, 255, 255, 0.13);
     color-scheme: dark;
   }
 }
@@ -73,6 +79,7 @@
   --bg: #111111; --surface: #1B1B1B; --sunken: #0A0A0A; --ink: #F5F5F5; --muted: #BDBDBD;
   --line: #353535; --accent: var(--brand); --accent-ink: #000000; --accent-text: var(--brand); --accent-soft: #3A2215; --focus: var(--brand);
   --c-entrega: #F0875C; --c-evaluacion: #EE7AA6; --c-correccion: #A994F2; --c-teorica: #73AEF0; --c-taller: #7CCB85; --c-aviso: #E3B84E;
+  --glow-soft: rgba(255, 255, 255, 0.13);
   color-scheme: dark;
 }
 html.t-lg { font-size: 112.5%; }
@@ -136,7 +143,7 @@ a { color: var(--accent-text); }
 /* Interruptor de modo oscuro: riel con la marca, perilla blanca con sol (claro) o negra con luna (oscuro).
    Los íconos van solo en blanco y negro. */
 .theme-switch { position: relative; flex: none; width: 3.6rem; height: 32px; padding: 0; border-radius: 999px; cursor: pointer;
-  background: var(--sunken); border: 1px solid var(--line); transition: background-color 0.25s, border-color 0.25s; }
+  background: var(--sunken); border: 1px solid var(--line); transition: background-color 0.25s, border-color 0.25s, transform 0.25s ease; }
 .theme-switch .knob { position: absolute; top: 2px; left: 2px; width: 26px; height: 26px; border-radius: 50%;
   display: grid; place-items: center; background: #FFFFFF; color: #000000; border: 2px solid var(--accent);
   transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.3, 1), background-color 0.25s, color 0.25s; }
@@ -167,7 +174,7 @@ main > section:focus { outline: none; }
    Con "Sin animaciones" (html.calm, más abajo) se muestra de una. */
 @keyframes tab-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 main > section.entering, [role="tabpanel"].entering { animation: tab-in 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
-.tab { transition: color 0.2s, border-color 0.25s; }
+.tab { transition: color 0.2s, border-color 0.25s, transform 0.25s ease; }
 /* Al final de cada pestaña, un enlace a la siguiente para seguir sin volver arriba. */
 .next-tab { margin-top: calc(var(--space-sub) - var(--space-block)); padding-top: var(--space-block); border-top: 1px solid var(--line); display: flex; justify-content: flex-end; }
 .next-tab a { color: var(--ink); text-decoration: none; font-family: var(--f-display); font-weight: 500; text-align: right; }
@@ -220,7 +227,7 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .scroll-cue { position: absolute; left: 50%; transform: translateX(-50%); bottom: 1rem; font: inherit; font-family: var(--f-display); font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--muted); background: none; border: 0; padding: 0.3rem 0; cursor: pointer; display: inline-flex; gap: 0.5rem; align-items: center; }
 .scroll-cue span { color: var(--accent-text); font-size: 1.2em; }
-.scroll-cue:hover { color: var(--ink); }
+.scroll-cue:hover { color: var(--ink); transform: translateX(-50%) scale(1.04); }
 
 .carousel { display: flex; flex-direction: column; gap: clamp(1.25rem, 3vw, 2rem); }
 .quote { font-family: var(--f-display); font-size: calc(clamp(1.6rem, 4.5vw, 3rem) + 4pt); font-weight: 700; line-height: var(--lh-sub); text-wrap: balance; max-width: 26ch; }
@@ -264,7 +271,7 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .subtabs { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 .subtab { font: inherit; font-family: var(--f-display); font-size: 0.92rem; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 0.55rem 0.9rem; cursor: pointer; display: flex; flex-direction: column; text-align: left; gap: 0.1rem; }
 .subtab span { font-family: var(--f-body); font-size: 0.75rem; color: var(--muted); }
-.subtab { transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s; }
+.subtab { transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s, transform 0.25s ease; }
 .subtab[aria-selected="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-soft); }
 
 /* Primer paso */
@@ -414,6 +421,22 @@ input[type="email"] { font: inherit; font-weight: 400; font-size: var(--step-0);
 footer { max-width: 72rem; margin: 0 auto; padding-inline: 16px; padding-block: 0 3rem; color: var(--muted); font-size: var(--step--1); }
 /* El pie usa todo el ancho: sin el límite de 65 caracteres de los párrafos, la frase no se corta a la mitad. */
 footer p { max-width: none; }
+
+/* ---------- Brillo al pasar el mouse ---------- */
+/* Todos los botones (con caja o sin ella) crecen apenas y se iluminan desde el centro hacia afuera:
+   un círculo de luz que nace chico en el medio y se abre hasta los bordes. :where() no suma
+   especificidad, así que cada botón conserva su posición y su forma. */
+:where(button, a.btn, a.tab, .next-tab a) { position: relative; isolation: isolate; transition: transform 0.25s ease; }
+:where(button, a.btn, a.tab, .next-tab a)::after {
+  content: ""; position: absolute; inset: -4px; z-index: -1; pointer-events: none; border-radius: inherit;
+  background: radial-gradient(closest-side, var(--glow-soft), transparent);
+  opacity: 0; transform: scale(0.3); transition: transform 0.35s ease, opacity 0.35s ease;
+}
+:where(.btn:not(.ghost), .chip-btn[aria-pressed="true"], .theme-switch[aria-checked="true"])::after { background: radial-gradient(closest-side, var(--glow-fill), transparent); }
+@media (hover: hover) {
+  :where(button, a.btn, a.tab, .next-tab a):hover:not(:disabled) { transform: scale(1.04); }
+  :where(button, a.btn, a.tab, .next-tab a):hover:not(:disabled)::after { opacity: 1; transform: scale(1); }
+}
 
 /* ---------- Cursor ---------- */
 /* El cursor es el de siempre; con mouse deja un rastro azul corto, como una raya de marcador,
@@ -922,7 +945,7 @@ Entrega</textarea></label>
   // Garabato en reposo: apenas el mouse se frena (el navegador avisa del movimiento cada ~16 ms, así que
   // 120 ms sin avisos ya es "quieto"), la punta garabatea rápido y sin patrón alrededor de donde quedó,
   // unos 5 segundos, y para. Vuelve a pasar recién después de mover el mouse.
-  const IDLE_MS = 120, DOODLE_MS = 5000, DOODLE_R = 16, DOODLE_LIFE = 600, DOODLE_PX = 220;
+  const IDLE_MS = 120, DOODLE_MS = 5000, DOODLE_R = 16, DOODLE_LIFE = 600, DOODLE_PX = 220, DOODLE_FADE = 700;
   let last = null, idleTimer = 0, doodle = null;
   function startDoodle() {
     if (!last || isCalm()) return;
@@ -931,9 +954,14 @@ Entrega</textarea></label>
   }
   function drawTrail() {
     const now = performance.now();
+    // Al final, el garabato no se frena de golpe: en el último tramo la punta va más lento
+    // y toda la raya se desvanece junto con ella, sin quedar quieta en pantalla.
+    let fade = 1;
     if (doodle) {
-      if (now - doodle.t0 > DOODLE_MS) doodle = null;
+      const left = DOODLE_MS - (now - doodle.t0);
+      if (left <= 0) { doodle = null; pts = pts.filter((p) => !p.life); }
       else {
+        fade = Math.min(1, left / DOODLE_FADE);
         // La punta avanza rápido y cambia de giro al azar: rulos, zigzags y vueltas atrás, como una birome
         // nerviosa. Si se aleja demasiado, la tira de vuelta hacia donde quedó el mouse.
         const d = doodle;
@@ -942,7 +970,7 @@ Entrega</textarea></label>
         d.dir += d.spin + (Math.random() - 0.5) * 0.5;
         const dx = d.x - d.px, dy = d.y - d.py, far = Math.hypot(dx, dy);
         if (far > DOODLE_R) d.dir = Math.atan2(dy, dx) + (Math.random() - 0.5) * 1.2;
-        const step = 4 + Math.random() * 4;
+        const step = (4 + Math.random() * 4) * (0.35 + 0.65 * fade);
         d.px += Math.cos(d.dir) * step; d.py += Math.sin(d.dir) * step;
         pts.push({ x: d.px, y: d.py, t: now, life: DOODLE_LIFE });
       }
@@ -956,7 +984,7 @@ Entrega</textarea></label>
     tctx.clearRect(0, 0, innerWidth, innerHeight);
     tctx.strokeStyle = getComputedStyle(root).getPropertyValue("--brand-2").trim();
     tctx.lineCap = "round"; tctx.lineJoin = "round";
-    tctx.globalAlpha = 0.8; tctx.lineWidth = 3;
+    tctx.globalAlpha = 0.8 * fade; tctx.lineWidth = 3;
     tctx.beginPath();
     pts.slice(Math.max(from, 0)).forEach((p, i) => (i ? tctx.lineTo(p.x, p.y) : tctx.moveTo(p.x, p.y)));
     tctx.stroke();
