@@ -57,6 +57,9 @@
   --space-block: 1.75rem;                      /* entre un título y su contenido */
   --space-grid: clamp(1.25rem, 2.5vw, 1.75rem);/* entre tarjetas */
   --pad-card: clamp(1.25rem, 3vw, 2rem);       /* relleno de tarjetas y paneles */
+
+  /* El punto garabateado del proyecto (favicon), usado como viñeta. */
+  --scribble: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAQAAAAm93DmAAADvklEQVRIx6XWWWxUVRzH8U9pC5alLIIWClJBVAiICxgMorIqiSIqPBAhasRoYiQhAaM88ISRJUH0QXlQo6gkpoCgRRIBFRJkh7KUJSCB1pKyTGGA0nV6fHCoLcNA6fzuw805955v/sv5n/PnZuqhQKWf9Zei2uqCNLPV2KtWoUnSUwHmGKW9Nn5z2nD5goixqQDTdZenk0J7ZevpE0cVGpOa2610td8JvZBmomp/G5IaMsc+1Z4FWRY6p0B2ao5/qd7E+CjTAlXG3dqx5IrZLs1j8fzW2iHTNFnNt6iDPnrrgIH6gEEi9uoM8ixWp9IMnWRrl2wbpcXfGSZ61/1iim0xQobpojpZYoC3RfU33SPgomPqVTljoxXKk1n3kvMq7bLPRUEQHFTklDJV/lERn2v61Plex2TAAy55Qwd3mmL7DZcHNeoEZQ7b43cRwVXPJAPW2qGzoeY5qjIBVS+o9ZH9go/lGu1TEUHUE9eDMuLvXw0y16u6JU1ZhXRrDTBSrjG6o8LnCpP9PlBRE5vO22S5q43ilW+zNWri4yvWmygzeZaZZqm2Ik4otd5WxwUr4nUCF7TWDjHFNshXpKMarY0UtcGZRHSWlYItxmvdMPeyKwnx/F4fbQyx2nE7/aVEkZ+Mu1YiaY2Q/czymrNmKNBKnmHGezFeGbUypCHYZq2HnLPLSfViosoN8IECSxKtbGu2ciW+slKxWCO7SpwUBLUuOmKGTk3WdfSDszdKTWcTbE7YvjWCWnudEQRRExISutol39wIOEFU3XXAy04LgjK/qBdcbHJ255njmMNmxiu+SQzpZpRechS511APy2n0LaZEb2n4w2QR5JnidVmWWu5k0v3bcIpk+UxwysEmsfwvjh8a7E2HnPejJzVTXe0RHLFbEBQ7qKoBeVXEFZuM0aa5uHvMVyOocMgy7xsm13bBaVFBxCqTrkWtObAFdqoU7DDa3aCvd5wWVNpvvsfd0VwYrSz2nRdsE8xClrG+VSIIqs2Re/PlGQkzbfS3wR49XJZlocGGy3TUCSOUy1d6u8CYMq+4S46Yt8QcschWhaZ6SqnzzXf1f/X1hWLBn0bqFc9jmq8Fy1ra4bQyTzCv0UwXuwXvNWfpjVTvkNDkRnvAfaJ2tBRITH0T90bKdsDhlgMflK57Q6V39jzWudxyYBn6NeyB5zwqYp1wa2AyDXPJ4XhDkmeXYNXtdDWJam+9YBF6Wik45+lUcDBVtTNm2iioNju1HhuyrYwfVhfM1TZVHAywRqlNJje6WG+pfwFLG5gJbp/7jwAAAABJRU5ErkJggg==");
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -110,7 +113,7 @@ a { color: var(--accent-text); }
 .tips li b { display: block; }
 .scribble-list li::before, .tips li b::before {
   content: ""; position: absolute; left: 0; top: 0.2em; width: 1.05em; height: 1.05em;
-  background: var(--accent); -webkit-mask: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAQAAAAm93DmAAADvklEQVRIx6XWWWxUVRzH8U9pC5alLIIWClJBVAiICxgMorIqiSIqPBAhasRoYiQhAaM88ISRJUH0QXlQo6gkpoCgRRIBFRJkh7KUJSCB1pKyTGGA0nV6fHCoLcNA6fzuw805955v/sv5n/PnZuqhQKWf9Zei2uqCNLPV2KtWoUnSUwHmGKW9Nn5z2nD5goixqQDTdZenk0J7ZevpE0cVGpOa2610td8JvZBmomp/G5IaMsc+1Z4FWRY6p0B2ao5/qd7E+CjTAlXG3dqx5IrZLs1j8fzW2iHTNFnNt6iDPnrrgIH6gEEi9uoM8ixWp9IMnWRrl2wbpcXfGSZ61/1iim0xQobpojpZYoC3RfU33SPgomPqVTljoxXKk1n3kvMq7bLPRUEQHFTklDJV/lERn2v61Plex2TAAy55Qwd3mmL7DZcHNeoEZQ7b43cRwVXPJAPW2qGzoeY5qjIBVS+o9ZH9go/lGu1TEUHUE9eDMuLvXw0y16u6JU1ZhXRrDTBSrjG6o8LnCpP9PlBRE5vO22S5q43ilW+zNWri4yvWmygzeZaZZqm2Ik4otd5WxwUr4nUCF7TWDjHFNshXpKMarY0UtcGZRHSWlYItxmvdMPeyKwnx/F4fbQyx2nE7/aVEkZ+Mu1YiaY2Q/czymrNmKNBKnmHGezFeGbUypCHYZq2HnLPLSfViosoN8IECSxKtbGu2ciW+slKxWCO7SpwUBLUuOmKGTk3WdfSDszdKTWcTbE7YvjWCWnudEQRRExISutol39wIOEFU3XXAy04LgjK/qBdcbHJ255njmMNmxiu+SQzpZpRechS511APy2n0LaZEb2n4w2QR5JnidVmWWu5k0v3bcIpk+UxwysEmsfwvjh8a7E2HnPejJzVTXe0RHLFbEBQ7qKoBeVXEFZuM0aa5uHvMVyOocMgy7xsm13bBaVFBxCqTrkWtObAFdqoU7DDa3aCvd5wWVNpvvsfd0VwYrSz2nRdsE8xClrG+VSIIqs2Re/PlGQkzbfS3wR49XJZlocGGy3TUCSOUy1d6u8CYMq+4S46Yt8QcschWhaZ6SqnzzXf1f/X1hWLBn0bqFc9jmq8Fy1ra4bQyTzCv0UwXuwXvNWfpjVTvkNDkRnvAfaJ2tBRITH0T90bKdsDhlgMflK57Q6V39jzWudxyYBn6NeyB5zwqYp1wa2AyDXPJ4XhDkmeXYNXtdDWJam+9YBF6Wik45+lUcDBVtTNm2iioNju1HhuyrYwfVhfM1TZVHAywRqlNJje6WG+pfwFLG5gJbp/7jwAAAABJRU5ErkJggg==") center / contain no-repeat; mask: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAQAAAAm93DmAAADvklEQVRIx6XWWWxUVRzH8U9pC5alLIIWClJBVAiICxgMorIqiSIqPBAhasRoYiQhAaM88ISRJUH0QXlQo6gkpoCgRRIBFRJkh7KUJSCB1pKyTGGA0nV6fHCoLcNA6fzuw805955v/sv5n/PnZuqhQKWf9Zei2uqCNLPV2KtWoUnSUwHmGKW9Nn5z2nD5goixqQDTdZenk0J7ZevpE0cVGpOa2610td8JvZBmomp/G5IaMsc+1Z4FWRY6p0B2ao5/qd7E+CjTAlXG3dqx5IrZLs1j8fzW2iHTNFnNt6iDPnrrgIH6gEEi9uoM8ixWp9IMnWRrl2wbpcXfGSZ61/1iim0xQobpojpZYoC3RfU33SPgomPqVTljoxXKk1n3kvMq7bLPRUEQHFTklDJV/lERn2v61Plex2TAAy55Qwd3mmL7DZcHNeoEZQ7b43cRwVXPJAPW2qGzoeY5qjIBVS+o9ZH9go/lGu1TEUHUE9eDMuLvXw0y16u6JU1ZhXRrDTBSrjG6o8LnCpP9PlBRE5vO22S5q43ilW+zNWri4yvWmygzeZaZZqm2Ik4otd5WxwUr4nUCF7TWDjHFNshXpKMarY0UtcGZRHSWlYItxmvdMPeyKwnx/F4fbQyx2nE7/aVEkZ+Mu1YiaY2Q/czymrNmKNBKnmHGezFeGbUypCHYZq2HnLPLSfViosoN8IECSxKtbGu2ciW+slKxWCO7SpwUBLUuOmKGTk3WdfSDszdKTWcTbE7YvjWCWnudEQRRExISutol39wIOEFU3XXAy04LgjK/qBdcbHJ255njmMNmxiu+SQzpZpRechS511APy2n0LaZEb2n4w2QR5JnidVmWWu5k0v3bcIpk+UxwysEmsfwvjh8a7E2HnPejJzVTXe0RHLFbEBQ7qKoBeVXEFZuM0aa5uHvMVyOocMgy7xsm13bBaVFBxCqTrkWtObAFdqoU7DDa3aCvd5wWVNpvvsfd0VwYrSz2nRdsE8xClrG+VSIIqs2Re/PlGQkzbfS3wR49XJZlocGGy3TUCSOUy1d6u8CYMq+4S46Yt8QcschWhaZ6SqnzzXf1f/X1hWLBn0bqFc9jmq8Fy1ra4bQyTzCv0UwXuwXvNWfpjVTvkNDkRnvAfaJ2tBRITH0T90bKdsDhlgMflK57Q6V39jzWudxyYBn6NeyB5zwqYp1wa2AyDXPJ4XhDkmeXYNXtdDWJam+9YBF6Wik45+lUcDBVtTNm2iioNju1HhuyrYwfVhfM1TZVHAywRqlNJje6WG+pfwFLG5gJbp/7jwAAAABJRU5ErkJggg==") center / contain no-repeat;
+  background: var(--accent); -webkit-mask: var(--scribble) center / contain no-repeat; mask: var(--scribble) center / contain no-repeat;
 }
 .tips li p { padding-left: 1.5em; }
 
@@ -411,6 +414,11 @@ input[type="email"] { font: inherit; font-weight: 400; font-size: var(--step-0);
 footer { max-width: 72rem; margin: 0 auto; padding-inline: 16px; padding-block: 0 3rem; color: var(--muted); font-size: var(--step--1); }
 /* El pie usa todo el ancho: sin el límite de 65 caracteres de los párrafos, la frase no se corta a la mitad. */
 footer p { max-width: none; }
+
+/* ---------- Cursor ---------- */
+/* El cursor es el de siempre; con mouse deja un rastro azul corto, como una raya de marcador,
+   y si se queda quieto hace un garabato. Lo dibuja el script en este lienzo, que no recibe clics. */
+.cur-trail { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
 
 /* "Sin animaciones" manda: arranca prendido si el sistema pide menos movimiento, pero se puede cambiar. */
 html.calm *, html.calm *::before, html.calm *::after { transition: none !important; animation: none !important; }
@@ -894,6 +902,82 @@ Entrega</textarea></label>
   $("#pref-theme").onclick = () => { prefs.theme = isDark() ? "light" : "dark"; applyPrefs(); };
   $("#pref-calm").onclick = () => { prefs.calm = !isCalm(); prefs.calmSet = true; applyPrefs(); };
   applyPrefs();
+
+  /* ---------- Cursor ---------- */
+  // Rastro: los últimos puntos del recorrido (menos de un quinto de segundo y, como mucho,
+  // unos 70px) se dibujan como una raya de marcador que se va borrando desde la cola. Con "Sin animaciones", no hay rastro.
+  const trail = document.createElement("canvas");
+  trail.className = "cur-trail"; trail.setAttribute("aria-hidden", "true");
+  document.body.appendChild(trail);
+  const tctx = trail.getContext("2d");
+  let pts = [], trailRaf = 0;
+  const TRAIL_MS = 180, TRAIL_PX = 70;
+  function sizeTrail() {
+    const r = window.devicePixelRatio || 1;
+    trail.width = innerWidth * r; trail.height = innerHeight * r;
+    tctx.setTransform(r, 0, 0, r, 0, 0);
+  }
+  sizeTrail();
+  window.addEventListener("resize", sizeTrail);
+  // Garabato en reposo: apenas el mouse se frena (el navegador avisa del movimiento cada ~16 ms, así que
+  // 120 ms sin avisos ya es "quieto"), la punta garabatea rápido y sin patrón alrededor de donde quedó,
+  // unos 5 segundos, y para. Vuelve a pasar recién después de mover el mouse.
+  const IDLE_MS = 120, DOODLE_MS = 5000, DOODLE_R = 16, DOODLE_LIFE = 600, DOODLE_PX = 220;
+  let last = null, idleTimer = 0, doodle = null;
+  function startDoodle() {
+    if (!last || isCalm()) return;
+    doodle = { x: last.x, y: last.y, t0: performance.now(), px: last.x, py: last.y, dir: Math.random() * Math.PI * 2, spin: 0 };
+    if (!trailRaf) trailRaf = requestAnimationFrame(drawTrail);
+  }
+  function drawTrail() {
+    const now = performance.now();
+    if (doodle) {
+      if (now - doodle.t0 > DOODLE_MS) doodle = null;
+      else {
+        // La punta avanza rápido y cambia de giro al azar: rulos, zigzags y vueltas atrás, como una birome
+        // nerviosa. Si se aleja demasiado, la tira de vuelta hacia donde quedó el mouse.
+        const d = doodle;
+        if (Math.random() < 0.12) d.spin = (Math.random() - 0.5) * 1.6;
+        if (Math.random() < 0.04) d.dir += Math.PI * (0.6 + Math.random() * 0.8);
+        d.dir += d.spin + (Math.random() - 0.5) * 0.5;
+        const dx = d.x - d.px, dy = d.y - d.py, far = Math.hypot(dx, dy);
+        if (far > DOODLE_R) d.dir = Math.atan2(dy, dx) + (Math.random() - 0.5) * 1.2;
+        const step = 4 + Math.random() * 4;
+        d.px += Math.cos(d.dir) * step; d.py += Math.sin(d.dir) * step;
+        pts.push({ x: d.px, y: d.py, t: now, life: DOODLE_LIFE });
+      }
+    }
+    // El garabato dura más en pantalla que el rastro, para que se lean los rulos.
+    pts = pts.filter((p) => now - p.t < (p.life || TRAIL_MS));
+    const maxPx = pts.some((p) => p.life) ? DOODLE_PX : TRAIL_PX;
+    // Recorta desde la punta hacia atrás para que la raya nunca sea larga.
+    let len = 0, from = pts.length - 1;
+    while (from > 0 && len < maxPx) { len += Math.hypot(pts[from].x - pts[from - 1].x, pts[from].y - pts[from - 1].y); from--; }
+    tctx.clearRect(0, 0, innerWidth, innerHeight);
+    tctx.strokeStyle = getComputedStyle(root).getPropertyValue("--brand-2").trim();
+    tctx.lineCap = "round"; tctx.lineJoin = "round";
+    tctx.globalAlpha = 0.8; tctx.lineWidth = 3;
+    tctx.beginPath();
+    pts.slice(Math.max(from, 0)).forEach((p, i) => (i ? tctx.lineTo(p.x, p.y) : tctx.moveTo(p.x, p.y)));
+    tctx.stroke();
+    trailRaf = pts.length || doodle ? requestAnimationFrame(drawTrail) : 0;
+  }
+  document.addEventListener("pointermove", (e) => {
+    // Solo con mouse o lápiz: en compus con pantalla táctil el mouse también cuenta, aunque el sistema diga "táctil".
+    if (e.pointerType === "touch" || isCalm()) return;
+    last = { x: e.clientX, y: e.clientY };
+    doodle = null;
+    pts = pts.filter((p) => !p.life);
+    pts.push({ ...last, t: performance.now() });
+    if (!trailRaf) trailRaf = requestAnimationFrame(drawTrail);
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(startDoodle, IDLE_MS);
+  }, { passive: true });
+  // Al salir de la ventana, hacer clic o escribir, el garabato se corta.
+  const stopDoodle = () => { clearTimeout(idleTimer); doodle = null; };
+  document.addEventListener("mouseleave", () => { stopDoodle(); last = null; pts = []; });
+  document.addEventListener("pointerdown", stopDoodle);
+  document.addEventListener("keydown", stopDoodle);
 
   /* ---------- Pestañas ---------- */
   function setupTabs(tabs, onSelect) {
