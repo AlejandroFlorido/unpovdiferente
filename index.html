@@ -57,6 +57,9 @@
   --space-block: 1.75rem;                      /* entre un título y su contenido */
   --space-grid: clamp(1.25rem, 2.5vw, 1.75rem);/* entre tarjetas */
   --pad-card: clamp(1.25rem, 3vw, 2rem);       /* relleno de tarjetas y paneles */
+
+  /* El punto garabateado del proyecto (favicon): viñeta y forma del cursor. */
+  --scribble: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAQAAAAm93DmAAADvklEQVRIx6XWWWxUVRzH8U9pC5alLIIWClJBVAiICxgMorIqiSIqPBAhasRoYiQhAaM88ISRJUH0QXlQo6gkpoCgRRIBFRJkh7KUJSCB1pKyTGGA0nV6fHCoLcNA6fzuw805955v/sv5n/PnZuqhQKWf9Zei2uqCNLPV2KtWoUnSUwHmGKW9Nn5z2nD5goixqQDTdZenk0J7ZevpE0cVGpOa2610td8JvZBmomp/G5IaMsc+1Z4FWRY6p0B2ao5/qd7E+CjTAlXG3dqx5IrZLs1j8fzW2iHTNFnNt6iDPnrrgIH6gEEi9uoM8ixWp9IMnWRrl2wbpcXfGSZ61/1iim0xQobpojpZYoC3RfU33SPgomPqVTljoxXKk1n3kvMq7bLPRUEQHFTklDJV/lERn2v61Plex2TAAy55Qwd3mmL7DZcHNeoEZQ7b43cRwVXPJAPW2qGzoeY5qjIBVS+o9ZH9go/lGu1TEUHUE9eDMuLvXw0y16u6JU1ZhXRrDTBSrjG6o8LnCpP9PlBRE5vO22S5q43ilW+zNWri4yvWmygzeZaZZqm2Ik4otd5WxwUr4nUCF7TWDjHFNshXpKMarY0UtcGZRHSWlYItxmvdMPeyKwnx/F4fbQyx2nE7/aVEkZ+Mu1YiaY2Q/czymrNmKNBKnmHGezFeGbUypCHYZq2HnLPLSfViosoN8IECSxKtbGu2ciW+slKxWCO7SpwUBLUuOmKGTk3WdfSDszdKTWcTbE7YvjWCWnudEQRRExISutol39wIOEFU3XXAy04LgjK/qBdcbHJ255njmMNmxiu+SQzpZpRechS511APy2n0LaZEb2n4w2QR5JnidVmWWu5k0v3bcIpk+UxwysEmsfwvjh8a7E2HnPejJzVTXe0RHLFbEBQ7qKoBeVXEFZuM0aa5uHvMVyOocMgy7xsm13bBaVFBxCqTrkWtObAFdqoU7DDa3aCvd5wWVNpvvsfd0VwYrSz2nRdsE8xClrG+VSIIqs2Re/PlGQkzbfS3wR49XJZlocGGy3TUCSOUy1d6u8CYMq+4S46Yt8QcschWhaZ6SqnzzXf1f/X1hWLBn0bqFc9jmq8Fy1ra4bQyTzCv0UwXuwXvNWfpjVTvkNDkRnvAfaJ2tBRITH0T90bKdsDhlgMflK57Q6V39jzWudxyYBn6NeyB5zwqYp1wa2AyDXPJ4XhDkmeXYNXtdDWJam+9YBF6Wik45+lUcDBVtTNm2iioNju1HhuyrYwfVhfM1TZVHAywRqlNJje6WG+pfwFLG5gJbp/7jwAAAABJRU5ErkJggg==");
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -110,7 +113,7 @@ a { color: var(--accent-text); }
 .tips li b { display: block; }
 .scribble-list li::before, .tips li b::before {
   content: ""; position: absolute; left: 0; top: 0.2em; width: 1.05em; height: 1.05em;
-  background: var(--accent); -webkit-mask: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAQAAAAm93DmAAADvklEQVRIx6XWWWxUVRzH8U9pC5alLIIWClJBVAiICxgMorIqiSIqPBAhasRoYiQhAaM88ISRJUH0QXlQo6gkpoCgRRIBFRJkh7KUJSCB1pKyTGGA0nV6fHCoLcNA6fzuw805955v/sv5n/PnZuqhQKWf9Zei2uqCNLPV2KtWoUnSUwHmGKW9Nn5z2nD5goixqQDTdZenk0J7ZevpE0cVGpOa2610td8JvZBmomp/G5IaMsc+1Z4FWRY6p0B2ao5/qd7E+CjTAlXG3dqx5IrZLs1j8fzW2iHTNFnNt6iDPnrrgIH6gEEi9uoM8ixWp9IMnWRrl2wbpcXfGSZ61/1iim0xQobpojpZYoC3RfU33SPgomPqVTljoxXKk1n3kvMq7bLPRUEQHFTklDJV/lERn2v61Plex2TAAy55Qwd3mmL7DZcHNeoEZQ7b43cRwVXPJAPW2qGzoeY5qjIBVS+o9ZH9go/lGu1TEUHUE9eDMuLvXw0y16u6JU1ZhXRrDTBSrjG6o8LnCpP9PlBRE5vO22S5q43ilW+zNWri4yvWmygzeZaZZqm2Ik4otd5WxwUr4nUCF7TWDjHFNshXpKMarY0UtcGZRHSWlYItxmvdMPeyKwnx/F4fbQyx2nE7/aVEkZ+Mu1YiaY2Q/czymrNmKNBKnmHGezFeGbUypCHYZq2HnLPLSfViosoN8IECSxKtbGu2ciW+slKxWCO7SpwUBLUuOmKGTk3WdfSDszdKTWcTbE7YvjWCWnudEQRRExISutol39wIOEFU3XXAy04LgjK/qBdcbHJ255njmMNmxiu+SQzpZpRechS511APy2n0LaZEb2n4w2QR5JnidVmWWu5k0v3bcIpk+UxwysEmsfwvjh8a7E2HnPejJzVTXe0RHLFbEBQ7qKoBeVXEFZuM0aa5uHvMVyOocMgy7xsm13bBaVFBxCqTrkWtObAFdqoU7DDa3aCvd5wWVNpvvsfd0VwYrSz2nRdsE8xClrG+VSIIqs2Re/PlGQkzbfS3wR49XJZlocGGy3TUCSOUy1d6u8CYMq+4S46Yt8QcschWhaZ6SqnzzXf1f/X1hWLBn0bqFc9jmq8Fy1ra4bQyTzCv0UwXuwXvNWfpjVTvkNDkRnvAfaJ2tBRITH0T90bKdsDhlgMflK57Q6V39jzWudxyYBn6NeyB5zwqYp1wa2AyDXPJ4XhDkmeXYNXtdDWJam+9YBF6Wik45+lUcDBVtTNm2iioNju1HhuyrYwfVhfM1TZVHAywRqlNJje6WG+pfwFLG5gJbp/7jwAAAABJRU5ErkJggg==") center / contain no-repeat; mask: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAQAAAAm93DmAAADvklEQVRIx6XWWWxUVRzH8U9pC5alLIIWClJBVAiICxgMorIqiSIqPBAhasRoYiQhAaM88ISRJUH0QXlQo6gkpoCgRRIBFRJkh7KUJSCB1pKyTGGA0nV6fHCoLcNA6fzuw805955v/sv5n/PnZuqhQKWf9Zei2uqCNLPV2KtWoUnSUwHmGKW9Nn5z2nD5goixqQDTdZenk0J7ZevpE0cVGpOa2610td8JvZBmomp/G5IaMsc+1Z4FWRY6p0B2ao5/qd7E+CjTAlXG3dqx5IrZLs1j8fzW2iHTNFnNt6iDPnrrgIH6gEEi9uoM8ixWp9IMnWRrl2wbpcXfGSZ61/1iim0xQobpojpZYoC3RfU33SPgomPqVTljoxXKk1n3kvMq7bLPRUEQHFTklDJV/lERn2v61Plex2TAAy55Qwd3mmL7DZcHNeoEZQ7b43cRwVXPJAPW2qGzoeY5qjIBVS+o9ZH9go/lGu1TEUHUE9eDMuLvXw0y16u6JU1ZhXRrDTBSrjG6o8LnCpP9PlBRE5vO22S5q43ilW+zNWri4yvWmygzeZaZZqm2Ik4otd5WxwUr4nUCF7TWDjHFNshXpKMarY0UtcGZRHSWlYItxmvdMPeyKwnx/F4fbQyx2nE7/aVEkZ+Mu1YiaY2Q/czymrNmKNBKnmHGezFeGbUypCHYZq2HnLPLSfViosoN8IECSxKtbGu2ciW+slKxWCO7SpwUBLUuOmKGTk3WdfSDszdKTWcTbE7YvjWCWnudEQRRExISutol39wIOEFU3XXAy04LgjK/qBdcbHJ255njmMNmxiu+SQzpZpRechS511APy2n0LaZEb2n4w2QR5JnidVmWWu5k0v3bcIpk+UxwysEmsfwvjh8a7E2HnPejJzVTXe0RHLFbEBQ7qKoBeVXEFZuM0aa5uHvMVyOocMgy7xsm13bBaVFBxCqTrkWtObAFdqoU7DDa3aCvd5wWVNpvvsfd0VwYrSz2nRdsE8xClrG+VSIIqs2Re/PlGQkzbfS3wR49XJZlocGGy3TUCSOUy1d6u8CYMq+4S46Yt8QcschWhaZ6SqnzzXf1f/X1hWLBn0bqFc9jmq8Fy1ra4bQyTzCv0UwXuwXvNWfpjVTvkNDkRnvAfaJ2tBRITH0T90bKdsDhlgMflK57Q6V39jzWudxyYBn6NeyB5zwqYp1wa2AyDXPJ4XhDkmeXYNXtdDWJam+9YBF6Wik45+lUcDBVtTNm2iioNju1HhuyrYwfVhfM1TZVHAywRqlNJje6WG+pfwFLG5gJbp/7jwAAAABJRU5ErkJggg==") center / contain no-repeat;
+  background: var(--accent); -webkit-mask: var(--scribble) center / contain no-repeat; mask: var(--scribble) center / contain no-repeat;
 }
 .tips li p { padding-left: 1.5em; }
 
@@ -411,6 +414,17 @@ input[type="email"] { font: inherit; font-weight: 400; font-size: var(--step-0);
 footer { max-width: 72rem; margin: 0 auto; padding-inline: 16px; padding-block: 0 3rem; color: var(--muted); font-size: var(--step--1); }
 /* El pie usa todo el ancho: sin el límite de 65 caracteres de los párrafos, la frase no se corta a la mitad. */
 footer p { max-width: none; }
+
+/* ---------- Cursor ---------- */
+/* Con mouse, el cursor es el punto garabateado en azul (lo pinta el script según el modo claro u oscuro)
+   y deja un rastro corto, como una raya de marcador. Sobre lo que se puede tocar, el punto crece;
+   en los campos de texto queda la barrita de siempre. En pantallas táctiles no cambia nada. */
+@media (hover: hover) and (pointer: fine) {
+  html.cur-on, html.cur-on body { cursor: var(--cur), auto; }
+  html.cur-on :is(a, button, label, select, summary, [role="button"]) { cursor: var(--cur-link), pointer; }
+  html.cur-on :is(input[type="text"], input[type="email"], input[type="date"], input[type="time"], textarea) { cursor: text; }
+}
+.cur-trail { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
 
 /* "Sin animaciones" manda: arranca prendido si el sistema pide menos movimiento, pero se puede cambiar. */
 html.calm *, html.calm *::before, html.calm *::after { transition: none !important; animation: none !important; }
@@ -877,6 +891,7 @@ Entrega</textarea></label>
   const darkSystem = window.matchMedia("(prefers-color-scheme: dark)");
   const isDark = () => (prefs.theme ? prefs.theme === "dark" : darkSystem.matches);
   darkSystem.addEventListener?.("change", () => applyPrefs());
+  let repaintCursor = () => {}; // lo completa la parte del cursor, más abajo
   function applyPrefs() {
     if (prefs.theme) root.dataset.theme = prefs.theme; else delete root.dataset.theme;
     $("#pref-theme").setAttribute("aria-checked", isDark());
@@ -888,12 +903,86 @@ Entrega</textarea></label>
     $("#pref-space").setAttribute("aria-pressed", prefs.spaced);
     $("#pref-calm").setAttribute("aria-pressed", isCalm());
     store.set("prefs", prefs);
+    repaintCursor();
   }
   $("#pref-size").onclick = () => { prefs.size = (prefs.size + 1) % sizes.length; applyPrefs(); };
   $("#pref-space").onclick = () => { prefs.spaced = !prefs.spaced; applyPrefs(); };
   $("#pref-theme").onclick = () => { prefs.theme = isDark() ? "light" : "dark"; applyPrefs(); };
   $("#pref-calm").onclick = () => { prefs.calm = !isCalm(); prefs.calmSet = true; applyPrefs(); };
   applyPrefs();
+
+  /* ---------- Cursor ---------- */
+  // El cursor es el punto garabateado teñido de azul, con un borde (blanco en modo claro,
+  // negro en oscuro) para que se vea también sobre los botones. Se vuelve a pintar al cambiar de modo.
+  const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+  const scribble = new Image();
+  scribble.src = getComputedStyle(root).getPropertyValue("--scribble").trim().replace(/^url\(["']?|["']?\)$/g, "");
+  function cursorURL(size, fill, edge) {
+    const c = document.createElement("canvas"), pad = 2, inner = size - pad * 2;
+    c.width = c.height = size;
+    const x = c.getContext("2d");
+    const tint = (color) => {
+      const t = document.createElement("canvas"); t.width = t.height = size;
+      const tx = t.getContext("2d");
+      tx.drawImage(scribble, pad, pad, inner, inner);
+      tx.globalCompositeOperation = "source-in"; tx.fillStyle = color; tx.fillRect(0, 0, size, size);
+      return t;
+    };
+    const e = tint(edge);
+    for (let a = 0; a < 8; a++) x.drawImage(e, Math.cos(a * Math.PI / 4) * 1.5, Math.sin(a * Math.PI / 4) * 1.5);
+    x.drawImage(tint(fill), 0, 0);
+    return 'url("' + c.toDataURL() + '") ' + size / 2 + " " + size / 2;
+  }
+  function paintCursor() {
+    if (!scribble.complete || !scribble.naturalWidth) return;
+    const css = getComputedStyle(root), blue = css.getPropertyValue("--brand-2").trim();
+    const edge = isDark() ? "#000000" : "#FFFFFF";
+    try {
+      root.style.setProperty("--cur", cursorURL(26, blue, edge));
+      root.style.setProperty("--cur-link", cursorURL(34, blue, edge));
+      root.classList.add("cur-on");
+    } catch (err) { root.classList.remove("cur-on"); }
+  }
+  scribble.onload = paintCursor;
+  repaintCursor = paintCursor;
+  paintCursor();
+
+  // Rastro: los últimos puntos del recorrido (menos de un quinto de segundo y, como mucho,
+  // unos 70px) se dibujan como una raya de marcador que se va borrando desde la cola. Con "Sin animaciones", no hay rastro.
+  const trail = document.createElement("canvas");
+  trail.className = "cur-trail"; trail.setAttribute("aria-hidden", "true");
+  document.body.appendChild(trail);
+  const tctx = trail.getContext("2d");
+  let pts = [], trailRaf = 0;
+  const TRAIL_MS = 180, TRAIL_PX = 70;
+  function sizeTrail() {
+    const r = window.devicePixelRatio || 1;
+    trail.width = innerWidth * r; trail.height = innerHeight * r;
+    tctx.setTransform(r, 0, 0, r, 0, 0);
+  }
+  sizeTrail();
+  window.addEventListener("resize", sizeTrail);
+  function drawTrail() {
+    const now = performance.now();
+    pts = pts.filter((p) => now - p.t < TRAIL_MS);
+    // Recorta desde la punta hacia atrás para que la raya nunca sea larga.
+    let len = 0, from = pts.length - 1;
+    while (from > 0 && len < TRAIL_PX) { len += Math.hypot(pts[from].x - pts[from - 1].x, pts[from].y - pts[from - 1].y); from--; }
+    tctx.clearRect(0, 0, innerWidth, innerHeight);
+    tctx.strokeStyle = getComputedStyle(root).getPropertyValue("--brand-2").trim();
+    tctx.lineCap = "round"; tctx.lineJoin = "round";
+    tctx.globalAlpha = 0.8; tctx.lineWidth = 3;
+    tctx.beginPath();
+    pts.slice(Math.max(from, 0)).forEach((p, i) => (i ? tctx.lineTo(p.x, p.y) : tctx.moveTo(p.x, p.y)));
+    tctx.stroke();
+    trailRaf = pts.length ? requestAnimationFrame(drawTrail) : 0;
+  }
+  document.addEventListener("pointermove", (e) => {
+    if (e.pointerType !== "mouse" || !finePointer.matches || isCalm()) return;
+    pts.push({ x: e.clientX, y: e.clientY, t: performance.now() });
+    if (!trailRaf) trailRaf = requestAnimationFrame(drawTrail);
+  }, { passive: true });
+  document.addEventListener("mouseleave", () => { pts = []; });
 
   /* ---------- Pestañas ---------- */
   function setupTabs(tabs, onSelect) {
