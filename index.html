@@ -904,7 +904,6 @@ Entrega</textarea></label>
   applyPrefs();
 
   /* ---------- Cursor ---------- */
-  const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
   // Rastro: los últimos puntos del recorrido (menos de un quinto de segundo y, como mucho,
   // unos 70px) se dibujan como una raya de marcador que se va borrando desde la cola. Con "Sin animaciones", no hay rastro.
   const trail = document.createElement("canvas");
@@ -957,7 +956,8 @@ Entrega</textarea></label>
     trailRaf = pts.length || doodle ? requestAnimationFrame(drawTrail) : 0;
   }
   document.addEventListener("pointermove", (e) => {
-    if (e.pointerType !== "mouse" || !finePointer.matches || isCalm()) return;
+    // Solo con mouse o lápiz: en compus con pantalla táctil el mouse también cuenta, aunque el sistema diga "táctil".
+    if (e.pointerType === "touch" || isCalm()) return;
     last = { x: e.clientX, y: e.clientY };
     doodle = null;
     pts = pts.filter((p) => !p.life);
