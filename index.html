@@ -919,25 +919,31 @@ Entrega</textarea></label>
   }
   sizeTrail();
   window.addEventListener("resize", sizeTrail);
-  // Garabato en reposo: si el mouse queda quieto un segundo, la punta da vueltas sueltas alrededor
-  // de donde quedó, unos segundos, y para. Vuelve a pasar recién después de mover el mouse.
-  const IDLE_MS = 1000, DOODLE_MS = 2600, DOODLE_R = 12, DOODLE_LIFE = 700, DOODLE_PX = 200;
+  // Garabato en reposo: si el mouse queda quieto un segundo, la punta garabatea rápido y sin patrón
+  // alrededor de donde quedó, unos 5 segundos, y para. Vuelve a pasar recién después de mover el mouse.
+  const IDLE_MS = 1000, DOODLE_MS = 5000, DOODLE_R = 16, DOODLE_LIFE = 600, DOODLE_PX = 220;
   let last = null, idleTimer = 0, doodle = null;
   function startDoodle() {
     if (!last || isCalm()) return;
-    doodle = { x: last.x, y: last.y, t0: performance.now(), a: 1 + Math.random() * 0.6, b: 2.3 + Math.random() * 0.8, ph: Math.random() * 6 };
+    doodle = { x: last.x, y: last.y, t0: performance.now(), px: last.x, py: last.y, dir: Math.random() * Math.PI * 2, spin: 0 };
     if (!trailRaf) trailRaf = requestAnimationFrame(drawTrail);
   }
   function drawTrail() {
     const now = performance.now();
     if (doodle) {
-      const k = (now - doodle.t0) / 1000;
       if (now - doodle.t0 > DOODLE_MS) doodle = null;
       else {
-        // Dos giros a distinto ritmo: un trazo en rulos que no se repite igual, como un garabato a mano.
-        const ang = k * 9, wob = Math.sin(k * doodle.b * 4 + doodle.ph);
-        const r = DOODLE_R * (0.55 + 0.45 * Math.sin(k * doodle.a * 3 + doodle.ph));
-        pts.push({ x: doodle.x + Math.cos(ang) * r + wob * 3, y: doodle.y + Math.sin(ang * 1.12) * r * 0.8, t: now, life: DOODLE_LIFE });
+        // La punta avanza rápido y cambia de giro al azar: rulos, zigzags y vueltas atrás, como una birome
+        // nerviosa. Si se aleja demasiado, la tira de vuelta hacia donde quedó el mouse.
+        const d = doodle;
+        if (Math.random() < 0.12) d.spin = (Math.random() - 0.5) * 1.6;
+        if (Math.random() < 0.04) d.dir += Math.PI * (0.6 + Math.random() * 0.8);
+        d.dir += d.spin + (Math.random() - 0.5) * 0.5;
+        const dx = d.x - d.px, dy = d.y - d.py, far = Math.hypot(dx, dy);
+        if (far > DOODLE_R) d.dir = Math.atan2(dy, dx) + (Math.random() - 0.5) * 1.2;
+        const step = 4 + Math.random() * 4;
+        d.px += Math.cos(d.dir) * step; d.py += Math.sin(d.dir) * step;
+        pts.push({ x: d.px, y: d.py, t: now, life: DOODLE_LIFE });
       }
     }
     // El garabato dura más en pantalla que el rastro, para que se lean los rulos.
