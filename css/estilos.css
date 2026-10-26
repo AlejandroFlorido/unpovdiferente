@@ -248,10 +248,15 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .parrows { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .nt-map .parrows { color: var(--brand-2); }
 .nd-map .parrows { color: var(--brand); }
-.parrows > path { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.parrows { pointer-events: none; }
+.parrow path { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.parrow path.hit { stroke: transparent; stroke-width: 22; pointer-events: stroke; }
+.parrow { transform-box: fill-box; transform-origin: center; transition: transform 0.25s ease; }
+.parrow:hover { transform: scale(1.08); }
 .psteps { list-style: none; margin: 0; padding: 0; }
 .pstep > * { position: absolute; }
-.pnum { width: 4.6cqw; height: auto; transform: translate(-50%, -50%); }
+.pnum { width: 4.6cqw; height: auto; transform: translate(-50%, -50%); transition: transform 0.25s ease; }
+.pnum:hover { transform: translate(-50%, -50%) scale(1.08); }
 .pimg { display: block; transition: transform 0.25s ease; }
 .pimg img { width: 100%; height: auto; }
 .pimg:hover { transform: scale(1.08); }
@@ -275,6 +280,7 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
   .pstep { display: grid; grid-template-columns: 2.2rem 6rem 1fr; align-items: center; gap: 0.9rem; }
   .pmap .pstep > * { position: static; transform: none; width: auto; }
   .pmap .pstep .pnum { width: 2.2rem; }
+  .pmap .pstep .pnum:hover { transform: scale(1.08); }
   .pmap .pstep .pimg { width: 100%; }
   .pmap .pstep .pimg img { width: auto; max-width: 100%; max-height: 5rem; margin-inline: auto; }
   .pmap .pstep .pcap { font-size: var(--step-0); text-align: left; }
