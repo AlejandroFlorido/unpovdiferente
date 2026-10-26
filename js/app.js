@@ -1062,10 +1062,72 @@
       box.children[k].style.setProperty("--h", H + "px");
     });
   });
-  // Con dedo o teclado no hay hover: tocar o Enter da vuelta la tarjeta
+  // Dorso: medio segundo después de darse vuelta, el contenido se deshace en polvo (como el chasquido de Thanos) y la tarjeta queda vacía
   $$(".dev-card").forEach((card) => {
-    card.addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse") card.classList.toggle("flipped"); });
-    card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); card.classList.toggle("flipped"); } });
+    const face = $(".dev-front", card), role = $(".dev-role", card), stars = $(".dev-stars", card);
+    role.innerHTML = role.textContent.split(" ").map((w) => `<span>${esc(w)}</span>`).join(" ");
+    const cv = document.createElement("canvas");
+    cv.className = "dev-dust";
+    face.appendChild(cv);
+    let timer = 0, raf = 0, done = false, over = false;
+    const showing = () => over || card.classList.contains("flipped");
+    function reset() {
+      clearTimeout(timer); cancelAnimationFrame(raf);
+      face.classList.remove("dusting", "dusted");
+      cv.getContext("2d").clearRect(0, 0, cv.width, cv.height);
+      done = false;
+    }
+    function snap() {
+      if (done || !showing()) return;
+      done = true;
+      if (isCalm()) { face.classList.add("dusting", "dusted"); return; }
+      const W = face.offsetWidth, H = face.offsetHeight, dpr = Math.min(window.devicePixelRatio || 1, 2);
+      cv.width = W * dpr; cv.height = H * dpr;
+      // Se dibuja en un lienzo lo que se ve (POV + texto) para tomar sus puntos
+      const off = document.createElement("canvas"); off.width = W; off.height = H;
+      const g = off.getContext("2d");
+      const box = face.getBoundingClientRect(), k = W / box.width;
+      const at = (el) => { const r = el.getBoundingClientRect(); return [(r.left - box.left) * k, (r.top - box.top) * k, r.width * k, r.height * k]; };
+      const img = $$(".dev-pov", card).find((x) => x.offsetWidth);
+      if (img) g.drawImage(img, ...at(img));
+      const cs = getComputedStyle(role);
+      g.font = cs.font; g.fillStyle = cs.color; g.textBaseline = "top";
+      $$("span", role).forEach((w) => { const [x, y] = at(w); g.fillText(w.textContent, x, y + 1); });
+      let px;
+      try { px = g.getImageData(0, 0, W, H).data; } catch (e) { face.classList.add("dusting", "dusted"); return; }
+      const parts = [], S = 2;
+      for (let y = 0; y < H; y += S) for (let x = 0; x < W; x += S) {
+        const i = (y * W + x) * 4;
+        if (px[i + 3] > 60) parts.push({ x, y, c: `rgb(${px[i]},${px[i + 1]},${px[i + 2]})`, d: (x / W) * 0.7 + Math.random() * 0.5, vx: 25 + Math.random() * 55, vy: -(15 + Math.random() * 45), l: 0.8 + Math.random() * 0.6 });
+      }
+      face.classList.add("dusting");
+      const ctx = cv.getContext("2d"), t0 = performance.now();
+      const end = Math.max(...parts.map((p) => p.d + p.l), 1);
+      (function frame(now) {
+        const t = (now - t0) / 1000;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, W, H);
+        for (const p of parts) {
+          const s = t - p.d;
+          if (s > p.l) continue;
+          const u = Math.max(0, s), a = s <= 0 ? 1 : 1 - s / p.l;
+          ctx.globalAlpha = a;
+          ctx.fillStyle = p.c;
+          ctx.fillRect(p.x + p.vx * u + Math.sin(p.y + u * 6) * 3 * u, p.y + p.vy * u, S, S);
+        }
+        if (t < end) raf = requestAnimationFrame(frame);
+        else { ctx.clearRect(0, 0, W, H); face.classList.add("dusted"); }
+      })(t0);
+    }
+    // 0,5 s de giro + 0,5 s de quieta
+    const arm = () => { clearTimeout(timer); if (!done) timer = setTimeout(snap, 1000); };
+    const disarm = () => { clearTimeout(timer); setTimeout(() => { if (!showing()) reset(); }, 300); };
+    card.addEventListener("mouseenter", () => { over = true; arm(); });
+    card.addEventListener("mouseleave", () => { over = false; disarm(); });
+    // Con dedo o teclado no hay hover: tocar o Enter da vuelta la tarjeta
+    const toggle = () => { card.classList.toggle("flipped"); card.classList.contains("flipped") ? arm() : disarm(); };
+    card.addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse") toggle(); });
+    card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
   });
 
   goSub(store.get("sub", "primer"));

@@ -647,5 +647,9 @@ html.calm *, html.calm *::before, html.calm *::after { transition: none !importa
 .dev-stars i::after { content: ""; position: absolute; top: var(--h, 600px); left: 0; width: inherit; height: inherit; border-radius: 50%; box-shadow: inherit; }
 .dev-pov { position: relative; width: 52%; }
 .dev-role { position: relative; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 0.75rem; letter-spacing: 0.02em; color: var(--dv-role); text-align: center; padding: 0 1rem; }
+.dev-dust { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.dev-front.dusting .dev-pov, .dev-front.dusting .dev-role { visibility: hidden; }
+.dev-front .dev-stars { transition: opacity 1.4s ease 0.3s; }
+.dev-front.dusting .dev-stars { opacity: 0; }
 @keyframes dev-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes dev-star { from { transform: translateY(0); } to { transform: translateY(calc(-1 * var(--h, 600px))); } }
