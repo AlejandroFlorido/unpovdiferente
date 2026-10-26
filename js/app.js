@@ -427,10 +427,15 @@
     const label = /^\d{1,2}[\/\-]\d{1,2}/.test(t) ? day : trCap(t) + (day ? " (" + day + ")" : "");
     return { label, date: d ? iso(d) : "", guess };
   }
+  // "A partir de la lectura del fallo" esconde un paso: "Leer el fallo"
+  const TR_NOUN = { lectura: "leer", visualización: "ver", análisis: "analizar", observación: "observar", revisión: "revisar", escucha: "escuchar" };
+  const TR_NOUN_RE = /^(?:a partir de|luego de|después de|tras|en base a|con base en|mediante)\s+(?:la|el)\s+(lectura|visualización|análisis|observación|revisión|escucha)\s+(?:de\s+)?(del?|la|los|las)?\s*/i;
   const trStart = (p) => {
     let prev;
     p = p.replace(/^[\s,;:.]+/, "");
     do { prev = p; p = p.replace(TR_SEQ, "").replace(TR_MODAL, "").replace(/^de\s+(?=\p{L}+(?:ar|er|ir)\b)/iu, "").trim(); } while (p !== prev);
+    const nm = p.replace(/^[\s,;:.]+/, "").match(TR_NOUN_RE);
+    if (nm) return TR_NOUN[nm[1].toLowerCase()] + " " + ((nm[2] || "").toLowerCase() === "del" ? "el " : nm[2] ? nm[2].toLowerCase() + " " : "") + p.replace(/^[\s,;:.]+/, "").slice(nm[0].length);
     // "Los alumnos deberán seleccionar..." → "seleccionar..."
     if (!trVerb(trFirst(p))) { const sm = p.match(/^(?:\p{L}+\s+){1,4}?(?:deber(?:á|án|ás)|deben|tienen que|tendrán que|van a)\s+/iu); if (sm) p = p.slice(sm[0].length); }
     return p;
@@ -507,6 +512,11 @@
     of("cuenta").forEach((c) => cuenta.push(...trList(c.replace(TR_SEQ, "").replace(/^(?:teniendo|tomando|tener|tené|tengan) en cuenta(?: que)?:?\s*|^considerando\s*|^considerar:?\s*|^importante:?\s*|^condiciones?:\s*/i, ""))));
     const plain = text.replace(/\s+/g, " ");
     const c = plain.match(/comuni(?:que|car|quen)\s+(.+?)(?:,|\.|\s+teniendo|\s+para\s|$)/i);
+    // ", fundamentándolo con los artículos..." también es algo a tener en cuenta
+    steps.forEach((st) => {
+      const g = st.match(/,\s*(\p{L}+?)([aá]ndo|i[eé]ndo)(?:lo|la|los|las)?\s+(.+)$/u);
+      if (g) cuenta.push(trCap(/^[aá]/.test(g[2]) ? g[1] + "ar " + g[3] : g[1] + g[2].replace("é", "e") + " " + g[3]));
+    });
     // Frases entre comillas dentro de un paso (que no sean lo que hay que leer): idea clave
     steps.forEach((st, i) => {
       if (TR_READ.test(verbs[i] || "") || /comuni(?:que|car|quen)/i.test(st)) return;
