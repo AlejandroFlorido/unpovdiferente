@@ -724,51 +724,87 @@
   });
 
   /* ---------- Tres conceptos ----------
-     Al tocar un concepto, los otros dos se desvanecen y el elegido crece y se desliza hasta el centro
-     (se mide su lugar antes y después y se anima la diferencia). Tocándolo de nuevo vuelve todo. */
+     Al tocar un concepto, crece y se desliza hasta el centro mientras los otros dos se desvanecen en su lugar
+     (todo a la vez, sin pausa). Después el texto se arma palabra por palabra. Tocándolo de nuevo vuelve todo.
+     El movimiento se hace midiendo el recuadro antes y después del cambio y animando la diferencia. */
   const concepts = $("#concepts");
   if (concepts) {
     const items = $$(".concept", concepts);
-    let busy = false;
-    const slide = (el, first) => {
+    const EASE = "cubic-bezier(0.4, 0, 0.2, 1)", DUR = 550;
+    // Cada palabra del texto va en su propio <span class="w">, con un punto de partida al azar para "ensamblarse".
+    // Lo que está resaltado (como el TDAH en el óvalo) entra entero, como una sola pieza.
+    const splitWords = (el) => {
+      let n = 0;
+      const mark = (w) => {
+        w.classList.add("w");
+        w.style.setProperty("--i", n++);
+        w.style.setProperty("--dx", `${(Math.random() - 0.5) * 40}px`);
+        w.style.setProperty("--dy", `${(Math.random() - 0.5) * 28}px`);
+        w.style.setProperty("--rot", `${(Math.random() - 0.5) * 24}deg`);
+      };
+      const walk = (node) => {
+        [...node.childNodes].forEach((ch) => {
+          if (ch.nodeType === 3) {
+            const frag = document.createDocumentFragment();
+            ch.textContent.split(/(\s+)/).forEach((part) => {
+              if (!part) return;
+              if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+              const s = document.createElement("span"); s.textContent = part; mark(s); frag.appendChild(s);
+            });
+            ch.replaceWith(frag);
+          } else if (ch.nodeType === 1) {
+            if (ch.classList.contains("circled")) mark(ch); else walk(ch);
+          }
+        });
+      };
+      walk(el);
+    };
+    items.forEach((item) => splitWords($(".concept-body", item)));
+
+    // Lleva el recuadro desde donde estaba (first) hasta su lugar nuevo, creciendo o achicándose de a poco.
+    const morph = (el, first) => {
       const last = el.getBoundingClientRect();
       el.style.transition = "none";
+      el.style.width = `${first.width}px`;
       el.style.transform = `translate(${first.left + first.width / 2 - last.left - last.width / 2}px, ${first.top - last.top}px)`;
       el.getBoundingClientRect();
-      el.style.transition = "transform 0.55s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease";
+      el.style.transition = `transform ${DUR}ms ${EASE}, width ${DUR}ms ${EASE}`;
+      el.style.width = `${last.width}px`;
       el.style.transform = "";
+      clearTimeout(el._morph);
+      el._morph = setTimeout(() => { el.style.width = ""; el.style.transition = ""; }, DUR + 50);
     };
     const setOpen = (item, open) => {
-      const btn = $(".concept-title", item), body = $(".concept-body", item);
-      btn.setAttribute("aria-expanded", open);
-      body.hidden = !open;
+      $(".concept-title", item).setAttribute("aria-expanded", open);
+      $(".concept-body", item).hidden = !open;
     };
+    let gone = 0;
     items.forEach((item) => {
       $(".concept-title", item).addEventListener("click", () => {
-        if (busy) return;
-        const opening = !item.classList.contains("open");
         const calm = isCalm();
-        if (opening) {
+        const others = items.filter((o) => o !== item);
+        const first = item.getBoundingClientRect();
+        clearTimeout(gone);
+        if (!item.classList.contains("open")) {
+          // Los otros dos quedan fijos donde estaban y se desvanecen ahí mismo, mientras el elegido crece.
+          const box = concepts.getBoundingClientRect();
+          others.forEach((o) => {
+            const r = o.getBoundingClientRect();
+            Object.assign(o.style, { position: "absolute", left: `${r.left - box.left}px`, top: `${r.top - box.top}px`, width: `${r.width}px` });
+          });
           item.classList.add("open");
-          concepts.classList.add("fading");
-          busy = true;
-          setTimeout(() => {
-            const first = item.getBoundingClientRect();
-            concepts.classList.add("focused");
-            setOpen(item, true);
-            if (!calm) slide(item, first);
-            busy = false;
-          }, calm ? 0 : 380);
+          concepts.classList.add("fading", "focused");
+          setOpen(item, true);
+          if (!calm) morph(item, first);
+          gone = setTimeout(() => concepts.classList.add("gone"), calm ? 0 : DUR);
         } else {
-          const first = item.getBoundingClientRect();
           setOpen(item, false);
           item.classList.remove("open");
-          concepts.classList.remove("focused");
-          if (!calm) slide(item, first);
-          // Los otros dos vuelven a aparecer con el mismo fundido, apenas después de que el elegido empieza a volver.
-          requestAnimationFrame(() => requestAnimationFrame(() => {
-            setTimeout(() => concepts.classList.remove("fading"), calm ? 0 : 120);
-          }));
+          concepts.classList.remove("focused", "gone");
+          others.forEach((o) => Object.assign(o.style, { position: "", left: "", top: "", width: "" }));
+          if (!calm) morph(item, first);
+          // Los otros dos reaparecen en su lugar con el mismo fundido, mientras el elegido vuelve.
+          requestAnimationFrame(() => requestAnimationFrame(() => concepts.classList.remove("fading")));
         }
       });
     });
