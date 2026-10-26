@@ -106,14 +106,23 @@ a { color: var(--accent-text); }
 .muted { color: var(--muted); }
 .small { font-size: var(--step--1); }
 
-/* Viñeta propia: el punto garabateado del proyecto, en naranja. */
+/* Viñetas del proyecto: 8 garabatos azules (assets/icons/vinetas) que se turnan en orden,
+   del 1 al 8 y vuelta a empezar. Son la viñeta estándar de todas las listas. */
 .scribble-list, .line-card ul.scribble-list { list-style: none; padding-left: 0; }
-.scribble-list li, .tips li b { position: relative; padding-left: 1.5em; }
+.scribble-list li, .tips li b { position: relative; padding-left: 1.6em; }
 .tips li b { display: block; }
 .scribble-list li::before, .tips li b::before {
-  content: ""; position: absolute; left: 0; top: 0.2em; width: 1.05em; height: 1.05em;
-  background: var(--accent); -webkit-mask: var(--scribble) center / contain no-repeat; mask: var(--scribble) center / contain no-repeat;
+  content: ""; position: absolute; left: 0; top: 0.15em; width: 1.1em; height: 1.1em;
+  background: center / contain no-repeat;
 }
+.scribble-list li:nth-child(8n+1)::before, .tips li:nth-child(8n+1) b::before { background-image: url("../assets/icons/vinetas/vineta-1.png"); }
+.scribble-list li:nth-child(8n+2)::before, .tips li:nth-child(8n+2) b::before { background-image: url("../assets/icons/vinetas/vineta-2.png"); }
+.scribble-list li:nth-child(8n+3)::before, .tips li:nth-child(8n+3) b::before { background-image: url("../assets/icons/vinetas/vineta-3.png"); }
+.scribble-list li:nth-child(8n+4)::before, .tips li:nth-child(8n+4) b::before { background-image: url("../assets/icons/vinetas/vineta-4.png"); }
+.scribble-list li:nth-child(8n+5)::before, .tips li:nth-child(8n+5) b::before { background-image: url("../assets/icons/vinetas/vineta-5.png"); }
+.scribble-list li:nth-child(8n+6)::before, .tips li:nth-child(8n+6) b::before { background-image: url("../assets/icons/vinetas/vineta-6.png"); }
+.scribble-list li:nth-child(8n+7)::before, .tips li:nth-child(8n+7) b::before { background-image: url("../assets/icons/vinetas/vineta-7.png"); }
+.scribble-list li:nth-child(8n+0)::before, .tips li:nth-child(8n+0) b::before { background-image: url("../assets/icons/vinetas/vineta-8.png"); }
 .tips li p { padding-left: 1.5em; }
 
 /* ---------- Cabecera ---------- */
@@ -218,13 +227,28 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .hero .lead p { font-size: calc(var(--step-1) + 2pt); max-width: 52ch; }
 /* Entender: primera pantalla "¿Qué es el TDAH?". La palabra TDAH va en el naranja de la marca
    y el nombre completo del trastorno, resaltado en azul con letra blanca. */
-#entender-tdah { scroll-margin-top: var(--top-h, 9rem); gap: var(--space-block); }
+#entender-tdah { scroll-margin-top: var(--top-h, 9rem); gap: var(--space-block); position: relative; }
 #que-es .brand-word { color: var(--brand); }
 /* Bloque alineado a la izquierda (centrado en la página); texto y cita en General Sans. */
 #que-es .lead { width: min(100%, 48rem); margin-inline: auto; align-items: flex-start; text-align: left; }
 #que-es .lead p { max-width: none; font-family: "General Sans", var(--f-body); }
 .hl { background: var(--brand-2); color: #FFFFFF; padding: 0.05em 0.3em; border-radius: 4px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 #que-es .lead p.source { font-size: var(--step--1); color: var(--muted); margin-top: -0.5rem; }
+/* Entender el TDAH: título y dos desplegables al medio de la pantalla. El título de cada uno va en la
+   fuente del proyecto; el contenido, alineado a la izquierda. */
+#entender-tdah { align-items: center; text-align: center; }
+.drops { width: min(100%, 44rem); display: flex; flex-direction: column; gap: 1rem; text-align: left; }
+.drop { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.drop summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  padding: 1.1rem 1.4rem; font-family: var(--f-title); font-size: calc(var(--step-1) + 4pt); line-height: var(--lh-sub); letter-spacing: -0.02em; }
+.drop summary::-webkit-details-marker { display: none; }
+.drop summary::after { content: "+"; font-family: var(--f-display); color: var(--accent-text); font-size: 1.4em; line-height: 1; transition: transform 0.25s ease; }
+.drop[open] summary::after { transform: rotate(45deg); }
+.drop summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: var(--radius); }
+.drop-body { padding: 0 1.4rem 1.4rem; display: flex; flex-direction: column; gap: 0.9rem; font-family: "General Sans", var(--f-body); }
+.drop-body p { max-width: none; }
+.drop-body ul { margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.drop[open] .drop-body { animation: tab-in 0.3s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
 .scroll-cue { position: absolute; left: 0; right: 0; margin-inline: auto; width: fit-content; bottom: 1rem; font: inherit; font-family: var(--f-display); font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--muted); background: none; border: 0; padding: 0.3rem 0; cursor: pointer; display: inline-flex; gap: 0.5rem; align-items: center; }
 .scroll-cue span { color: var(--accent-text); font-size: 1.2em; }
