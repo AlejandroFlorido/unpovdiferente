@@ -788,17 +788,32 @@
     items.forEach((item) => splitWords($(".concept-body", item)));
 
     // Lleva el recuadro desde donde estaba (first) hasta su lugar nuevo, creciendo o achicándose de a poco.
-    const morph = (el, first) => {
-      const last = el.getBoundingClientRect();
-      el.style.transition = "none";
-      el.style.width = `${first.width}px`;
-      el.style.transform = `translate(${first.left + first.width / 2 - last.left - last.width / 2}px, ${first.top - last.top}px)`;
+    // Para que nada "tiemble", durante el movimiento no se reacomoda ningún texto: el recuadro anima su ancho y alto,
+    // el título ya tiene su tamaño final y se agranda con una escala (sin recalcular letras), y el texto de adentro
+    // queda quieto e invisible hasta que el recuadro termina (recién ahí se ensambla).
+    const morph = (el, first, firstTitle) => {
+      const title = $(".concept-title", el), body = $(".concept-body", el);
+      const last = el.getBoundingClientRect(), lastTitle = title.getBoundingClientRect();
+      const s = firstTitle.height / lastTitle.height;
+      const dy = (firstTitle.top - first.top) - (lastTitle.top - last.top);
+      if (!body.hidden) body.style.width = `${body.getBoundingClientRect().width}px`;
+      el.style.transition = title.style.transition = "none";
+      Object.assign(el.style, { width: `${first.width}px`, height: `${first.height}px`,
+        transform: `translate(${first.left + first.width / 2 - last.left - last.width / 2}px, ${first.top - last.top}px)` });
+      title.style.transformOrigin = "50% 0";
+      title.style.transform = `translateY(${dy}px) scale(${s})`;
       el.getBoundingClientRect();
-      el.style.transition = `transform ${DUR}ms ${EASE}, width ${DUR}ms ${EASE}`;
-      el.style.width = `${last.width}px`;
-      el.style.transform = "";
+      const t = `${DUR}ms ${EASE}`;
+      el.style.transition = `transform ${t}, width ${t}, height ${t}`;
+      title.style.transition = `transform ${t}`;
+      Object.assign(el.style, { width: `${last.width}px`, height: `${last.height}px`, transform: "" });
+      title.style.transform = "";
       clearTimeout(el._morph);
-      el._morph = setTimeout(() => { el.style.width = ""; el.style.transition = ""; }, DUR + 50);
+      el._morph = setTimeout(() => {
+        Object.assign(el.style, { width: "", height: "", transition: "" });
+        Object.assign(title.style, { transition: "", transformOrigin: "" });
+        body.style.width = "";
+      }, DUR + 50);
     };
     const setOpen = (item, open) => {
       $(".concept-title", item).setAttribute("aria-expanded", open);
@@ -809,7 +824,7 @@
       $(".concept-title", item).addEventListener("click", () => {
         const calm = isCalm();
         const others = items.filter((o) => o !== item);
-        const first = item.getBoundingClientRect();
+        const first = item.getBoundingClientRect(), firstTitle = $(".concept-title", item).getBoundingClientRect();
         clearTimeout(gone);
         if (!item.classList.contains("open")) {
           // Los otros dos quedan fijos donde estaban y se desvanecen ahí mismo, mientras el elegido crece.
@@ -821,14 +836,14 @@
           item.classList.add("open");
           concepts.classList.add("fading", "focused");
           setOpen(item, true);
-          if (!calm) morph(item, first);
+          if (!calm) morph(item, first, firstTitle);
           gone = setTimeout(() => concepts.classList.add("gone"), calm ? 0 : DUR);
         } else {
           setOpen(item, false);
           item.classList.remove("open");
           concepts.classList.remove("focused", "gone");
           others.forEach((o) => Object.assign(o.style, { position: "", left: "", top: "", width: "" }));
-          if (!calm) morph(item, first);
+          if (!calm) morph(item, first, firstTitle);
           // Los otros dos reaparecen en su lugar con el mismo fundido, mientras el elegido vuelve.
           requestAnimationFrame(() => requestAnimationFrame(() => concepts.classList.remove("fading")));
         }
