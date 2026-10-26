@@ -574,14 +574,29 @@
     ["Entrega", "Revisar formato, nombre de archivo y fecha. Entregar.", "Después, descansá. También es parte del proceso."]
   ];
   let mapCur = store.get("map", 3);
-  function renderMap() {
-    $("#map").innerHTML = mapSteps.map((s, i) => `
+  const MAP_T = 0.28; // segundos que tarda en cargarse cada tramo
+  function renderMap(prev) {
+    const anim = prev !== undefined && prev !== mapCur && !isCalm();
+    const fwd = anim && mapCur > prev;
+    $("#map").innerHTML = mapSteps.map((s, i) => {
+      // Al avanzar, los tramos se cargan de a uno; al volver, se descargan del último al primero
+      let fill = "", node = "";
+      if (fwd && i > prev && i <= mapCur) fill = ` class="in" style="--d:${(i - prev - 1) * MAP_T + 0.05}s"`;
+      if (anim && !fwd && i > mapCur && i <= prev) fill = ` class="out" style="--d:${(prev - i) * MAP_T * 0.6}s"`;
+      if (fwd && i >= prev && i < mapCur) node = ` pop" style="--d:${(i - prev) * MAP_T}s`;
+      if (anim && i === mapCur) node = ` ring" style="--d:${fwd ? (mapCur - prev) * MAP_T : (prev - mapCur) * MAP_T * 0.6}s`;
+      return `
       <button class="map-step ${i < mapCur ? "passed" : ""} ${i === mapCur ? "current" : ""}" type="button" role="listitem" data-i="${i}" aria-current="${i === mapCur ? "step" : "false"}">
-        <span class="node">${i < mapCur ? "✓" : i + 1}</span><span>${esc(s[0])}</span>
-      </button>`).join("");
+        ${i ? `<i class="link" aria-hidden="true"><b${fill}></b></i>` : ""}<span class="node${node}">${i < mapCur ? "✓" : i + 1}</span><span>${esc(s[0])}</span>
+      </button>`;
+    }).join("");
     const s = mapSteps[mapCur];
     $("#map-detail").innerHTML = `<span class="eyebrow">Estás en: ${esc(s[0])}</span><p>${esc(s[1])}</p><p class="small muted">${esc(s[2])}</p>`;
-    $$("#map .map-step").forEach((b) => b.onclick = () => { mapCur = Number(b.dataset.i); store.set("map", mapCur); renderMap(); });
+    $$("#map .map-step").forEach((b) => b.onclick = () => {
+      const from = mapCur;
+      mapCur = Number(b.dataset.i); store.set("map", mapCur); renderMap(from);
+      $(`#map .map-step[data-i="${mapCur}"]`).focus();
+    });
   }
   renderMap();
 

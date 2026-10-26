@@ -533,12 +533,20 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 
 .map { display: flex; gap: 0; overflow-x: auto; padding-bottom: 0.5rem; }
 .map-step { flex: 1 0 8.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; position: relative; background: none; border: 0; font: inherit; color: inherit; cursor: pointer; padding: 0.25rem; }
-.map-step::before { content: ""; position: absolute; top: 1.2rem; left: -50%; right: 50%; height: 3px; background: var(--line); z-index: 0; }
-.map-step:first-child::before { display: none; }
-.map-step .node { width: 2.4rem; height: 2.4rem; border-radius: 50%; display: grid; place-items: center; background: var(--surface); border: 3px solid var(--line); font-family: var(--f-display); font-weight: 600; z-index: 1; font-variant-numeric: tabular-nums; }
-.map-step.passed::before, .map-step.current::before { background: var(--accent); }
+.map-step .link { position: absolute; top: calc(1.45rem - 1.5px); left: calc(-50% + 1.45rem); right: calc(50% + 1.45rem); height: 3px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.map-step .link b { position: absolute; inset: 0; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+.map-step.passed .link b, .map-step.current .link b { transform: scaleX(1); }
+.map-step .link b.in { animation: map-fill 0.28s ease-in-out var(--d, 0s) both; }
+.map-step .link b.out { animation: map-empty 0.18s ease-in var(--d, 0s) both; transform-origin: right; }
+.map-step .node { position: relative; z-index: 1; width: 2.4rem; height: 2.4rem; border-radius: 50%; display: grid; place-items: center; background: var(--surface); border: 3px solid var(--line); font-family: var(--f-display); font-weight: 600; font-variant-numeric: tabular-nums; }
 .map-step.passed .node { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .map-step.current .node { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.map-step .node.pop { animation: map-pop 0.32s ease-out var(--d, 0s) both; }
+.map-step .node.ring { animation: map-ring 0.45s ease-out var(--d, 0s) both; }
+@keyframes map-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes map-empty { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+@keyframes map-pop { 0% { transform: scale(0.75); background: var(--surface); border-color: var(--line); color: transparent; } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
+@keyframes map-ring { 0% { border-color: var(--line); box-shadow: 0 0 0 0 var(--accent-soft); transform: scale(0.9); } 60% { box-shadow: 0 0 0 9px var(--accent-soft); transform: scale(1.1); } 100% { transform: scale(1); } }
 .map-step span { font-size: var(--step--1); font-weight: 700; }
 .map-detail { display: flex; flex-direction: column; gap: 0.35rem; }
 
