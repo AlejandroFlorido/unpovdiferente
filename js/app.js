@@ -1119,8 +1119,8 @@
         else { ctx.clearRect(0, 0, W, H); face.classList.add("dusted"); }
       })(t0);
     }
-    // 0,5 s de giro + 0,5 s de quieta
-    const arm = () => { clearTimeout(timer); if (!done) timer = setTimeout(snap, 1000); };
+    // 0,5 s de giro + 1,5 s de quieta
+    const arm = () => { clearTimeout(timer); if (!done) timer = setTimeout(snap, 2000); };
     const disarm = () => { clearTimeout(timer); setTimeout(() => { if (!showing()) reset(); }, 300); };
     card.addEventListener("mouseenter", () => { over = true; arm(); });
     card.addEventListener("mouseleave", () => { over = false; disarm(); });
