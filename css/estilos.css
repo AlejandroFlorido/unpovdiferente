@@ -228,6 +228,7 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 /* Entender: primera pantalla "¿Qué es el TDAH?". La palabra TDAH va en el naranja de la marca
    y el nombre completo del trastorno, resaltado en azul con letra blanca. */
 #entender-tdah, #tres-conceptos, #nt-vs-nd { scroll-margin-top: var(--top-h, 9rem); gap: var(--space-block); position: relative; align-items: center; text-align: center; }
+#nt-vs-nd { min-height: calc(100svh - var(--top-h, 9rem) - var(--tail-h, 0px)); }
 #entender-tdah, #tres-conceptos { padding-bottom: 3.5rem; }
 /* Frases destacadas en el naranja de la marca. */
 .orange { color: var(--brand); font-weight: 600; }
