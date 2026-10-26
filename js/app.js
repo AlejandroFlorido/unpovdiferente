@@ -361,7 +361,7 @@
 
   /* ---------- Traductor de consignas ---------- */
   // Formas que no son infinitivo (subjuntivo, voseo, irregulares) → infinitivo
-  const TR_VERBS = { diseñ: "diseñar", rediseñ: "rediseñar", realiz: "realizar", elabor: "elaborar", cre: "crear", desarroll: "desarrollar", produc: "producir", produzc: "producir", propon: "proponer", propong: "proponer", analiz: "analizar", investig: "investigar", present: "presentar", ilustr: "ilustrar", maquet: "maquetar", redact: "redactar", constru: "construir", construy: "construir", arm: "armar", gener: "generar", confeccion: "confeccionar", plante: "plantear", resolv: "resolver", resuelv: "resolver", explor: "explorar", relev: "relevar", fotografi: "fotografiar", dibuj: "dibujar", intervin: "intervenir", interven: "intervenir", proyect: "proyectar", escrib: "escribir", compar: "comparar", seleccion: "seleccionar", investigu: "investigar", realic: "realizar", analic: "analizar", organiz: "organizar", organic: "organizar", document: "documentar", grab: "grabar", edit: "editar", entrevist: "entrevistar", bocet: "bocetar", dej: "dejar", elimin: "eliminar", marc: "marcar", marqu: "marcar", recort: "recortar", reduzc: "reducir", reduc: "reducir", sintetic: "sintetizar", sintetiz: "sintetizar", busqu: "buscar", busc: "buscar", revis: "revisar", corrij: "corregir", correg: "corregir", reescrib: "reescribir", narr: "narrar", describ: "describir", identifiqu: "identificar", identific: "identificar", explic: "explicar", expliqu: "explicar", justifiqu: "justificar", justific: "justificar", resum: "resumir", complet: "completar", entreg: "entregar", entregu: "entregar", sub: "subir", expong: "exponer", expon: "exponer", observ: "observar", tom: "tomar", respond: "responder", contest: "contestar", ubiqu: "ubicar", ubic: "ubicar", relacion: "relacionar", vincul: "vincular", agreg: "agregar", agregu: "agregar", tach: "tachar", subray: "subrayar", list: "listar", mir: "mirar", escuch: "escuchar", consult: "consultar", imagin: "imaginar", defin: "definir", reflexion: "reflexionar", argument: "argumentar", fundament: "fundamentar", ordená: "ordenar", orden: "ordenar", cont: "contar" };
+  const TR_VERBS = { diseñ: "diseñar", rediseñ: "rediseñar", realiz: "realizar", elabor: "elaborar", cre: "crear", desarroll: "desarrollar", produc: "producir", produzc: "producir", propon: "proponer", propong: "proponer", analiz: "analizar", investig: "investigar", present: "presentar", ilustr: "ilustrar", maquet: "maquetar", redact: "redactar", constru: "construir", construy: "construir", arm: "armar", gener: "generar", confeccion: "confeccionar", plante: "plantear", resolv: "resolver", resuelv: "resolver", explor: "explorar", relev: "relevar", fotografi: "fotografiar", dibuj: "dibujar", intervin: "intervenir", interven: "intervenir", proyect: "proyectar", escrib: "escribir", compar: "comparar", seleccion: "seleccionar", investigu: "investigar", realic: "realizar", analic: "analizar", organiz: "organizar", organic: "organizar", document: "documentar", grab: "grabar", edit: "editar", entrevist: "entrevistar", bocet: "bocetar", dej: "dejar", elimin: "eliminar", marc: "marcar", marqu: "marcar", recort: "recortar", reduzc: "reducir", reduc: "reducir", sintetic: "sintetizar", sintetiz: "sintetizar", busqu: "buscar", busc: "buscar", revis: "revisar", corrij: "corregir", correg: "corregir", reescrib: "reescribir", narr: "narrar", describ: "describir", identifiqu: "identificar", identific: "identificar", explic: "explicar", expliqu: "explicar", justifiqu: "justificar", justific: "justificar", resum: "resumir", complet: "completar", entreg: "entregar", entregu: "entregar", sub: "subir", expong: "exponer", expon: "exponer", observ: "observar", tom: "tomar", respond: "responder", contest: "contestar", ubiqu: "ubicar", ubic: "ubicar", relacion: "relacionar", vincul: "vincular", agreg: "agregar", agregu: "agregar", tach: "tachar", subray: "subrayar", list: "listar", mir: "mirar", escuch: "escuchar", consult: "consultar", imagin: "imaginar", defin: "definir", reflexion: "reflexionar", argument: "argumentar", fundament: "fundamentar", ordená: "ordenar", orden: "ordenar", cont: "contar", public: "publicar", publiqu: "publicar", coment: "comentar", particip: "participar", debat: "debatir", visualiz: "visualizar", visualic: "visualizar", respond: "responder", envi: "enviar", sub: "subir", cit: "citar", aport: "aportar" };
   const TR_IRREG = { lean: "leer", lea: "leer", "leé": "leer", piensen: "pensar", piense: "pensar", "pensá": "pensar", elijan: "elegir", elija: "elegir", "elegí": "elegir", hagan: "hacer", haga: "hacer", "hacé": "hacer", vean: "ver", vea: "ver", "mirá": "mirar", cuenten: "contar", cuente: "contar", "poné": "poner", pongan: "poner", "sacá": "sacar", saquen: "sacar", "tené": "tener", tengan: "tener", "decí": "decir", digan: "decir", "andá": "ir", vayan: "ir", "traé": "traer", traigan: "traer" };
   // Sustantivos y adjetivos que terminan como un infinitivo
   const TR_NOT_VERB = new Set("lugar hogar mujer poder deber placer taller collar mar par bar militar popular familiar particular similar regular escolar solar primer cualquier altar azar billar dólar éter cráter carácter alfiler mantel nivel".split(" "));
@@ -391,11 +391,46 @@
     evalua: { name: "Cómo se evalúa", tag: "Se evalúa" },
     otro: { name: "Contexto (no es tarea)", tag: "Contexto" }
   };
-  const TR_DATE = /\s*\b(?:(?:el|para el|hasta el)\s+(?:(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)\s+)?\d{1,2}[\/\-]\d{1,2}(?:[\/\-]\d{2,4})?|\d{1,2}[\/\-]\d{1,2}(?:[\/\-]\d{2,4})?|(?:el|para el|hasta el)\s+(?:próximo\s+)?(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:para\s+)?la\s+(?:próxima clase|semana que viene|clase que viene))\b/i;
+  // Fechas: 20/10, 14 de noviembre, el jueves, antes del domingo, mañana, en 10 días, la próxima clase...
+  const TR_WD = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+  const TR_MES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+  const trWdRe = "lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo", trMesRe = TR_MES.join("|") + "|setiembre";
+  const TR_DATE = new RegExp("\\s*(?<![\\p{L}\\d])(?:(?:antes|después)\\s+del?\\s+|(?:hasta|para|a más tardar|como máximo|como mucho)\\s+(?:el\\s+|la\\s+)?|(?:el|la|este|esta)\\s+)?" +
+    "(?:(?:próximo\\s+)?(?:" + trWdRe + ")(?:\\s+\\d{1,2}(?:\\s+de\\s+(?:" + trMesRe + "))?)?(?:\\s+que viene|\\s+próximo)?" +
+    "|\\d{1,2}[\\/\\-]\\d{1,2}(?:[\\/\\-]\\d{2,4})?|\\d{1,2}\\s+de\\s+(?:" + trMesRe + ")(?:\\s+de\\s+\\d{4})?" +
+    "|pasado mañana|(?<!la\\s)mañana|hoy|(?:la\\s+)?(?:próxima clase|clase que viene|semana que viene|próxima semana)|fin de mes|(?:en|dentro de)\\s+\\d+\\s+días)(?![\\p{L}\\d])", "iu");
+  // Convierte lo que dice la consigna en una fecha real, contando desde hoy
+  function trWhen(txt) {
+    const t = trClean(txt).replace(/^(?:el\s+)?(?:plazo|fecha de entrega|fecha límite)?\s*(?:vence|es)?\s*/i, "");
+    const low = t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+    const now = today();
+    let d = null, guess = false;
+    const fix = (x) => (x < addDays(now, -30) ? new Date(x.getFullYear() + 1, x.getMonth(), x.getDate()) : x);
+    let m;
+    if ((m = low.match(/(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{2,4}))?/))) d = m[3] ? new Date(Number(m[3].length === 2 ? "20" + m[3] : m[3]), m[2] - 1, m[1]) : fix(new Date(now.getFullYear(), m[2] - 1, m[1]));
+    else if ((m = low.match(/(\d{1,2})\s+de\s+([a-z]+)(?:\s+de\s+(\d{4}))?/)) && TR_MES.concat("setiembre").includes(m[2])) {
+      const mi = m[2] === "setiembre" ? 8 : TR_MES.indexOf(m[2]);
+      d = m[3] ? new Date(Number(m[3]), mi, m[1]) : fix(new Date(now.getFullYear(), mi, m[1]));
+    } else if ((m = low.match(/(domingo|lunes|martes|miercoles|jueves|viernes|sabado)(?:\s+(\d{1,2}))?/))) {
+      const wd = TR_WD.map((w) => w.normalize("NFD").replace(/[̀-ͯ]/g, "")).indexOf(m[1]);
+      if (m[2]) { d = new Date(now.getFullYear(), now.getMonth(), Number(m[2])); if (d < now) d = new Date(now.getFullYear(), now.getMonth() + 1, Number(m[2])); }
+      else { d = addDays(now, (wd - now.getDay() + 7) % 7 || 7); if (/que viene|proximo/.test(low) && daysBetween(now, d) < 7 && now.getDay() !== 0) d = addDays(d, 7); guess = true; }
+    }
+    else if (/pasado manana/.test(low)) d = addDays(now, 2);
+    else if (/manana/.test(low)) d = addDays(now, 1);
+    else if (/\bhoy\b/.test(low)) d = now;
+    else if ((m = low.match(/(\d+)\s+dias/))) d = addDays(now, Number(m[1]));
+    else if (/fin de mes/.test(low)) d = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    else if (/semana que viene|proxima semana/.test(low)) { d = addDays(now, (8 - now.getDay()) % 7 || 7); guess = true; }
+    const day = d ? TR_WD[d.getDay()].slice(0, 3) + " " + pad(d.getDate()) + "/" + pad(d.getMonth() + 1) : "";
+    // "20/10" ya es la fecha; "antes del jueves" se muestra con la fecha calculada al lado
+    const label = /^\d{1,2}[\/\-]\d{1,2}/.test(t) ? day : trCap(t) + (day ? " (" + day + ")" : "");
+    return { label, date: d ? iso(d) : "", guess };
+  }
   const trStart = (p) => {
     let prev;
     p = p.replace(/^[\s,;:.]+/, "");
-    do { prev = p; p = p.replace(TR_SEQ, "").replace(TR_MODAL, "").trim(); } while (p !== prev);
+    do { prev = p; p = p.replace(TR_SEQ, "").replace(TR_MODAL, "").replace(/^de\s+(?=\p{L}+(?:ar|er|ir)\b)/iu, "").trim(); } while (p !== prev);
     // "Los alumnos deberán seleccionar..." → "seleccionar..."
     if (!trVerb(trFirst(p))) { const sm = p.match(/^(?:\p{L}+\s+){1,4}?(?:deber(?:á|án|ás)|deben|tienen que|tendrán que|van a)\s+/iu); if (sm) p = p.slice(sm[0].length); }
     return p;
@@ -447,13 +482,28 @@
   const trClean = (s) => s.replace(/^[\s,;:.]+|[\s,;:.]+$/g, "").replace(/^(?:y|e)\s+/i, "");
   function trBuild(segs, text) {
     const of = (cat) => segs.filter((s) => s.cat === cat).map((s) => trClean(s.text)).filter(Boolean);
-    const steps = [], verbs = [], cuenta = [];
-    of("paso").forEach((p) => {
+    const steps = [], verbs = [], cuenta = [], dates = [];
+    let waiting = [];
+    segs.forEach((sg) => {
+      const p = trClean(sg.text);
+      if (!p) return;
+      if (sg.cat === "fecha") {
+        // Cada fecha va con el paso que la precede (o con el siguiente, si está antes)
+        const w = trWhen(p);
+        if (steps.length) dates.push(Object.assign(w, { step: steps.length - 1 })); else waiting.push(w);
+        return;
+      }
+      if (sg.cat !== "paso") return;
       const q = trStart(p), inf = trVerb(trFirst(q));
       const step = inf ? trCap(inf + q.slice(trFirst(q).length)) : trCap(q);
       if (/^(?:en\s+|con\s+|de\s+)/i.test(q) && steps.length && !inf) steps[steps.length - 1] += ", " + q; // una parte suelta movida a "Hacer"
-      else if (step) { steps.push(step); verbs.push(inf); }
+      else if (step) {
+        steps.push(step); verbs.push(inf);
+        waiting.forEach((w) => dates.push(Object.assign(w, { step: steps.length - 1 }))); waiting = [];
+      }
     });
+    waiting.forEach((w) => dates.push(Object.assign(w, { step: -1 })));
+    const stepDue = steps.map((_, i) => dates.length > 1 ? dates.filter((d) => d.step === i).map((d) => d.label).join(" · ") : "");
     of("cuenta").forEach((c) => cuenta.push(...trList(c.replace(TR_SEQ, "").replace(/^(?:teniendo|tomando|tener|tené|tengan) en cuenta(?: que)?:?\s*|^considerando\s*|^considerar:?\s*|^importante:?\s*|^condiciones?:\s*/i, ""))));
     const plain = text.replace(/\s+/g, " ");
     const c = plain.match(/comuni(?:que|car|quen)\s+(.+?)(?:,|\.|\s+teniendo|\s+para\s|$)/i);
@@ -470,16 +520,16 @@
     let entregar = formats.length ? formats.join(" + ") : trCap(ent.replace(/^se\s+entregan?\s+/i, "").replace(/^entrega:?\s*/i, ""));
     let guess = false;
     if (!entregar && verbs.some((v) => /^(escribir|reescribir|redactar|narrar)$/.test(v))) { entregar = "Seguramente el texto que escribas"; guess = true; }
-    const fs = of("fecha").join(" ");
-    const d = fs.match(/\b(\d{1,2})[\/\-](\d{1,2})/);
-    const fecha = d ? pad(d[1]) + "/" + pad(d[2]) : trCap(fs.replace(/^(?:el\s+)?(?:plazo|fecha de entrega|fecha límite)?\s*(?:vence|es)?\s*/i, "").replace(/^(?:para|hasta)\s+/i, ""));
+    // Si hay varias fechas, la de la entrega es la última
+    const last = dates.slice().sort((a, b) => (a.date || "0") < (b.date || "0") ? -1 : 1).pop();
+    const fecha = last ? last.label : "";
     const evalua = of("evalua").flatMap((e) => trList(e.replace(/^(?:se\s+(?:evalua(?:rá)?|evaluará|evalúa|van a evaluar)|criterios?(?: de evaluación)?:?|(?:la\s+)?evaluación:?)\s*/i, "")));
     const asks = [];
     if (!fecha) asks.push("¿Cuándo se entrega?");
     if (!formats.length && (!entregar || guess)) asks.push("¿En qué formato y con qué extensión se entrega?");
     if (!evalua.length) asks.push("¿Qué se va a evaluar?");
     return {
-      steps, comunicar: c ? c[1].replace(/^(el|la|los|las)\s+/i, "").trim() : "",
+      steps, stepDue, dates, due: last ? last.date : "", guessDate: dates.some((d) => d.guess), comunicar: c ? c[1].replace(/^(el|la|los|las)\s+/i, "").trim() : "",
       cuenta: Array.from(new Set(cuenta.map((x) => x.trim()).filter(Boolean))), entregar, fecha, evalua: Array.from(new Set(evalua)), asks,
       paso: steps.length === 1 && c ? "Definir el concepto en una frase" : steps[0] || "Releer la consigna y marcar lo que no entiendo"
     };
@@ -502,8 +552,9 @@
     const list = (lbl, arr, cls) => arr.length ? `<div class="tp-cell ${cls || ""}"><span class="lbl">${lbl}</span><ul class="scribble-list">${arr.map((e) => `<li>${esc(e)}</li>`).join("")}</ul></div>` : cell(lbl, "", cls);
     $("#tr-card").innerHTML = `
       <span class="tp-title">Paso a paso</span>
-      ${r.steps.length ? `<ol class="tp-steps">${r.steps.map((s) => `<li>${esc(s)}</li>`).join("")}</ol>` : `<p class="ask">No encontramos acciones. Tocá en la consigna las partes que dicen qué hacer y marcalas como "Qué hacer".</p>`}
-      <div class="tp-grid">${r.comunicar ? cell("Qué comunicar", r.comunicar) : ""}${list("Qué tener en cuenta", r.cuenta)}${cell("Qué entregar", r.entregar)}${cell("Fecha", r.fecha, "date")}</div>
+      ${r.steps.length ? `<ol class="tp-steps">${r.steps.map((s, i) => `<li><span>${esc(s)}${r.stepDue[i] ? `<span class="due">${esc(r.stepDue[i])}</span>` : ""}</span></li>`).join("")}</ol>` : `<p class="ask">No encontramos acciones. Tocá en la consigna las partes que dicen qué hacer y marcalas como "Qué hacer".</p>`}
+      <div class="tp-grid">${r.comunicar ? cell("Qué comunicar", r.comunicar) : ""}${list("Qué tener en cuenta", r.cuenta)}${cell("Qué entregar", r.entregar)}${cell(r.dates.length > 1 ? "Fecha final" : "Fecha", r.fecha, "date")}</div>
+      ${r.guessDate ? `<p class="small muted">Las fechas con día de la semana están calculadas desde hoy. Si la consigna es de otra semana, ajustalas en "Dividir la entrega".</p>` : ""}
       ${r.evalua.length ? list("Se evalúa", r.evalua) : ""}
       ${r.asks.length ? list("Preguntale al docente", r.asks, "asks") : ""}
       ${cell("Primer paso", r.paso, "key")}`;
@@ -538,7 +589,7 @@
   $("#tr-input").addEventListener("input", () => store.set("tr", Object.assign(store.get("tr", {}), { input: $("#tr-input").value })));
   $("#tr-copy").onclick = () => {
     const r = trRes;
-    const lines = ["PASO A PASO:", ...r.steps.map((s, i) => (i + 1) + ". " + s)];
+    const lines = ["PASO A PASO:", ...r.steps.map((s, i) => (i + 1) + ". " + s + (r.stepDue[i] ? " (" + r.stepDue[i] + ")" : ""))];
     if (r.comunicar) lines.push("QUÉ COMUNICAR: " + r.comunicar);
     lines.push("QUÉ TENER EN CUENTA: " + (r.cuenta.join(", ") || TR_ASK), "QUÉ ENTREGAR: " + (r.entregar || TR_ASK), "FECHA: " + (r.fecha || TR_ASK));
     if (r.evalua.length) lines.push("SE EVALÚA: " + r.evalua.join(", "));
@@ -549,14 +600,9 @@
   $("#tr-toplan").onclick = () => {
     const r = trRes;
     dv.title = (r.steps[0] || dv.title).slice(0, 60);
-    const f = r.fecha.match(/(\d{1,2})\/(\d{1,2})/);
-    if (f) {
-      let d = new Date(today().getFullYear(), Number(f[2]) - 1, Number(f[1]));
-      if (d < today()) d = new Date(d.getFullYear() + 1, d.getMonth(), d.getDate());
-      dv.due = iso(d);
-    }
+    if (r.due) dv.due = r.due;
     // Con dos pasos o más, las etapas son los pasos de la consigna (más revisar y entregar)
-    if (r.steps.length > 1) dv.stages = [...r.steps, "Revisar contra la consigna y entregar"].map((t) => ({ text: t, done: false, date: "" }));
+    if (r.steps.length > 1) dv.stages = [...r.steps, "Revisar contra la consigna y entregar"].map((t, i) => ({ text: t, done: false, date: (r.dates.find((d) => d.step === i) || {}).date || "" }));
     else dv.stages[0].text = r.paso;
     saveDv(); renderDv();
     goTab("herramientas", true); goSub("dividir");

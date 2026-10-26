@@ -508,6 +508,7 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .tp-steps { margin: 0; padding: 0; list-style: none; counter-reset: paso; display: flex; flex-direction: column; gap: 0.6rem; }
 .tp-steps li { counter-increment: paso; display: grid; grid-template-columns: 2rem 1fr; gap: 0.6rem; align-items: baseline; overflow-wrap: anywhere; }
 .tp-steps li::before { content: counter(paso); font-family: var(--f-display); font-weight: 700; color: var(--brand-2); font-size: 1.25rem; }
+.tp-steps .due { display: block; font-size: var(--step--1); font-weight: 700; color: var(--c-entrega); }
 .tp-card .ask { color: var(--muted); font-style: italic; }
 .tp-cell.asks { border-top-color: var(--c-aviso); }
 .tp-cell.asks .lbl { color: var(--c-aviso); }
