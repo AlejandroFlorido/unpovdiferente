@@ -252,11 +252,23 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .drop-body p { max-width: none; }
 .drop-body ul { margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
 .drop[open] .drop-body { animation: tab-in 0.3s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
-/* Tres conceptos: tres desplegables lado a lado (en celular, uno debajo del otro).
-   Títulos en azul, naranja y azul de la marca. */
-.drops-3 { width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); align-items: start; gap: var(--space-grid); }
-.drop.t-blue summary { color: var(--brand-2); }
-.drop.t-orange summary { color: var(--brand); }
+/* Tres conceptos: tres recuadros lado a lado (en celular, uno debajo del otro), cada uno con el borde
+   y el título en su color: azul, naranja, azul. Al abrir uno, los otros dos se desvanecen y el elegido
+   crece hasta el centro (el movimiento lo hace el script); se cierra tocando el título de nuevo. */
+.concepts { width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); align-items: start; gap: var(--space-grid); }
+.concept { --c: var(--brand-2); border: 2px solid var(--c); border-radius: var(--radius); display: flex; flex-direction: column;
+  transition: opacity 0.25s ease; }
+.concept.t-orange { --c: var(--brand); }
+.concept-title { font: inherit; font-family: var(--f-title); font-size: calc(var(--step-2) + 4pt); line-height: var(--lh-title); letter-spacing: -0.02em;
+  color: var(--c); background: none; border: 0; border-radius: inherit; padding: 1.6rem 1.2rem; cursor: pointer; text-align: center;
+  transition: font-size 0.45s cubic-bezier(0.2, 0.7, 0.3, 1), padding 0.45s cubic-bezier(0.2, 0.7, 0.3, 1), transform 0.25s ease; }
+.concept-body { padding: 0 1.6rem 1.6rem; display: flex; flex-direction: column; gap: 0.9rem; text-align: left; font-family: "General Sans", var(--f-body); }
+.concept-body p { max-width: none; }
+.concepts.fading .concept:not(.open) { opacity: 0; pointer-events: none; }
+.concepts.focused .concept:not(.open) { display: none; }
+.concepts.focused .concept.open { grid-column: 1 / -1; justify-self: center; width: min(100%, 44rem); }
+.concept.open .concept-title { font-size: calc(clamp(2rem, 5vw, 3.4rem) + 4pt); padding-block: 2rem 1.2rem; }
+.concept.open .concept-body:not([hidden]) { animation: tab-in 0.35s 0.2s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
 .scroll-cue { position: absolute; left: 0; right: 0; margin-inline: auto; width: fit-content; bottom: 1rem; font: inherit; font-family: var(--f-display); font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--muted); background: none; border: 0; padding: 0.3rem 0; cursor: pointer; display: inline-flex; gap: 0.5rem; align-items: center; }
 .scroll-cue span { color: var(--accent-text); font-size: 1.2em; }
