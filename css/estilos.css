@@ -272,6 +272,12 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
   transition: font-size 0.45s cubic-bezier(0.2, 0.7, 0.3, 1), padding 0.45s cubic-bezier(0.2, 0.7, 0.3, 1), transform 0.25s ease; }
 .concept-body { padding: 0 1.6rem 1.6rem; display: flex; flex-direction: column; gap: 0.9rem; text-align: left; font-family: "General Sans", var(--f-body); }
 .concept-body p { max-width: none; }
+.concept-body p { font-size: var(--step-1); line-height: var(--lh-sub); }
+/* Palabra encerrada en un óvalo naranja desdibujado, como el POV del logo: dos trazos desparejos. */
+.circled { position: relative; display: inline-block; padding: 0 0.35em; margin: 0 0.1em; }
+.circled::before, .circled::after { content: ""; position: absolute; pointer-events: none; border: 2px solid var(--brand); }
+.circled::before { inset: -0.3em -0.15em -0.25em -0.2em; border-radius: 55% 45% 50% 50% / 60% 50% 50% 40%; transform: rotate(-4deg); }
+.circled::after { inset: -0.2em -0.25em -0.3em -0.1em; border-width: 1.5px; opacity: 0.6; border-radius: 45% 55% 45% 55% / 50% 60% 40% 50%; transform: rotate(3deg); }
 .concepts.fading .concept:not(.open) { opacity: 0; pointer-events: none; }
 .concepts.focused .concept:not(.open) { display: none; }
 .concepts.focused .concept.open { grid-column: 1 / -1; justify-self: center; width: min(100%, 44rem); }
