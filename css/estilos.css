@@ -215,7 +215,8 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
    cabecera fija (la mide el script). */
 .screen { min-height: calc(100svh - var(--top-h, 9rem)); display: flex; flex-direction: column; justify-content: center; }
 #te-pasa { scroll-margin-top: var(--top-h, 9rem); position: relative; padding-bottom: 3.5rem; }
-#tres-formas { scroll-margin-top: var(--top-h, 9rem); gap: var(--space-block); padding-bottom: 1.5rem; min-height: calc(100svh - var(--top-h, 9rem) - var(--tail-h, 0px)); }
+#tres-formas { scroll-margin-top: var(--top-h, 9rem); gap: var(--space-block); }
+.screen.last { padding-bottom: 1.5rem; min-height: calc(100svh - var(--top-h, 9rem) - var(--tail-h, 0px)); }
 .hero.screen { min-height: calc(100svh - var(--top-h, 9rem) - var(--main-pt)); position: relative; padding-bottom: 3.5rem; }
 /* Interlineado del h1 más cerrado que el de los demás títulos; "Espaciado amplio" lo sigue abriendo. */
 .hero h1 { font-size: calc(clamp(2.6rem, 8vw, 5.6rem) + 4pt); font-weight: 700; max-width: 18ch; text-wrap: balance; line-height: calc(var(--lh-title) * 0.9); }
@@ -548,13 +549,14 @@ input[type="email"] { font: inherit; font-weight: 400; font-size: var(--step-0);
 
 /* ---------- Equipo ---------- */
 .team .lead { align-items: center; text-align: center; }
+/* Dos pantallas, como Inicio y Entender: quienes hacen el proyecto y quienes lo desarrollan. */
+#quienes, #desarrolladores { scroll-margin-top: var(--top-h, 9rem); gap: var(--space-block); position: relative; padding-bottom: 3.5rem; }
+#quienes { min-height: calc(100svh - var(--top-h, 9rem) - var(--main-pt)); }
+.team-list.dos { grid-template-columns: repeat(2, minmax(0, 15rem)); justify-content: center; }
 .team-list { list-style: none; margin: 0 auto; padding: 0; max-width: 46rem; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-grid); }
-/* Tres cuadrados en fila con los directores; el desarrollo web va solo, abajo y al medio. */
-.team-list .person.solo { grid-column: 2; }
 .person { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 0.8rem; min-width: 0; }
 @media (max-width: 600px) {
-  .team-list { grid-template-columns: minmax(0, 16rem); justify-content: center; }
-  .team-list .person.solo { grid-column: 1; }
+  .team-list, .team-list.dos { grid-template-columns: minmax(0, 16rem); justify-content: center; }
   .person { aspect-ratio: auto; min-height: 11rem; }
 }
 .avatar { flex: none; width: 6.5rem; height: auto; aspect-ratio: 1; border-radius: 50%; object-fit: cover; }

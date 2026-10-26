@@ -293,15 +293,16 @@
   const setTopH = () => root.style.setProperty("--top-h", topEl.offsetHeight + "px");
   setTopH();
   if ("ResizeObserver" in window) new ResizeObserver(setTopH).observe(topEl); else window.addEventListener("resize", setTopH);
-  // "Tres formas" es la última pantalla del Inicio: deja lugar para el "Siguiente" y el pie, que se ven dentro de ella.
-  const lastScreen = $("#tres-formas");
+  // La última pantalla de cada pestaña (.screen.last) deja lugar para el "Siguiente" y el pie, que se ven dentro de ella.
+  const lastScreens = $$(".screen.last");
   const setTailH = () => {
-    if (!lastScreen.offsetParent) return;
-    const tail = document.documentElement.scrollHeight - (lastScreen.getBoundingClientRect().bottom + window.scrollY);
+    const last = lastScreens.find((el) => el.offsetParent);
+    if (!last) return;
+    const tail = document.documentElement.scrollHeight - (last.getBoundingClientRect().bottom + window.scrollY);
     root.style.setProperty("--tail-h", Math.max(0, Math.round(tail)) + "px");
   };
   setTailH();
-  if ("ResizeObserver" in window) { const ro = new ResizeObserver(setTailH); ro.observe(lastScreen.parentElement); ro.observe($("footer")); }
+  if ("ResizeObserver" in window) { const ro = new ResizeObserver(setTailH); lastScreens.forEach((el) => ro.observe(el.parentElement)); ro.observe($("footer")); }
   window.addEventListener("resize", setTailH);
   // "¿Te pasa? ↓" y "Tres formas ↓" bajan a la parte siguiente del Inicio (de una con "Sin animaciones").
   // Los botones "↑" vuelven a la parte anterior; si es la primera pantalla de la pestaña, sube hasta arriba de todo.
