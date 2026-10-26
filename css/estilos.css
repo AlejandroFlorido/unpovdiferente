@@ -228,6 +228,7 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 /* Entender: primera pantalla "¿Qué es el TDAH?". La palabra TDAH va en el naranja de la marca
    y el nombre completo del trastorno, resaltado en azul con letra blanca. */
 #entender-tdah, #tres-conceptos, #nt-vs-nd { scroll-margin-top: var(--top-h, 9rem); gap: var(--space-block); position: relative; align-items: center; text-align: center; }
+#nt-vs-nd { min-height: calc(100svh - var(--top-h, 9rem) - var(--tail-h, 0px)); }
 #entender-tdah, #tres-conceptos { padding-bottom: 3.5rem; }
 /* Frases destacadas en el naranja de la marca. */
 .orange { color: var(--brand); font-weight: 600; }
@@ -282,16 +283,19 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .concept-body p { max-width: none; }
 .concept-body p { font-size: var(--step-1); line-height: var(--lh-sub); }
 /* Palabra encerrada en un óvalo naranja desdibujado, como el POV del logo: dos trazos desparejos. */
+.fx-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+/* Óvalos borroneados: trazo más grueso, pasado por el filtro #borron (definido en index.html). */
+.circled::before, .circled::after, .title-circled::before, .title-circled::after { filter: url(#borron); }
 /* Título encerrado en el óvalo naranja desdibujado (mismo dibujo que .circled, a escala de título). */
 #entender-tdah h2.title-circled { font-size: calc(var(--step-3) + 8pt); line-height: 1; }
 .title-circled { position: relative; display: inline-block; padding: 0.5em 0.9em; }
-.title-circled::before, .title-circled::after { content: ""; position: absolute; pointer-events: none; border: 3px solid var(--brand); }
-.title-circled::before { inset: -0.05em 0 0 -0.1em; border-radius: 55% 45% 50% 50% / 60% 50% 50% 40%; transform: rotate(-2.5deg); }
-.title-circled::after { inset: 0.05em -0.1em -0.05em 0; border-width: 2px; opacity: 0.6; border-radius: 45% 55% 45% 55% / 50% 60% 40% 50%; transform: rotate(1.8deg); }
+.title-circled::before, .title-circled::after { content: ""; position: absolute; pointer-events: none; border: 5px solid var(--brand); }
+.title-circled::before { inset: -0.05em 0 0 -0.1em; border-radius: 50% 48% 50% 52% / 52% 50% 50% 48%; transform: rotate(-2deg); }
+.title-circled::after { inset: 0.05em -0.1em -0.05em 0; border-width: 3px; opacity: 0.6; border-radius: 48% 52% 50% 50% / 50% 52% 48% 50%; transform: rotate(1.5deg); }
 .circled { position: relative; display: inline-block; padding: 0 0.35em; margin: 0 0.1em; }
-.circled::before, .circled::after { content: ""; position: absolute; pointer-events: none; border: 2px solid var(--brand); }
-.circled::before { inset: -0.3em -0.15em -0.25em -0.2em; border-radius: 55% 45% 50% 50% / 60% 50% 50% 40%; transform: rotate(-4deg); }
-.circled::after { inset: -0.2em -0.25em -0.3em -0.1em; border-width: 1.5px; opacity: 0.6; border-radius: 45% 55% 45% 55% / 50% 60% 40% 50%; transform: rotate(3deg); }
+.circled::before, .circled::after { content: ""; position: absolute; pointer-events: none; border: 3px solid var(--brand); }
+.circled::before { inset: -0.3em -0.15em -0.25em -0.2em; border-radius: 50% 48% 50% 52% / 52% 50% 50% 48%; transform: rotate(-3deg); }
+.circled::after { inset: -0.2em -0.25em -0.3em -0.1em; border-width: 1.5px; opacity: 0.6; border-radius: 48% 52% 50% 50% / 50% 52% 48% 50%; transform: rotate(2deg); }
 /* Los que no se eligieron se apagan de a poco en su lugar: se desvanecen, se achican apenas y se desenfocan. */
 .concepts { position: relative; }
 .concepts.fading .concept:not(.open) { opacity: 0; transform: scale(0.95); filter: blur(4px); pointer-events: none; }

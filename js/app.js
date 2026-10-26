@@ -293,6 +293,16 @@
   const setTopH = () => root.style.setProperty("--top-h", topEl.offsetHeight + "px");
   setTopH();
   if ("ResizeObserver" in window) new ResizeObserver(setTopH).observe(topEl); else window.addEventListener("resize", setTopH);
+  // La última pantalla de Entender deja lugar para la nota y el pie: mide lo que viene debajo.
+  const ntvsnd = $("#nt-vs-nd");
+  const setTailH = () => {
+    if (!ntvsnd.offsetParent) return;
+    const tail = document.documentElement.scrollHeight - (ntvsnd.getBoundingClientRect().bottom + window.scrollY);
+    root.style.setProperty("--tail-h", Math.max(0, Math.round(tail)) + "px");
+  };
+  setTailH();
+  if ("ResizeObserver" in window) { const ro = new ResizeObserver(setTailH); ro.observe(ntvsnd.nextElementSibling); ro.observe($("footer")); }
+  window.addEventListener("resize", setTailH);
   // "¿Te pasa? ↓" y "Tres formas ↓" bajan a la parte siguiente del Inicio (de una con "Sin animaciones").
   $$("[data-cue]").forEach((b) => { b.onclick = () => document.getElementById(b.dataset.cue).scrollIntoView({ behavior: isCalm() ? "auto" : "smooth", block: "start" }); });
   $("#car-prev").onclick = () => { car = (car - 1 + situations.length) % situations.length; renderCar(-1); };
