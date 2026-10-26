@@ -299,29 +299,6 @@
   $("#car-next").onclick = () => { car = (car + 1) % situations.length; renderCar(1); };
   renderCar();
 
-  /* ---------- Mitos ---------- */
-  const myths = [
-    ["Es falta de voluntad o de interés.", "Es una condición del neurodesarrollo. Afecta funciones como planificar, iniciar tareas y sostener la atención, aunque haya muchas ganas."],
-    ["Solo les pasa a chicos y chicas.", "En muchas personas continúa en la adultez. En la universidad aumenta la autonomía que se pide y por eso a veces se nota más."],
-    ["Si se concentra en lo que le gusta, no tiene TDAH.", "La atención se regula según el interés. El hiperfoco existe y convive con la dificultad para concentrarse en lo que no engancha."],
-    ["Es estar moviéndose todo el tiempo.", "Hay presentaciones donde predomina la inatención, más silenciosas y fáciles de pasar por alto."],
-    ["Hay que bajar la exigencia.", "Lo que ayuda es información clara, estructura y fechas visibles. La exigencia puede ser la misma."],
-    ["Es algo que se supera con organización.", "Las herramientas ayudan mucho, pero no cambian la condición. Son apoyos, como los anteojos para la vista."]
-  ];
-  $("#myths").innerHTML = myths.map((m, i) => `
-    <div class="myth">
-      <button type="button" aria-expanded="false" aria-controls="myth-${i}">
-        <span class="tag m">Mito</span><span class="claim">${esc(m[0])}</span><span class="hint">Ver la realidad</span>
-      </button>
-      <div class="reveal" id="myth-${i}" hidden><span class="tag r">Realidad</span><p class="small">${esc(m[1])}</p></div>
-    </div>`).join("");
-  $$("#myths .myth button").forEach((b) => b.onclick = () => {
-    const open = b.getAttribute("aria-expanded") !== "true";
-    b.setAttribute("aria-expanded", open);
-    document.getElementById(b.getAttribute("aria-controls")).hidden = !open;
-    $(".hint", b).textContent = open ? "Ocultar" : "Ver la realidad";
-  });
-
   /* ---------- Códigos visuales ---------- */
   const TYPES = {
     entrega: "Entrega", evaluacion: "Evaluación", correccion: "Corrección",
