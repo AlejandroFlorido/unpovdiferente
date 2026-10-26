@@ -851,48 +851,6 @@
     });
   }
 
-  /* ---------- Agujero negro (tarjeta de Alejandro) ----------
-     Con el mouse 0,5 s sobre el nombre, aparece un agujero negro y las letras caen en espiral hacia el centro;
-     medio segundo después de desaparecer, vuelven a salir y se arman en su lugar. Nunca con "Sin animaciones". */
-  const hole = $(".person.blackhole");
-  if (hole && hole.animate) {
-    const txt = $("div", hole);
-    // Cada letra en su <span class="l">; las palabras quedan juntas para que no se corten al final de la línea.
-    [...txt.children].forEach((el) => {
-      el.innerHTML = el.textContent.split(/(\s+)/).map((w) => (/^\s+$/.test(w) ? w : w ? `<span class="wd">${[...w].map((c) => `<span class="l">${esc(c)}</span>`).join("")}</span>` : "")).join("");
-    });
-    const letters = $$(".l", hole);
-    const SWALLOW = 900, HOLD = 500;
-    let timer = 0, busy = false;
-    const spiral = (el, back) => {
-      const h = hole.getBoundingClientRect(), r = el.getBoundingClientRect();
-      // Posición de la letra respecto del centro; la espiral la hace girar ~1 vuelta mientras se acerca.
-      const px = r.left + r.width / 2 - (h.left + h.width / 2), py = r.top + r.height / 2 - (h.top + h.height / 2);
-      const turn = 1.6 * Math.PI;
-      const at = (t) => {
-        const a = turn * t, k = 1 - t, x = (px * Math.cos(a) - py * Math.sin(a)) * k, y = (px * Math.sin(a) + py * Math.cos(a)) * k;
-        return { transform: `translate(${x - px}px, ${y - py}px) rotate(${a * 57.3}deg) scale(${1 - t * 0.95})`, opacity: t > 0.85 ? (1 - t) / 0.15 : 1, filter: `blur(${t * 2}px)` };
-      };
-      const frames = [0, 0.25, 0.5, 0.75, 0.9, 1].map((t) => ({ ...at(t), offset: t }));
-      const delay = Math.random() * 180;
-      return el.animate(back ? frames.map((f) => ({ ...f, offset: 1 - f.offset })).reverse() : frames,
-        { duration: SWALLOW - 180, delay, easing: back ? "cubic-bezier(0.2, 0.7, 0.3, 1)" : "cubic-bezier(0.55, 0, 0.8, 0.4)", fill: "both" });
-    };
-    const run = () => {
-      busy = true;
-      hole.classList.add("bh-on");
-      const gone = letters.map((l) => spiral(l, false));
-      Promise.all(gone.map((a) => a.finished)).then(() => setTimeout(() => {
-        gone.forEach((a) => a.cancel());
-        const back = letters.map((l) => spiral(l, true));
-        hole.classList.remove("bh-on");
-        Promise.all(back.map((a) => a.finished)).then(() => { back.forEach((a) => a.cancel()); busy = false; });
-      }, HOLD));
-    };
-    txt.addEventListener("mouseenter", () => { if (!busy && !isCalm()) timer = setTimeout(run, 500); });
-    txt.addEventListener("mouseleave", () => clearTimeout(timer));
-  }
-
   /* ---------- Estado inicial ---------- */
   const hash = (location.hash || "").slice(1);
   goSub(store.get("sub", "primer"));

@@ -555,20 +555,6 @@ input[type="email"] { font: inherit; font-weight: 400; font-size: var(--step-0);
 .team-list.dos { grid-template-columns: repeat(2, minmax(0, 15rem)); justify-content: center; }
 .team-list { list-style: none; margin: 0 auto; padding: 0; max-width: 46rem; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-grid); }
 .person { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 0.8rem; min-width: 0; }
-/* Tarjeta de Alejandro: un agujero negro en el fondo que se traga el nombre y lo vuelve a armar (lo maneja js/app.js). */
-.person.blackhole { position: relative; overflow: hidden; }
-.person.blackhole > div { position: relative; z-index: 1; }
-.bh { position: absolute; left: 50%; top: 50%; width: 78%; aspect-ratio: 1; margin: -39% 0 0 -39%; border-radius: 50%; pointer-events: none;
-  background: radial-gradient(circle, #000 0 30%, rgba(0, 0, 0, 0.85) 36%, transparent 62%);
-  opacity: 0; transform: scale(0); transition: opacity 0.7s ease, transform 0.9s cubic-bezier(0.3, 0, 0.2, 1); }
-.bh::before { content: ""; position: absolute; inset: 14%; border-radius: 50%; filter: blur(3px);
-  background: conic-gradient(from 0deg, transparent, var(--brand) 18%, transparent 35%, var(--brand-2) 55%, transparent 70%, var(--brand) 88%, transparent);
-  -webkit-mask: radial-gradient(circle, transparent 38%, #000 42%, #000 58%, transparent 66%); mask: radial-gradient(circle, transparent 38%, #000 42%, #000 58%, transparent 66%);
-  animation: bh-spin 1.4s linear infinite; }
-.blackhole.bh-on .bh { opacity: 1; transform: scale(1) rotate(-90deg); }
-.blackhole .l { display: inline-block; white-space: pre; }
-.blackhole .wd { display: inline-block; white-space: nowrap; }
-@keyframes bh-spin { to { transform: rotate(360deg); } }
 @media (max-width: 600px) {
   .team-list, .team-list.dos { grid-template-columns: minmax(0, 16rem); justify-content: center; }
   .person { aspect-ratio: auto; min-height: 11rem; }
