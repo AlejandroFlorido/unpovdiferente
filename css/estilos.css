@@ -557,6 +557,7 @@ input[type="email"] { font: inherit; font-weight: 400; font-size: var(--step-0);
   .team-list .person.solo { grid-column: 1; }
   .person { aspect-ratio: auto; min-height: 11rem; }
 }
+.avatar { flex: none; width: 6.5rem; height: auto; aspect-ratio: 1; border-radius: 50%; object-fit: cover; }
 .initials { flex: none; width: 3.2rem; height: 3.2rem; border-radius: 50%; background: var(--accent-soft); color: var(--ink); display: grid; place-items: center; font-family: var(--f-display); font-weight: 700; font-size: var(--step--1); }
 .person b { display: block; overflow-wrap: anywhere; }
 .person span { font-size: var(--step--1); color: var(--muted); }
