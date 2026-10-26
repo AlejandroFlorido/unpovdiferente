@@ -337,7 +337,7 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .concept.t-orange { --c: var(--brand); }
 .concept-title { font: inherit; font-family: var(--f-title); font-size: calc(var(--step-2) + 4pt); line-height: var(--lh-title); letter-spacing: -0.02em;
   color: var(--c); background: none; border: 0; border-radius: inherit; padding: 1.6rem 1.2rem; cursor: pointer; text-align: center;
-  transition: font-size 0.45s cubic-bezier(0.2, 0.7, 0.3, 1), padding 0.45s cubic-bezier(0.2, 0.7, 0.3, 1), transform 0.25s ease; }
+  transition: transform 0.25s ease; }
 .concept-body { padding: 0 1.6rem 1.6rem; display: flex; flex-direction: column; gap: 0.9rem; text-align: left; font-family: "General Sans", var(--f-body); }
 .concept-body p { max-width: none; }
 .concept-body p { font-size: var(--step-1); line-height: var(--lh-sub); }
@@ -363,7 +363,7 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .concept.open .concept-title { font-size: calc(clamp(2rem, 5vw, 3.4rem) + 4pt); padding-block: 2rem 1.2rem; }
 /* El texto se "ensambla": cada palabra llega desde un lugar al azar, girada y desenfocada, y se acomoda en su sitio. */
 .concept-body .w { display: inline-block; }
-.concept.open .concept-body .w { animation: word-in 0.5s calc(0.3s + var(--i) * 22ms) cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+.concept.open .concept-body .w { animation: word-in 0.5s calc(0.55s + var(--i) * 22ms) cubic-bezier(0.2, 0.7, 0.3, 1) both; }
 @keyframes word-in { from { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); filter: blur(5px); } to { opacity: 1; transform: none; filter: none; } }
 .scroll-cue { position: absolute; left: 0; right: 0; margin-inline: auto; width: fit-content; bottom: 1rem; font: inherit; font-family: var(--f-display); font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--muted); background: none; border: 0; padding: 0.3rem 0; cursor: pointer; display: inline-flex; gap: 0.5rem; align-items: center; }
@@ -573,16 +573,16 @@ footer p { max-width: none; }
 /* Todos los botones (con caja o sin ella) crecen apenas y se iluminan desde el centro hacia afuera:
    un círculo de luz que nace chico en el medio y se abre hasta los bordes. :where() no suma
    especificidad, así que cada botón conserva su posición y su forma. */
-:where(button, a.btn, a.tab, .next-tab a) { position: relative; isolation: isolate; transition: transform 0.25s ease; }
-:where(button, a.btn, a.tab, .next-tab a)::after {
+:where(button, a.btn, a.tab, .next-tab a, .person) { position: relative; isolation: isolate; transition: transform 0.25s ease; }
+:where(button, a.btn, a.tab, .next-tab a, .person)::after {
   content: ""; position: absolute; inset: -4px; z-index: -1; pointer-events: none; border-radius: inherit;
   background: radial-gradient(closest-side, var(--glow-soft), transparent);
   opacity: 0; transform: scale(0.3); transition: transform 0.35s ease, opacity 0.35s ease;
 }
 :where(.btn:not(.ghost), .chip-btn[aria-pressed="true"], .theme-switch[aria-checked="true"])::after { background: radial-gradient(closest-side, var(--glow-fill), transparent); }
 @media (hover: hover) {
-  :where(button, a.btn, a.tab, .next-tab a):hover:not(:disabled) { transform: scale(1.04); }
-  :where(button, a.btn, a.tab, .next-tab a):hover:not(:disabled)::after { opacity: 1; transform: scale(1); }
+  :where(button, a.btn, a.tab, .next-tab a, .person):hover:not(:disabled) { transform: scale(1.04); }
+  :where(button, a.btn, a.tab, .next-tab a, .person):hover:not(:disabled)::after { opacity: 1; transform: scale(1); }
 }
 
 /* ---------- Cursor ---------- */
