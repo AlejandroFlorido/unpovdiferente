@@ -215,7 +215,7 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
    cabecera fija (la mide el script). */
 .screen { min-height: calc(100svh - var(--top-h, 9rem)); display: flex; flex-direction: column; justify-content: center; }
 #te-pasa { scroll-margin-top: var(--top-h, 9rem); position: relative; padding-bottom: 3.5rem; }
-#tres-formas { scroll-margin-top: var(--top-h, 9rem); gap: var(--space-block); padding-bottom: 3.5rem; }
+#tres-formas { scroll-margin-top: var(--top-h, 9rem); gap: var(--space-block); padding-bottom: 1.5rem; min-height: calc(100svh - var(--top-h, 9rem) - var(--tail-h, 0px)); }
 .hero.screen { min-height: calc(100svh - var(--top-h, 9rem) - var(--main-pt)); position: relative; padding-bottom: 3.5rem; }
 /* Interlineado del h1 más cerrado que el de los demás títulos; "Espaciado amplio" lo sigue abriendo. */
 .hero h1 { font-size: calc(clamp(2.6rem, 8vw, 5.6rem) + 4pt); font-weight: 700; max-width: 18ch; text-wrap: balance; line-height: calc(var(--lh-title) * 0.9); }
