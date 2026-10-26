@@ -360,77 +360,204 @@
   $("#wk-type").innerHTML = Object.entries(TYPES).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
 
   /* ---------- Traductor de consignas ---------- */
-  const trIds = ["que", "comunicar", "cuenta", "entregar", "fecha", "paso"];
-  const trLabels = { que: "Qué hacer", comunicar: "Qué comunicar", cuenta: "Qué tener en cuenta", entregar: "Qué entregar", fecha: "Fecha", paso: "Primer paso" };
-  const TR_VERBS = { diseñ: "diseñar", rediseñ: "rediseñar", realiz: "realizar", elabor: "elaborar", cre: "crear", desarroll: "desarrollar", produc: "producir", produzc: "producir", propon: "proponer", propong: "proponer", analiz: "analizar", investig: "investigar", present: "presentar", ilustr: "ilustrar", maquet: "maquetar", redact: "redactar", constru: "construir", construy: "construir", arm: "armar", gener: "generar", confeccion: "confeccionar", plante: "plantear", resolv: "resolver", resuelv: "resolver", explor: "explorar", relev: "relevar", fotografi: "fotografiar", dibuj: "dibujar", intervin: "intervenir", interven: "intervenir", proyect: "proyectar", escrib: "escribir", compar: "comparar", seleccion: "seleccionar", investigu: "investigar", realic: "realizar", analic: "analizar", organiz: "organizar", organic: "organizar", document: "documentar", grab: "grabar", edit: "editar", entrevist: "entrevistar", bocet: "bocetar" };
-  // Infinitivo (diseñar), subjuntivo (diseñe, diseñen), "deberán diseñar" o voseo (diseñá); la palabra entera, aunque lleve tildes o ñ
-  const TR_VERB = new RegExp("(?<![\\p{L}])(" + Object.keys(TR_VERBS).sort((a, b) => b.length - a.length).join("|") + ")(?:ar|er|ir|en|an|e|á|é|í)(?![\\p{L}])", "giu");
-  function translate(text) {
-    const t = text.replace(/\s+/g, " ").trim();
-    const out = {};
-    // Qué hacer: cada verbo de tarea en infinitivo + su objeto, en el orden en que aparecen
-    const plain = t.replace(/\s*\([^)]*\)/g, "");
-    const acts = [];
-    for (const m of plain.matchAll(TR_VERB)) {
-      if (/\b(el|la|lo|los|las|del|al|se)\s*$/i.test(plain.slice(0, m.index))) continue; // "el presente trabajo", "se propone"
-      const inf = TR_VERBS[m[1].toLowerCase()];
-      const obj = plain.slice(m.index + m[0].length).split(/\s+y\s+que\s+|\s+que\s+|[,.;:]|\s+teniendo\s/i)[0].trim();
-      const act = (inf.charAt(0).toUpperCase() + inf.slice(1) + " " + obj).trim();
-      if (!acts.some((x) => x.startsWith(inf.charAt(0).toUpperCase() + inf.slice(1)))) acts.push(act);
+  // Formas que no son infinitivo (subjuntivo, voseo, irregulares) → infinitivo
+  const TR_VERBS = { diseñ: "diseñar", rediseñ: "rediseñar", realiz: "realizar", elabor: "elaborar", cre: "crear", desarroll: "desarrollar", produc: "producir", produzc: "producir", propon: "proponer", propong: "proponer", analiz: "analizar", investig: "investigar", present: "presentar", ilustr: "ilustrar", maquet: "maquetar", redact: "redactar", constru: "construir", construy: "construir", arm: "armar", gener: "generar", confeccion: "confeccionar", plante: "plantear", resolv: "resolver", resuelv: "resolver", explor: "explorar", relev: "relevar", fotografi: "fotografiar", dibuj: "dibujar", intervin: "intervenir", interven: "intervenir", proyect: "proyectar", escrib: "escribir", compar: "comparar", seleccion: "seleccionar", investigu: "investigar", realic: "realizar", analic: "analizar", organiz: "organizar", organic: "organizar", document: "documentar", grab: "grabar", edit: "editar", entrevist: "entrevistar", bocet: "bocetar", dej: "dejar", elimin: "eliminar", marc: "marcar", marqu: "marcar", recort: "recortar", reduzc: "reducir", reduc: "reducir", sintetic: "sintetizar", sintetiz: "sintetizar", busqu: "buscar", busc: "buscar", revis: "revisar", corrij: "corregir", correg: "corregir", reescrib: "reescribir", narr: "narrar", describ: "describir", identifiqu: "identificar", identific: "identificar", explic: "explicar", expliqu: "explicar", justifiqu: "justificar", justific: "justificar", resum: "resumir", complet: "completar", entreg: "entregar", entregu: "entregar", sub: "subir", expong: "exponer", expon: "exponer", observ: "observar", tom: "tomar", respond: "responder", contest: "contestar", ubiqu: "ubicar", ubic: "ubicar", relacion: "relacionar", vincul: "vincular", agreg: "agregar", agregu: "agregar", tach: "tachar", subray: "subrayar", list: "listar", mir: "mirar", escuch: "escuchar", consult: "consultar", imagin: "imaginar", defin: "definir", reflexion: "reflexionar", argument: "argumentar", fundament: "fundamentar", ordená: "ordenar", orden: "ordenar", cont: "contar" };
+  const TR_IRREG = { lean: "leer", lea: "leer", "leé": "leer", piensen: "pensar", piense: "pensar", "pensá": "pensar", elijan: "elegir", elija: "elegir", "elegí": "elegir", hagan: "hacer", haga: "hacer", "hacé": "hacer", vean: "ver", vea: "ver", "mirá": "mirar", cuenten: "contar", cuente: "contar", "poné": "poner", pongan: "poner", "sacá": "sacar", saquen: "sacar", "tené": "tener", tengan: "tener", "decí": "decir", digan: "decir", "andá": "ir", vayan: "ir", "traé": "traer", traigan: "traer" };
+  // Sustantivos y adjetivos que terminan como un infinitivo
+  const TR_NOT_VERB = new Set("lugar hogar mujer poder deber placer taller collar mar par bar militar popular familiar particular similar regular escolar solar primer cualquier altar azar billar dólar éter cráter carácter alfiler mantel nivel".split(" "));
+  const TR_READ = /^(leer|ver|mirar|escuchar|consultar|buscar)$/;
+  const TR_SEQ = /^(?:primero|después|luego|más tarde|a continuación|finalmente|por último|al final|también|además|y|e)\b,?\s*/i;
+  const TR_MODAL = /^(?:se\s+(?:debe|deberá|deben|deberán|pide|solicita)\s+|deber(?:á|án|ás)\s+|deben\s+|tienen\s+que\s+|tenés\s+que\s+|tendrán\s+que\s+|hay\s+que\s+|(?:les|te)\s+(?:pedimos|pido)\s+que\s+|se\s+propone\s+)/i;
+  function trVerb(word) {
+    const w = (word || "").toLowerCase();
+    if (!w || TR_NOT_VERB.has(w)) return "";
+    if (TR_IRREG[w]) return TR_IRREG[w];
+    const m = w.match(/^(\p{L}+?)(?:ar|er|ir)(?:se|lo|la|los|las|le|les)?$/u);
+    if (m && w.length > 3) return w.replace(/(?<=(?:ar|er|ir))(?:se|lo|la|los|las|le|les)$/u, "");
+    for (const k of Object.keys(TR_VERBS).sort((a, b) => b.length - a.length)) {
+      if (w.startsWith(k) && /^(?:en|an|e|a|á|é|í)$/u.test(w.slice(k.length))) return TR_VERBS[k];
     }
-    out.que = acts.slice(0, 4).join(" · ");
-    const c = t.match(/comuni(?:que|car|quen)\s+(.+?)(?:,|\.|\s+teniendo|\s+para\s)/i);
-    out.comunicar = c ? c[1].replace(/^(el|la|los|las)\s+/i, "").trim() : "";
-    const k = t.match(/(?:teniendo en cuenta|considerando|tener en cuenta|tengan en cuenta|tené en cuenta)\s+(.+?)\./i);
-    out.cuenta = k ? k[1].split(/,\s*|\s+y\s+/).map((s) => s.trim()).filter(Boolean).join(" · ") : "";
-    const fm = t.match(/\b(PDF|JPG|PNG|editable|impres[oa]|maqueta|archivo abierto|AI|PSD|InDesign)\b/gi);
-    out.entregar = fm ? Array.from(new Set(fm.map((s) => /^(pdf|jpg|png|ai|psd)$/i.test(s) ? s.toUpperCase() : (s.toLowerCase() === "editable" ? "archivo editable" : s.toLowerCase())))).join(" + ") : "";
-    const d = t.match(/\b(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{2,4}))?\b/);
-    out.fecha = d ? pad(d[1]) + "/" + pad(d[2]) : "";
-    out.paso = out.comunicar ? "Definir el concepto en una frase" : "Releer la consigna y marcar lo que no entiendo";
-    const ev = t.match(/(?:se evalua(?:rá)?|se evaluará|se evalúa|criterios?:?)\s+(.+?)(?:\.|$)/i);
-    out.evalua = ev ? ev[1].replace(/^(el|la|los|las)\s+/i, "").split(/,\s*|\s+y\s+/).map((s) => s.replace(/^(el|la|los|las)\s+/i, "").trim()).filter(Boolean) : [];
-    return out;
+    return "";
   }
-  let trEval = [];
+  const trFirst = (s) => (s.match(/^\p{L}+/u) || [""])[0];
+  const trCap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  const trList = (s) => s.split(/,\s*|\s+y\s+(?!\d)/).map((x) => x.replace(/^(?:el|la|los|las)\s+/i, "").trim()).filter(Boolean);
+  // Partes de la consigna: el traductor sugiere y el estudiante corrige tocando cada parte
+  const TR_CATS = {
+    paso: { name: "Qué hacer", tag: "Hacer" },
+    cuenta: { name: "Qué tener en cuenta", tag: "Tener en cuenta" },
+    entregar: { name: "Qué entregar", tag: "Entrega" },
+    fecha: { name: "Fecha", tag: "Fecha" },
+    evalua: { name: "Cómo se evalúa", tag: "Se evalúa" },
+    otro: { name: "Contexto (no es tarea)", tag: "Contexto" }
+  };
+  const TR_DATE = /\s*\b(?:(?:el|para el|hasta el)\s+(?:(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)\s+)?\d{1,2}[\/\-]\d{1,2}(?:[\/\-]\d{2,4})?|\d{1,2}[\/\-]\d{1,2}(?:[\/\-]\d{2,4})?|(?:el|para el|hasta el)\s+(?:próximo\s+)?(?:lunes|martes|miércoles|jueves|viernes|sábado|domingo)|(?:para\s+)?la\s+(?:próxima clase|semana que viene|clase que viene))\b/i;
+  const trStart = (p) => {
+    let prev;
+    p = p.replace(/^[\s,;:.]+/, "");
+    do { prev = p; p = p.replace(TR_SEQ, "").replace(TR_MODAL, "").trim(); } while (p !== prev);
+    // "Los alumnos deberán seleccionar..." → "seleccionar..."
+    if (!trVerb(trFirst(p))) { const sm = p.match(/^(?:\p{L}+\s+){1,4}?(?:deber(?:á|án|ás)|deben|tienen que|tendrán que|van a)\s+/iu); if (sm) p = p.slice(sm[0].length); }
+    return p;
+  };
+  function trSegments(text) {
+    const segs = [];
+    const add = (txt, cat) => {
+      if (!txt.trim()) return;
+      // La fecha va aparte aunque esté adentro de otra parte
+      const d = cat !== "fecha" && txt.match(TR_DATE);
+      if (d) { add(txt.slice(0, d.index), cat); segs.push({ text: d[0], cat: "fecha" }); add(txt.slice(d.index + d[0].length), cat); }
+      else if (!trClean(txt) && segs.length) segs[segs.length - 1].text += txt; // un punto suelto va con la parte anterior
+      else segs.push({ text: txt, cat });
+    };
+    // Lo que está entre comillas no se corta (títulos, frases citadas)
+    const quotes = [];
+    const t = text.replace(/\s+/g, " ").trim()
+      .replace(/"[^"]*"|“[^”]*”|«[^»]*»/g, (q) => "\u0001" + (quotes.push(q) - 1) + "\u0002");
+    const back = (s) => s.replace(/\u0001(\d+)\u0002/g, (_, i) => quotes[i]);
+    for (const s0 of t.match(/[^.!?;]+(?:[.!?;]+|$)\s*/g) || []) {
+      const s = s0.trim();
+      if (!s) continue;
+      const sp = s0.endsWith(" ") ? " " : "";
+      if (/^(?:se\s+evalu|se\s+evalú|criterios?\b|la\s+evaluación|evaluación:)/i.test(s)) { add(back(s) + sp, "evalua"); continue; }
+      if (/^(?:el\s+)?(?:plazo|fecha de entrega|fecha límite|vence)/i.test(s)) { add(back(s) + sp, "fecha"); continue; }
+      if (/^(?:se\s+entrega|la\s+entrega|entrega:|formato|el\s+trabajo\s+se\s+entrega|extensión|subir|enviar|entregar\s+(?:en|por|al|a\s+trav))/i.test(s)) { add(back(s) + sp, "entregar"); continue; }
+      if (/^(?:tener en cuenta|tené en cuenta|tengan en cuenta|importante|considerar|condiciones?:|recordá|recuerden|no\s+(?:se\s+)?(?:puede|pueden|debe|deben|vale))/i.test(s)) { add(back(s) + sp, "cuenta"); continue; }
+      // "..., teniendo en cuenta X, Y y Z" es "Qué tener en cuenta"
+      let body = s, tail = "";
+      const tc = s.match(/,?\s*(?:teniendo en cuenta|considerando|tomando en cuenta|respetando|sin\s+(?:usar|superar|exceder))\s+.+$/i);
+      if (tc) { body = s.slice(0, tc.index); tail = s.slice(tc.index); }
+      // Cortar en pasos: en "después/luego/finalmente" y en ", " o " y " seguidos de un verbo
+      const cuts = [0];
+      for (const m of body.matchAll(/,\s*(?:y\s+|e\s+)?|\s+[ye]\s+|\s+(?=(?:después|luego|finalmente|por último|a continuación)\b)/giu)) {
+        const after = body.slice(m.index + m[0].length);
+        if (trVerb(trFirst(trStart(after))) || /^(?:después|luego|finalmente|por último|a continuación)\b/i.test(after)) cuts.push(m.index);
+      }
+      cuts.push(body.length);
+      const parts = [];
+      for (let i = 0; i < cuts.length - 1; i++) parts.push(body.slice(cuts[i], cuts[i + 1]));
+      parts.forEach((p, i) => {
+        const cat = trVerb(trFirst(trStart(p))) ? "paso" : parts.length > 1 || /\b(?:individual|grupal|en grupos?|obligatori|máximo|mínimo|sin|no se|solo|sólo|debe|deben|tiene que|importante)\b/i.test(p) ? "cuenta" : "otro";
+        add(back(p) + (i === parts.length - 1 && !tail ? sp : ""), cat);
+      });
+      if (tail) add(back(tail) + sp, "cuenta");
+    }
+    return segs;
+  }
+  const trClean = (s) => s.replace(/^[\s,;:.]+|[\s,;:.]+$/g, "").replace(/^(?:y|e)\s+/i, "");
+  function trBuild(segs, text) {
+    const of = (cat) => segs.filter((s) => s.cat === cat).map((s) => trClean(s.text)).filter(Boolean);
+    const steps = [], verbs = [], cuenta = [];
+    of("paso").forEach((p) => {
+      const q = trStart(p), inf = trVerb(trFirst(q));
+      const step = inf ? trCap(inf + q.slice(trFirst(q).length)) : trCap(q);
+      if (/^(?:en\s+|con\s+|de\s+)/i.test(q) && steps.length && !inf) steps[steps.length - 1] += ", " + q; // una parte suelta movida a "Hacer"
+      else if (step) { steps.push(step); verbs.push(inf); }
+    });
+    of("cuenta").forEach((c) => cuenta.push(...trList(c.replace(TR_SEQ, "").replace(/^(?:teniendo|tomando|tener|tené|tengan) en cuenta(?: que)?:?\s*|^considerando\s*|^considerar:?\s*|^importante:?\s*|^condiciones?:\s*/i, ""))));
+    const plain = text.replace(/\s+/g, " ");
+    const c = plain.match(/comuni(?:que|car|quen)\s+(.+?)(?:,|\.|\s+teniendo|\s+para\s|$)/i);
+    // Frases entre comillas dentro de un paso (que no sean lo que hay que leer): idea clave
+    steps.forEach((st, i) => {
+      if (TR_READ.test(verbs[i] || "") || /comuni(?:que|car|quen)/i.test(st)) return;
+      for (const m of st.matchAll(/"[^"]*"|“[^”]*”|«[^»]*»/g)) cuenta.push("Idea clave: " + m[0]);
+    });
+    const lim = plain.match(/(?:no más de|como máximo|máximo de|mínimo de|al menos|entre \d+ y \d+|hasta)\s+\d*\s*(?:páginas|carillas|palabras|caracteres|líneas|minutos|diapositivas|imágenes)\b|\b\d+\s*(?:páginas|carillas|palabras|caracteres|líneas|minutos|diapositivas)\b/gi);
+    if (lim) cuenta.push(...lim.map((x) => "Extensión: " + x));
+    const ent = of("entregar").join(" ");
+    const fm = ent.match(/\b(PDF|JPG|PNG|Word|editable|impres[oa]|maqueta|archivo abierto|AI|PSD|InDesign|campus|aula virtual|mail)\b/gi);
+    const formats = fm ? Array.from(new Set(fm.map((s) => /^(pdf|jpg|png|ai|psd)$/i.test(s) ? s.toUpperCase() : s.toLowerCase() === "editable" ? "archivo editable" : /^word$/i.test(s) ? "Word" : s.toLowerCase()))) : [];
+    let entregar = formats.length ? formats.join(" + ") : trCap(ent.replace(/^se\s+entregan?\s+/i, "").replace(/^entrega:?\s*/i, ""));
+    let guess = false;
+    if (!entregar && verbs.some((v) => /^(escribir|reescribir|redactar|narrar)$/.test(v))) { entregar = "Seguramente el texto que escribas"; guess = true; }
+    const fs = of("fecha").join(" ");
+    const d = fs.match(/\b(\d{1,2})[\/\-](\d{1,2})/);
+    const fecha = d ? pad(d[1]) + "/" + pad(d[2]) : trCap(fs.replace(/^(?:el\s+)?(?:plazo|fecha de entrega|fecha límite)?\s*(?:vence|es)?\s*/i, "").replace(/^(?:para|hasta)\s+/i, ""));
+    const evalua = of("evalua").flatMap((e) => trList(e.replace(/^(?:se\s+(?:evalua(?:rá)?|evaluará|evalúa|van a evaluar)|criterios?(?: de evaluación)?:?|(?:la\s+)?evaluación:?)\s*/i, "")));
+    const asks = [];
+    if (!fecha) asks.push("¿Cuándo se entrega?");
+    if (!formats.length && (!entregar || guess)) asks.push("¿En qué formato y con qué extensión se entrega?");
+    if (!evalua.length) asks.push("¿Qué se va a evaluar?");
+    return {
+      steps, comunicar: c ? c[1].replace(/^(el|la|los|las)\s+/i, "").trim() : "",
+      cuenta: Array.from(new Set(cuenta.map((x) => x.trim()).filter(Boolean))), entregar, fecha, evalua: Array.from(new Set(evalua)), asks,
+      paso: steps.length === 1 && c ? "Definir el concepto en una frase" : steps[0] || "Releer la consigna y marcar lo que no entiendo"
+    };
+  }
+  let trSegs = [], trSel = -1, trRes = null;
+  const TR_ASK = "No lo dice la consigna";
   function renderTr() {
-    const v = {}; trIds.forEach((id) => v[id] = $("#tr-" + id).value.trim());
-    const cell = (id, cls) => `<div class="tp-cell ${cls || ""}"><span class="lbl">${trLabels[id]}</span><span>${esc(v[id] || "—")}</span></div>`;
+    const r = trRes = trBuild(trSegs, $("#tr-input").value);
+    // Consigna resaltada por partes
+    let n = 0;
+    $("#tr-text").innerHTML = trSegs.map((s, i) => `<span role="button" tabindex="0" class="frag f-${s.cat}${i === trSel ? " sel" : ""}" data-i="${i}" aria-pressed="${i === trSel}" aria-label="${esc(TR_CATS[s.cat].name)}: ${esc(trClean(s.text))}"><span class="ftag" aria-hidden="true">${s.cat === "paso" ? ++n : TR_CATS[s.cat].tag}</span>${esc(s.text.trim().replace(/^[,;]\s*/, ""))}</span>`).join(" ");
+    $("#tr-legend").innerHTML = Object.entries(TR_CATS).map(([k, v]) => `<span class="fkey f-${k}">${v.name}</span>`).join("");
+    const pick = $("#tr-pick");
+    pick.hidden = trSel < 0;
+    if (trSel >= 0) {
+      pick.innerHTML = `<span class="small"><b>Esta parte es:</b> "${esc(trClean(trSegs[trSel].text))}"</span>
+        <div class="row">${Object.entries(TR_CATS).map(([k, v]) => `<button type="button" class="btn ghost fpick f-${k}" data-cat="${k}" aria-pressed="${trSegs[trSel].cat === k}">${v.name}</button>`).join("")}</div>`;
+    }
+    const cell = (lbl, val, cls) => `<div class="tp-cell ${cls || ""}"><span class="lbl">${lbl}</span><span${val ? "" : ' class="ask"'}>${esc(val || TR_ASK)}</span></div>`;
+    const list = (lbl, arr, cls) => arr.length ? `<div class="tp-cell ${cls || ""}"><span class="lbl">${lbl}</span><ul class="scribble-list">${arr.map((e) => `<li>${esc(e)}</li>`).join("")}</ul></div>` : cell(lbl, "", cls);
     $("#tr-card").innerHTML = `
-      <span class="tp-title">${v.que.includes(" · ") ? v.que.split(" · ").map((a, i) => (i + 1) + ". " + esc(a)).join("<br>") : esc(v.que || "Consigna")}</span>
-      <div class="tp-grid">${cell("comunicar")}${cell("cuenta")}${cell("entregar")}${cell("fecha", "date")}</div>
-      ${trEval.length ? `<div class="tp-cell"><span class="lbl">Se evalúa</span><ul class="scribble-list">${trEval.map((e) => `<li>${esc(e)}</li>`).join("")}</ul></div>` : ""}
-      ${cell("paso", "key")}`;
-    store.set("tr", { input: $("#tr-input").value, v, ev: trEval });
+      <span class="tp-title">Paso a paso</span>
+      ${r.steps.length ? `<ol class="tp-steps">${r.steps.map((s) => `<li>${esc(s)}</li>`).join("")}</ol>` : `<p class="ask">No encontramos acciones. Tocá en la consigna las partes que dicen qué hacer y marcalas como "Qué hacer".</p>`}
+      <div class="tp-grid">${r.comunicar ? cell("Qué comunicar", r.comunicar) : ""}${list("Qué tener en cuenta", r.cuenta)}${cell("Qué entregar", r.entregar)}${cell("Fecha", r.fecha, "date")}</div>
+      ${r.evalua.length ? list("Se evalúa", r.evalua) : ""}
+      ${r.asks.length ? list("Preguntale al docente", r.asks, "asks") : ""}
+      ${cell("Primer paso", r.paso, "key")}`;
+    store.set("tr", { input: $("#tr-input").value, segs: trSegs });
   }
   function runTr() {
-    const r = translate($("#tr-input").value);
-    trIds.forEach((id) => $("#tr-" + id).value = r[id] || "");
-    trEval = r.evalua;
-    const missing = trIds.filter((id) => !r[id]).map((id) => trLabels[id].toLowerCase());
-    $("#tr-msg").textContent = missing.length ? "Completá a mano: " + missing.join(", ") + "." : "Revisá que cada campo esté bien.";
+    trSegs = trSegments($("#tr-input").value);
+    trSel = -1;
+    $("#tr-msg").textContent = trSegs.length ? "" : "Pegá una consigna primero.";
     renderTr();
   }
   $("#tr-run").onclick = runTr;
-  trIds.forEach((id) => $("#tr-" + id).addEventListener("input", renderTr));
+  const trFrag = (e) => {
+    const b = e.target.closest(".frag"); if (!b) return;
+    if (e.type === "keydown") { if (e.key !== "Enter" && e.key !== " ") return; e.preventDefault(); }
+    trSel = trSel === Number(b.dataset.i) ? -1 : Number(b.dataset.i);
+    renderTr();
+    if (trSel >= 0) $("#tr-pick .fpick[aria-pressed=true]")?.focus();
+  };
+  $("#tr-text").addEventListener("click", trFrag);
+  $("#tr-text").addEventListener("keydown", trFrag);
+  $("#tr-pick").addEventListener("click", (e) => {
+    const b = e.target.closest(".fpick"); if (!b || trSel < 0) return;
+    const i = trSel;
+    trSegs[i].cat = b.dataset.cat; trSel = -1;
+    renderTr();
+    $(`#tr-text .frag[data-i="${i}"]`)?.focus();
+  });
   const trSaved = store.get("tr", null);
-  if (trSaved) { $("#tr-input").value = trSaved.input; trIds.forEach((id) => $("#tr-" + id).value = trSaved.v[id] || ""); trEval = trSaved.ev || []; renderTr(); }
+  if (trSaved && Array.isArray(trSaved.segs)) { $("#tr-input").value = trSaved.input; trSegs = trSaved.segs; renderTr(); }
   else runTr();
   $("#tr-input").addEventListener("input", () => store.set("tr", Object.assign(store.get("tr", {}), { input: $("#tr-input").value })));
   $("#tr-copy").onclick = () => {
-    const lines = trIds.map((id) => trLabels[id].toUpperCase() + ": " + ($("#tr-" + id).value || "—"));
-    if (trEval.length) lines.push("SE EVALÚA: " + trEval.join(", "));
+    const r = trRes;
+    const lines = ["PASO A PASO:", ...r.steps.map((s, i) => (i + 1) + ". " + s)];
+    if (r.comunicar) lines.push("QUÉ COMUNICAR: " + r.comunicar);
+    lines.push("QUÉ TENER EN CUENTA: " + (r.cuenta.join(", ") || TR_ASK), "QUÉ ENTREGAR: " + (r.entregar || TR_ASK), "FECHA: " + (r.fecha || TR_ASK));
+    if (r.evalua.length) lines.push("SE EVALÚA: " + r.evalua.join(", "));
+    if (r.asks.length) lines.push("PREGUNTAR AL DOCENTE: " + r.asks.join(" "));
+    lines.push("PRIMER PASO: " + r.paso);
     copyText(lines.join("\n"), $("#tr-msg"));
   };
   $("#tr-toplan").onclick = () => {
-    dv.title = $("#tr-que").value.split(" · ")[0] || dv.title;
-    const f = $("#tr-fecha").value.match(/(\d{1,2})\/(\d{1,2})/);
+    const r = trRes;
+    dv.title = (r.steps[0] || dv.title).slice(0, 60);
+    const f = r.fecha.match(/(\d{1,2})\/(\d{1,2})/);
     if (f) {
       let d = new Date(today().getFullYear(), Number(f[2]) - 1, Number(f[1]));
       if (d < today()) d = new Date(d.getFullYear() + 1, d.getMonth(), d.getDate());
       dv.due = iso(d);
     }
-    if ($("#tr-paso").value) dv.stages[0].text = $("#tr-paso").value;
+    // Con dos pasos o más, las etapas son los pasos de la consigna (más revisar y entregar)
+    if (r.steps.length > 1) dv.stages = [...r.steps, "Revisar contra la consigna y entregar"].map((t) => ({ text: t, done: false, date: "" }));
+    else dv.stages[0].text = r.paso;
     saveDv(); renderDv();
     goTab("herramientas", true); goSub("dividir");
   };

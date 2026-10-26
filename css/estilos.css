@@ -505,7 +505,31 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .tp-cell.date .lbl { color: var(--c-entrega); }
 .tp-cell ul, .tp-cell ol { margin: 0; padding-left: 1.2rem; }
 .arrow-down { font-family: var(--f-display); font-weight: 600; color: var(--accent-text); text-align: center; }
-.trans-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 1rem; }
+.tp-steps { margin: 0; padding: 0; list-style: none; counter-reset: paso; display: flex; flex-direction: column; gap: 0.6rem; }
+.tp-steps li { counter-increment: paso; display: grid; grid-template-columns: 2rem 1fr; gap: 0.6rem; align-items: baseline; overflow-wrap: anywhere; }
+.tp-steps li::before { content: counter(paso); font-family: var(--f-display); font-weight: 700; color: var(--brand-2); font-size: 1.25rem; }
+.tp-card .ask { color: var(--muted); font-style: italic; }
+.tp-cell.asks { border-top-color: var(--c-aviso); }
+.tp-cell.asks .lbl { color: var(--c-aviso); }
+/* Traductor guiado: la consigna pintada por partes */
+.f-paso { --fc: var(--brand-2); } .f-cuenta { --fc: var(--c-taller); } .f-entregar { --fc: var(--c-correccion); }
+.f-fecha { --fc: var(--c-entrega); } .f-evalua { --fc: var(--c-evaluacion); } .f-otro { --fc: var(--muted); }
+.tr-guide { display: flex; flex-direction: column; gap: 0.75rem; }
+.tr-legend { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; font-size: var(--step--1); }
+.fkey { display: inline-flex; align-items: center; gap: 0.35rem; }
+.fkey::before { content: ""; width: 0.8rem; height: 0.8rem; border-radius: 3px; background: var(--fc); }
+.tr-text { line-height: 2.1; }
+.tr-text .frag { cursor: pointer; padding: 0.15rem 0.3rem; border-bottom: 3px solid var(--fc); border-radius: 4px 4px 0 0;
+  background: color-mix(in srgb, var(--fc) 13%, transparent); -webkit-box-decoration-break: clone; box-decoration-break: clone; transition: background 0.2s ease; }
+.tr-text .frag:focus-visible { outline: 3px solid var(--fc); outline-offset: 2px; }
+.tr-text .frag:hover { background: color-mix(in srgb, var(--fc) 26%, transparent); }
+.tr-text .frag.sel { outline: 2px solid var(--fc); outline-offset: 1px; background: color-mix(in srgb, var(--fc) 26%, transparent); }
+.tr-text .frag.f-otro { color: var(--muted); }
+.frag .ftag { font-family: var(--f-display); font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fc); margin-right: 0.35rem; vertical-align: 0.15em; white-space: nowrap; }
+.tr-pick { display: flex; flex-direction: column; gap: 0.6rem; padding: 0.9rem; border: 2px dashed var(--line); border-radius: var(--radius); }
+.tr-pick .row { gap: 0.4rem; }
+.tr-pick .fpick { border-color: var(--fc); color: inherit; font-size: var(--step--1); padding: 0.35rem 0.75rem; }
+.tr-pick .fpick[aria-pressed="true"] { background: color-mix(in srgb, var(--fc) 22%, transparent); }
 
 .map { display: flex; gap: 0; overflow-x: auto; padding-bottom: 0.5rem; }
 .map-step { flex: 1 0 8.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; position: relative; background: none; border: 0; font: inherit; color: inherit; cursor: pointer; padding: 0.25rem; }
