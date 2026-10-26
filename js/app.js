@@ -318,8 +318,18 @@
   $$("#myths .myth button").forEach((b) => b.onclick = () => {
     const open = b.getAttribute("aria-expanded") !== "true";
     b.setAttribute("aria-expanded", open);
-    document.getElementById(b.getAttribute("aria-controls")).hidden = !open;
     $(".hint", b).textContent = open ? "Ocultar" : "Ver la realidad";
+    const r = document.getElementById(b.getAttribute("aria-controls"));
+    if (r.anim) r.anim.cancel();
+    r.hidden = false;
+    if (isCalm()) { r.hidden = !open; return; }
+    // Despliega o pliega la realidad de a poco: alto, relleno y opacidad juntos.
+    const cs = getComputedStyle(r);
+    const full = { height: r.offsetHeight + "px", paddingTop: cs.paddingTop, paddingBottom: cs.paddingBottom, opacity: 1 };
+    const zero = { height: "0px", paddingTop: "0px", paddingBottom: "0px", opacity: 0 };
+    r.style.overflow = "hidden";
+    r.anim = r.animate(open ? [zero, full] : [full, zero], { duration: 320, easing: "cubic-bezier(.4,0,.2,1)" });
+    r.anim.onfinish = () => { r.style.overflow = ""; r.hidden = !open; r.anim = null; };
   });
 
   /* ---------- Códigos visuales ---------- */
