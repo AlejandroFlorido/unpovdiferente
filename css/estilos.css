@@ -627,21 +627,25 @@ footer p { max-width: none; }
 html.calm *, html.calm *::before, html.calm *::after { transition: none !important; animation: none !important; }
 
 /* Tarjeta de desarrollador: sobria, se da vuelta. Frente negro con borde azul que gira; dorso con estrellas y símbolo POV */
+/* Modo diurno: tarjeta clara; modo nocturno: tarjeta negra */
+.dev-card { --dv-face: #ffffff; --dv-inner: radial-gradient(ellipse at center, #ffffff 0%, #f1f3f8 100%); --dv-ink: #111111; --dv-night: radial-gradient(ellipse at bottom, #e6edff 0%, #ffffff 100%); --dv-role: #333333; --dv-edge: 0 0 0 1px var(--line); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .dev-card { --dv-face: #151515; --dv-inner: radial-gradient(ellipse at center, #1b1b1b 0%, #121212 100%); --dv-ink: #ffffff; --dv-night: radial-gradient(ellipse at bottom, #161d27 0%, #0b0c10 100%); --dv-role: #ffffffd9; --dv-edge: none; } }
+:root[data-theme="dark"] .dev-card { --dv-face: #151515; --dv-inner: radial-gradient(ellipse at center, #1b1b1b 0%, #121212 100%); --dv-ink: #ffffff; --dv-night: radial-gradient(ellipse at bottom, #161d27 0%, #0b0c10 100%); --dv-role: #ffffffd9; --dv-edge: none; }
 .person.dev-card { padding: 0; border: 0; background: none; perspective: 900px; cursor: pointer; overflow: visible; }
 .person.dev-card::after { display: none; }
 .dev-flip { position: relative; width: 100%; height: 100%; min-height: 15rem; transform-style: preserve-3d; transition: transform 0.5s ease; border-radius: var(--radius); }
 .dev-card:hover .dev-flip, .dev-card.flipped .dev-flip { transform: rotateY(180deg); }
 .dev-card:focus-visible { outline: 3px solid var(--brand); outline-offset: 4px; }
-.dev-face { position: absolute; inset: 0; border-radius: var(--radius); overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #151515; color: #fff; }
+.dev-face { position: absolute; inset: 0; border-radius: var(--radius); overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: var(--dv-face); color: var(--dv-ink); box-shadow: var(--dv-edge); }
 .dev-back { display: flex; align-items: center; justify-content: center; }
 .dev-back::before { content: ""; position: absolute; width: 30%; height: 160%; background: linear-gradient(90deg, transparent, var(--brand-2), transparent); animation: dev-spin 6s linear infinite; }
-.dev-inner { position: absolute; inset: 2px; border-radius: calc(var(--radius) - 2px); background: radial-gradient(ellipse at center, #1b1b1b 0%, #121212 100%); display: flex; align-items: center; justify-content: center; }
+.dev-inner { position: absolute; inset: 2px; border-radius: calc(var(--radius) - 2px); background: var(--dv-inner); display: flex; align-items: center; justify-content: center; }
 .dev-text { padding: 1.25rem; text-align: center; }
-.dev-front { transform: rotateY(180deg); background: radial-gradient(ellipse at bottom, #161d27 0%, #0b0c10 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.9rem; }
+.dev-front { transform: rotateY(180deg); background: var(--dv-night); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.9rem; }
 .dev-stars { position: absolute; inset: 0; overflow: hidden; }
 .dev-stars i { position: absolute; top: 0; left: 0; background: transparent; border-radius: 50%; animation: dev-star var(--t, 30s) linear infinite; }
 .dev-stars i::after { content: ""; position: absolute; top: var(--h, 600px); left: 0; width: inherit; height: inherit; border-radius: 50%; box-shadow: inherit; }
 .dev-pov { position: relative; width: 52%; }
-.dev-role { position: relative; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 0.75rem; letter-spacing: 0.02em; color: #ffffffd9; text-align: center; padding: 0 1rem; }
+.dev-role { position: relative; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 0.75rem; letter-spacing: 0.02em; color: var(--dv-role); text-align: center; padding: 0 1rem; }
 @keyframes dev-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes dev-star { from { transform: translateY(0); } to { transform: translateY(calc(-1 * var(--h, 600px))); } }
