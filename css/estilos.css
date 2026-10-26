@@ -256,8 +256,16 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
    y el título en su color: azul, naranja, azul. Al abrir uno, los otros dos se desvanecen y el elegido
    crece hasta el centro (el movimiento lo hace el script); se cierra tocando el título de nuevo. */
 .concepts { width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); align-items: start; gap: var(--space-grid); }
-.concept { --c: var(--brand-2); border: 2px solid var(--c); border-radius: var(--radius); display: flex; flex-direction: column;
-  transition: opacity 0.25s ease; }
+/* Recuadro "desdibujado": bordes con curvas desparejas, como hechos a mano, y un segundo trazo
+   apenas corrido y girado encima, como el óvalo del logo. Cada recuadro tiene su propio dibujo. */
+.concept { --c: var(--brand-2); position: relative; border: 2.5px solid var(--c); display: flex; flex-direction: column;
+  border-radius: 255px 18px 225px 16px / 16px 225px 18px 255px; transition: opacity 0.25s ease; }
+.concept::before { content: ""; position: absolute; inset: -5px -3px -3px -6px; border: 1.5px solid var(--c); opacity: 0.55; pointer-events: none;
+  border-radius: 18px 225px 16px 255px / 255px 16px 225px 18px; transform: rotate(-0.6deg); }
+.concept:nth-child(2) { border-radius: 16px 240px 20px 210px / 230px 18px 250px 14px; }
+.concept:nth-child(2)::before { border-radius: 240px 14px 230px 20px / 20px 250px 14px 230px; transform: rotate(0.5deg); inset: -3px -6px -5px -3px; }
+.concept:nth-child(3) { border-radius: 230px 14px 250px 20px / 20px 250px 14px 230px; }
+.concept:nth-child(3)::before { border-radius: 14px 250px 18px 220px / 220px 14px 250px 18px; transform: rotate(-0.4deg); inset: -6px -4px -2px -5px; }
 .concept.t-orange { --c: var(--brand); }
 .concept-title { font: inherit; font-family: var(--f-title); font-size: calc(var(--step-2) + 4pt); line-height: var(--lh-title); letter-spacing: -0.02em;
   color: var(--c); background: none; border: 0; border-radius: inherit; padding: 1.6rem 1.2rem; cursor: pointer; text-align: center;
