@@ -294,7 +294,12 @@
   setTopH();
   if ("ResizeObserver" in window) new ResizeObserver(setTopH).observe(topEl); else window.addEventListener("resize", setTopH);
   // "¿Te pasa? ↓" y "Tres formas ↓" bajan a la parte siguiente del Inicio (de una con "Sin animaciones").
-  $$("[data-cue]").forEach((b) => { b.onclick = () => document.getElementById(b.dataset.cue).scrollIntoView({ behavior: isCalm() ? "auto" : "smooth", block: "start" }); });
+  // Los botones "↑" vuelven a la parte anterior; si es la primera pantalla de la pestaña, sube hasta arriba de todo.
+  $$("[data-cue]").forEach((b) => { b.onclick = () => {
+    const t = document.getElementById(b.dataset.cue), behavior = isCalm() ? "auto" : "smooth";
+    if (t === t.parentElement.firstElementChild) window.scrollTo({ top: 0, behavior });
+    else t.scrollIntoView({ behavior, block: "start" });
+  }; });
   $("#car-prev").onclick = () => { car = (car - 1 + situations.length) % situations.length; renderCar(-1); };
   $("#car-next").onclick = () => { car = (car + 1) % situations.length; renderCar(1); };
   renderCar();

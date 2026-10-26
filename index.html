@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;500;600;700&display=swap">
 <!-- ?v= obliga al navegador a bajar el CSS y el JS nuevos después de cada cambio: subir el número al editarlos. -->
-<link rel="stylesheet" href="css/estilos.css?v=33">
+<link rel="stylesheet" href="css/estilos.css?v=34">
 
 <!-- Filtro "borroneado" para los óvalos naranjas: ondula el trazo y lo deja con huecos, como marcador seco. -->
 <svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -64,7 +64,7 @@
 <main>
   <!-- ================= INICIO ================= -->
   <section id="inicio">
-    <div class="hero screen">
+    <div class="hero screen" id="inicio-hero">
       <div class="lead">
         <span class="eyebrow">TDAH en la universidad</span>
         <h1>Sabés lo que tenés que hacer. <em>Te ayudamos a empezar.</em></h1>
@@ -78,6 +78,7 @@
     </div>
 
     <div class="carousel screen" id="te-pasa" aria-roledescription="carrusel" aria-label="Situaciones de la cursada">
+      <button class="scroll-cue up" type="button" data-cue="inicio-hero"><span aria-hidden="true">↑</span> Inicio</button>
       <span class="eyebrow">¿Te pasa?</span>
       <p class="quote car-slide" id="car-quote" aria-live="polite"></p>
       <div class="behind car-slide">
@@ -94,6 +95,7 @@
     </div>
 
     <div class="lead" id="tres-formas">
+      <button class="scroll-cue up" type="button" data-cue="te-pasa"><span aria-hidden="true">↑</span> ¿Te pasa?</button>
       <h2>Tres formas de usar este sitio</h2>
       <p class="small muted">El proyecto se organiza en tres líneas: informar sobre el TDAH, orientar en la información académica y acompañar con herramientas.</p>
     </div>
@@ -129,6 +131,7 @@
     </div>
 
     <div class="screen" id="entender-tdah">
+      <button class="scroll-cue up" type="button" data-cue="que-es"><span aria-hidden="true">↑</span> ¿Qué es el TDAH?</button>
       <h2 class="title-circled">Entender el TDAH</h2>
       <div class="drops">
         <details class="drop">
@@ -165,6 +168,7 @@
     </div>
 
     <div class="screen" id="tres-conceptos">
+      <button class="scroll-cue up" type="button" data-cue="entender-tdah"><span aria-hidden="true">↑</span> Entender el TDAH</button>
       <h2>Tres conceptos para entender</h2>
       <div class="concepts" id="concepts">
         <div class="concept t-blue">
@@ -184,6 +188,7 @@
     </div>
 
     <div class="screen" id="nt-vs-nd">
+      <button class="scroll-cue up" type="button" data-cue="tres-conceptos"><span aria-hidden="true">↑</span> Tres conceptos</button>
       <h2 class="vs-title"><img src="assets/img/entender/titulo-nt-vs-nd.png" alt="Neurotípico vs Neurodivergente"></h2>
       <div class="vs-cols">
         <div class="vs-col">
@@ -229,6 +234,7 @@
     </div>
 
     <div class="lead" id="mitos">
+      <button class="scroll-cue up" type="button" data-cue="nt-vs-nd"><span aria-hidden="true">↑</span> Neurotípico vs Neurodivergente</button>
       <h2>Mitos y realidades</h2>
       <p class="small muted">Tocá cada tarjeta para ver la realidad.</p>
     </div>
@@ -549,4 +555,4 @@ Entrega</textarea></label>
   <p class="copyright"><small>© 2026 Alejandro Gabriel Florido. Todos los derechos reservados.</small></p>
 </footer>
 
-<script src="js/app.js?v=33"></script>
+<script src="js/app.js?v=34"></script>
