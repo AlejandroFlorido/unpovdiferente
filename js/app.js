@@ -735,7 +735,7 @@
       el.style.transition = "none";
       el.style.transform = `translate(${first.left + first.width / 2 - last.left - last.width / 2}px, ${first.top - last.top}px)`;
       el.getBoundingClientRect();
-      el.style.transition = "transform 0.45s cubic-bezier(0.2, 0.7, 0.3, 1), opacity 0.25s ease";
+      el.style.transition = "transform 0.55s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease";
       el.style.transform = "";
     };
     const setOpen = (item, open) => {
@@ -758,15 +758,17 @@
             setOpen(item, true);
             if (!calm) slide(item, first);
             busy = false;
-          }, calm ? 0 : 250);
+          }, calm ? 0 : 380);
         } else {
           const first = item.getBoundingClientRect();
           setOpen(item, false);
           item.classList.remove("open");
           concepts.classList.remove("focused");
           if (!calm) slide(item, first);
-          // Los otros dos vuelven a aparecer con el mismo fundido.
-          requestAnimationFrame(() => concepts.classList.remove("fading"));
+          // Los otros dos vuelven a aparecer con el mismo fundido, apenas después de que el elegido empieza a volver.
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            setTimeout(() => concepts.classList.remove("fading"), calm ? 0 : 120);
+          }));
         }
       });
     });
