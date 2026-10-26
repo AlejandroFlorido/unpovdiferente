@@ -227,9 +227,9 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .hero .lead p { font-size: calc(var(--step-1) + 2pt); max-width: 52ch; }
 /* Entender: primera pantalla "¿Qué es el TDAH?". La palabra TDAH va en el naranja de la marca
    y el nombre completo del trastorno, resaltado en azul con letra blanca. */
+#mitos { scroll-margin-top: calc(var(--top-h, 9rem) + 1.5rem); }
 #entender-tdah, #tres-conceptos, #nt-vs-nd { scroll-margin-top: var(--top-h, 9rem); gap: var(--space-block); position: relative; align-items: center; text-align: center; }
-#nt-vs-nd { min-height: calc(100svh - var(--top-h, 9rem) - var(--tail-h, 0px)); }
-#entender-tdah, #tres-conceptos { padding-bottom: 3.5rem; }
+#entender-tdah, #tres-conceptos, #nt-vs-nd { padding-bottom: 3.5rem; }
 /* Frases destacadas en el naranja de la marca. */
 .orange { color: var(--brand); font-weight: 600; }
 .drop-sub { font-family: var(--f-title); font-size: calc(var(--step-0) + 4pt); margin-top: 0.4rem; }
@@ -336,6 +336,14 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .line-card ul { margin: 0; padding-left: 1.1rem; color: var(--muted); font-size: var(--step--1); display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
 
 /* ---------- Entender ---------- */
+.myth { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); display: flex; flex-direction: column; }
+.myth button { font: inherit; color: inherit; background: none; border: 0; text-align: left; padding: 1.25rem 1.4rem; cursor: pointer; display: flex; flex-direction: column; gap: 0.35rem; }
+.myth .tag { font-family: var(--f-display); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.myth .tag.m { color: var(--c-entrega); }
+.myth .tag.r { color: var(--accent-text); }
+.myth .claim { font-family: var(--f-display); font-weight: 500; font-size: 1.05rem; }
+.myth .reveal { padding: 0 1.4rem 1.25rem; display: flex; flex-direction: column; gap: 0.35rem; border-top: 1px dashed var(--line); padding-top: 0.8rem; }
+.myth .hint { color: var(--muted); font-size: var(--step--1); }
 
 .ef-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--space-grid); }
 .ef { display: flex; flex-direction: column; gap: 0.5rem; padding-left: 1rem; border-left: 3px solid var(--accent); }

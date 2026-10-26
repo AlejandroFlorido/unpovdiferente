@@ -293,21 +293,34 @@
   const setTopH = () => root.style.setProperty("--top-h", topEl.offsetHeight + "px");
   setTopH();
   if ("ResizeObserver" in window) new ResizeObserver(setTopH).observe(topEl); else window.addEventListener("resize", setTopH);
-  // La última pantalla de Entender deja lugar para la nota y el pie: mide lo que viene debajo.
-  const ntvsnd = $("#nt-vs-nd");
-  const setTailH = () => {
-    if (!ntvsnd.offsetParent) return;
-    const tail = document.documentElement.scrollHeight - (ntvsnd.getBoundingClientRect().bottom + window.scrollY);
-    root.style.setProperty("--tail-h", Math.max(0, Math.round(tail)) + "px");
-  };
-  setTailH();
-  if ("ResizeObserver" in window) { const ro = new ResizeObserver(setTailH); ro.observe(ntvsnd.nextElementSibling); ro.observe($("footer")); }
-  window.addEventListener("resize", setTailH);
   // "¿Te pasa? ↓" y "Tres formas ↓" bajan a la parte siguiente del Inicio (de una con "Sin animaciones").
   $$("[data-cue]").forEach((b) => { b.onclick = () => document.getElementById(b.dataset.cue).scrollIntoView({ behavior: isCalm() ? "auto" : "smooth", block: "start" }); });
   $("#car-prev").onclick = () => { car = (car - 1 + situations.length) % situations.length; renderCar(-1); };
   $("#car-next").onclick = () => { car = (car + 1) % situations.length; renderCar(1); };
   renderCar();
+
+  /* ---------- Mitos ---------- */
+  const myths = [
+    ["Es falta de voluntad o de interés.", "Es una condición del neurodesarrollo. Afecta funciones como planificar, iniciar tareas y sostener la atención, aunque haya muchas ganas."],
+    ["Solo les pasa a chicos y chicas.", "En muchas personas continúa en la adultez. En la universidad aumenta la autonomía que se pide y por eso a veces se nota más."],
+    ["Si se concentra en lo que le gusta, no tiene TDAH.", "La atención se regula según el interés. El hiperfoco existe y convive con la dificultad para concentrarse en lo que no engancha."],
+    ["Es estar moviéndose todo el tiempo.", "Hay presentaciones donde predomina la inatención, más silenciosas y fáciles de pasar por alto."],
+    ["Hay que bajar la exigencia.", "Lo que ayuda es información clara, estructura y fechas visibles. La exigencia puede ser la misma."],
+    ["Es algo que se supera con organización.", "Las herramientas ayudan mucho, pero no cambian la condición. Son apoyos, como los anteojos para la vista."]
+  ];
+  $("#myths").innerHTML = myths.map((m, i) => `
+    <div class="myth">
+      <button type="button" aria-expanded="false" aria-controls="myth-${i}">
+        <span class="tag m">Mito</span><span class="claim">${esc(m[0])}</span><span class="hint">Ver la realidad</span>
+      </button>
+      <div class="reveal" id="myth-${i}" hidden><span class="tag r">Realidad</span><p class="small">${esc(m[1])}</p></div>
+    </div>`).join("");
+  $$("#myths .myth button").forEach((b) => b.onclick = () => {
+    const open = b.getAttribute("aria-expanded") !== "true";
+    b.setAttribute("aria-expanded", open);
+    document.getElementById(b.getAttribute("aria-controls")).hidden = !open;
+    $(".hint", b).textContent = open ? "Ocultar" : "Ver la realidad";
+  });
 
   /* ---------- Códigos visuales ---------- */
   const TYPES = {
