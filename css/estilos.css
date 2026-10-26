@@ -227,7 +227,11 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .hero .lead p { font-size: calc(var(--step-1) + 2pt); max-width: 52ch; }
 /* Entender: primera pantalla "¿Qué es el TDAH?". La palabra TDAH va en el naranja de la marca
    y el nombre completo del trastorno, resaltado en azul con letra blanca. */
-#entender-tdah { scroll-margin-top: var(--top-h, 9rem); gap: var(--space-block); position: relative; }
+#entender-tdah, #tres-conceptos { scroll-margin-top: var(--top-h, 9rem); gap: var(--space-block); position: relative; align-items: center; text-align: center; }
+#entender-tdah { padding-bottom: 3.5rem; }
+/* Frases destacadas en el naranja de la marca. */
+.orange { color: var(--brand); font-weight: 600; }
+.drop-sub { font-family: var(--f-title); font-size: calc(var(--step-0) + 4pt); margin-top: 0.4rem; }
 #que-es .brand-word { color: var(--brand); }
 /* Bloque alineado a la izquierda (centrado en la página); texto y cita en General Sans. */
 #que-es .lead { width: min(100%, 48rem); margin-inline: auto; align-items: flex-start; text-align: left; }
@@ -236,7 +240,6 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 #que-es .lead p.source { font-size: var(--step--1); color: var(--muted); margin-top: -0.5rem; }
 /* Entender el TDAH: título y dos desplegables al medio de la pantalla. El título de cada uno va en la
    fuente del proyecto; el contenido, alineado a la izquierda. */
-#entender-tdah { align-items: center; text-align: center; }
 .drops { width: min(100%, 44rem); display: flex; flex-direction: column; gap: 1rem; text-align: left; }
 .drop { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
 .drop summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem;
