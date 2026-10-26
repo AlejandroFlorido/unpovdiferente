@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;500;600;700&display=swap">
 <!-- ?v= obliga al navegador a bajar el CSS y el JS nuevos después de cada cambio: subir el número al editarlos. -->
-<link rel="stylesheet" href="css/estilos.css?v=27">
+<link rel="stylesheet" href="css/estilos.css?v=28">
 
 <!-- Filtro "borroneado" para los óvalos naranjas: ondula el trazo y lo deja con huecos, como marcador seco. -->
 <svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -176,7 +176,33 @@
     </div>
 
     <div class="screen" id="nt-vs-nd">
-      <h2>Neurotípico vs Neurodivergente</h2>
+      <h2 class="vs-title"><img src="assets/img/entender/titulo-nt-vs-nd.png" alt="Neurotípico vs Neurodivergente"></h2>
+      <div class="vs-cols">
+        <div class="vs-col">
+          <h3>Neurotípico</h3>
+          <p class="vs-sub">proceso más lineal</p>
+        </div>
+        <div class="vs-col">
+          <h3>Neurodivergente</h3>
+          <p class="vs-sub">proceso <b>no</b> lineal</p>
+          <div class="nd-map">
+            <svg class="nd-arrows" viewBox="0 0 1000 430" aria-hidden="true" focusable="false">
+              <defs><marker id="nd-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+              <path d="M248,88 C290,40 370,30 436,48"/>
+              <path d="M488,72 C505,120 470,148 404,168"/>
+              <path d="M410,200 C440,245 500,235 545,190 C600,135 690,130 740,118 C785,105 805,85 822,66"/>
+              <path d="M888,218 C895,262 850,262 795,255"/>
+            </svg>
+            <ol class="nd-steps">
+            <li class="nd-step s1"><span class="nd-num" aria-hidden="true">1</span><span class="nd-img"><img class="img-claro" src="assets/img/entender/nd-plan.png" alt="" loading="lazy"><img class="img-oscuro" src="assets/img/entender/nd-plan-oscuro.png" alt="" loading="lazy"></span><span class="nd-cap"><b>Saber</b> qué hay que hacer</span></li>
+            <li class="nd-step s2"><span class="nd-num" aria-hidden="true">2</span><span class="nd-img"><img class="img-claro" src="assets/img/entender/nd-bloqueo.png" alt="" loading="lazy"><img class="img-oscuro" src="assets/img/entender/nd-bloqueo-oscuro.png" alt="" loading="lazy"></span><span class="nd-cap">Sentirse <b>bloqueado</b> para empezar y <b>frustrarse</b></span></li>
+            <li class="nd-step s3"><span class="nd-num" aria-hidden="true">3</span><span class="nd-img"><img class="img-claro" src="assets/img/entender/nd-tareas.png" alt="" loading="lazy"><img class="img-oscuro" src="assets/img/entender/nd-tareas-oscuro.png" alt="" loading="lazy"></span><span class="nd-cap"><b>Saltar</b> entre varias tareas a la vez</span></li>
+            <li class="nd-step s4"><span class="nd-num" aria-hidden="true">4</span><span class="nd-img"><img class="img-claro" src="assets/img/entender/nd-reloj.png" alt="" loading="lazy"><img class="img-oscuro" src="assets/img/entender/nd-reloj-oscuro.png" alt="" loading="lazy"></span><span class="nd-cap"><b>Perder</b> la noción del tiempo</span></li>
+            <li class="nd-step s5"><span class="nd-num" aria-hidden="true">5</span><span class="nd-img"><img class="img-claro" src="assets/img/entender/nd-entrega.png" alt="" loading="lazy"><img class="img-oscuro" src="assets/img/entender/nd-entrega-oscuro.png" alt="" loading="lazy"></span><span class="nd-cap"><b>Terminar</b> a último momento</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
       <button class="scroll-cue" type="button" data-cue="mitos">Mitos y realidades <span aria-hidden="true">↓</span></button>
     </div>
 
@@ -501,4 +527,4 @@ Entrega</textarea></label>
   <p class="copyright"><small>© 2026 Alejandro Gabriel Florido. Todos los derechos reservados.</small></p>
 </footer>
 
-<script src="js/app.js?v=27"></script>
+<script src="js/app.js?v=28"></script>
