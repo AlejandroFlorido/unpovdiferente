@@ -1051,6 +1051,23 @@
 
   /* ---------- Estado inicial ---------- */
   const hash = (location.hash || "").slice(1);
+  /* ---------- Tarjeta de desarrollador ---------- */
+  // Estrellas azules y naranjas: tres capas de puntos (box-shadow) que suben sin fin, como en el código de Ale
+  $$(".dev-card .dev-stars").forEach((box) => {
+    const W = 400, H = 600;
+    [[1, 70, 25], [2, 25, 50], [3, 10, 75]].forEach(([size, n, t], k) => {
+      const pts = Array.from({ length: n }, (_, i) => `${Math.round(Math.random() * W)}px ${Math.round(Math.random() * H)}px ${i % 2 ? "var(--brand)" : "var(--brand-2)"}`);
+      Object.assign(box.children[k].style, { width: size + "px", height: size + "px", boxShadow: pts.join(",") });
+      box.children[k].style.setProperty("--t", t + "s");
+      box.children[k].style.setProperty("--h", H + "px");
+    });
+  });
+  // Con dedo o teclado no hay hover: tocar o Enter da vuelta la tarjeta
+  $$(".dev-card").forEach((card) => {
+    card.addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse") card.classList.toggle("flipped"); });
+    card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); card.classList.toggle("flipped"); } });
+  });
+
   goSub(store.get("sub", "primer"));
   goTab(sectionIds.includes(hash) ? hash : "inicio", false);
   // El navegador salta solo hasta el #ancla al cargar: la pestaña tiene que arrancar desde arriba.
