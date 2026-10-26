@@ -1052,10 +1052,10 @@
   /* ---------- Estado inicial ---------- */
   const hash = (location.hash || "").slice(1);
   /* ---------- Tarjeta de desarrollador ---------- */
-  // Estrellas azules y naranjas: tres capas de puntos (box-shadow) que suben sin fin, como en el código de Ale
+  // Estrellas azules y naranjas: dos capas de puntos (box-shadow) que suben sin fin, como en el código de Ale
   $$(".dev-card .dev-stars").forEach((box) => {
     const W = 400, H = 600;
-    [[1, 70, 25], [2, 25, 50], [3, 10, 75]].forEach(([size, n, t], k) => {
+    [[1, 40, 40], [2, 12, 80]].forEach(([size, n, t], k) => {
       const pts = Array.from({ length: n }, (_, i) => `${Math.round(Math.random() * W)}px ${Math.round(Math.random() * H)}px ${i % 2 ? "var(--brand)" : "var(--brand-2)"}`);
       Object.assign(box.children[k].style, { width: size + "px", height: size + "px", boxShadow: pts.join(",") });
       box.children[k].style.setProperty("--t", t + "s");

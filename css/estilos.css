@@ -626,31 +626,22 @@ footer p { max-width: none; }
 /* "Sin animaciones" manda: arranca prendido si el sistema pide menos movimiento, pero se puede cambiar. */
 html.calm *, html.calm *::before, html.calm *::after { transition: none !important; animation: none !important; }
 
-/* Tarjeta de desarrollador: se da vuelta (borde que gira, estrellas azules y naranjas, símbolo POV) */
+/* Tarjeta de desarrollador: sobria, se da vuelta. Frente negro con borde azul que gira; dorso con estrellas y símbolo POV */
 .person.dev-card { padding: 0; border: 0; background: none; perspective: 900px; cursor: pointer; overflow: visible; }
 .person.dev-card::after { display: none; }
-.dev-flip { position: relative; width: 100%; height: 100%; min-height: 15rem; transform-style: preserve-3d; transition: transform 0.5s ease; border-radius: var(--radius); box-shadow: 0 0 12px 1px #000000aa; }
+.dev-flip { position: relative; width: 100%; height: 100%; min-height: 15rem; transform-style: preserve-3d; transition: transform 0.5s ease; border-radius: var(--radius); }
 .dev-card:hover .dev-flip, .dev-card.flipped .dev-flip { transform: rotateY(180deg); }
 .dev-card:focus-visible { outline: 3px solid var(--brand); outline-offset: 4px; }
 .dev-face { position: absolute; inset: 0; border-radius: var(--radius); overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #151515; color: #fff; }
 .dev-back { display: flex; align-items: center; justify-content: center; }
-.dev-back::before { content: ""; position: absolute; width: 45%; height: 160%; background: linear-gradient(90deg, transparent, var(--brand-2), var(--brand-2), var(--brand-2), var(--brand-2), transparent); animation: dev-spin 5s linear infinite; }
-.dev-inner { position: absolute; inset: 3px; border-radius: calc(var(--radius) - 2px); overflow: hidden; background: radial-gradient(ellipse at center, #1c1c1c 0%, #151515 55%, #0b0b0b 100%); box-shadow: inset 0 0 18px 6px #000000cc; display: flex; align-items: center; justify-content: center; }
-.dev-text { position: relative; display: flex; flex-direction: column; gap: 0.5rem; padding: 1.25rem; text-align: center; }
-.dev-card .dev-text span, .dev-card .dev-desc span { color: #ffffffbb; }
-.dev-front { transform: rotateY(180deg); background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%); }
+.dev-back::before { content: ""; position: absolute; width: 30%; height: 160%; background: linear-gradient(90deg, transparent, var(--brand-2), transparent); animation: dev-spin 6s linear infinite; }
+.dev-inner { position: absolute; inset: 2px; border-radius: calc(var(--radius) - 2px); background: radial-gradient(ellipse at center, #1b1b1b 0%, #121212 100%); display: flex; align-items: center; justify-content: center; }
+.dev-text { padding: 1.25rem; text-align: center; }
+.dev-front { transform: rotateY(180deg); background: radial-gradient(ellipse at bottom, #161d27 0%, #0b0c10 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.9rem; }
 .dev-stars { position: absolute; inset: 0; overflow: hidden; }
 .dev-stars i { position: absolute; top: 0; left: 0; background: transparent; border-radius: 50%; animation: dev-star var(--t, 30s) linear infinite; }
 .dev-stars i::after { content: ""; position: absolute; top: var(--h, 600px); left: 0; width: inherit; height: inherit; border-radius: 50%; box-shadow: inherit; }
-.dev-orb { position: absolute; border-radius: 50%; filter: blur(15px); animation: dev-float 2.6s linear infinite; }
-.dev-orb.o1 { width: 5rem; height: 5rem; background: var(--brand); left: 8%; top: 12%; }
-.dev-orb.o2 { width: 8rem; height: 8rem; background: var(--brand-2); right: -1.5rem; bottom: 18%; animation-delay: -0.8s; opacity: 0.85; }
-.dev-orb.o3 { width: 2rem; height: 2rem; background: #ffbb66; right: 18%; top: 8%; animation-delay: -1.8s; }
-.dev-pov { position: absolute; left: 50%; top: 40%; width: 62%; transform: translate(-50%, -50%); filter: drop-shadow(0 0 10px #0009); }
-.dev-front-content { position: absolute; inset: 0; padding: 0.7rem; display: flex; flex-direction: column; justify-content: space-between; text-align: left; }
-.dev-badge { width: fit-content; padding: 0.15rem 0.6rem; border-radius: 999px; background: #00000066; backdrop-filter: blur(2px); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #fff !important; }
-.dev-desc { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.6rem 0.75rem; border-radius: calc(var(--radius) - 4px); background: #00000099; backdrop-filter: blur(5px); box-shadow: 0 0 10px 5px #00000066; }
-.dev-desc b { font-size: var(--step--1); }
+.dev-pov { position: relative; width: 52%; }
+.dev-role { position: relative; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 0.75rem; letter-spacing: 0.02em; color: #ffffffd9; text-align: center; padding: 0 1rem; }
 @keyframes dev-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes dev-star { from { transform: translateY(0); } to { transform: translateY(calc(-1 * var(--h, 600px))); } }
-@keyframes dev-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
