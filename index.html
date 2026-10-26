@@ -7,6 +7,7 @@
 <link rel="preload" href="assets/fonts/unpovdiferente-bold.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="css/estilos.css">
 
@@ -98,19 +99,73 @@
 
   <!-- ================= ENTENDER ================= -->
   <section id="entender">
-    <div class="lead">
-      <span class="eyebrow">01 · Informar</span>
-      <h2>El TDAH en la cursada</h2>
-      <p>El TDAH (trastorno por déficit de atención e hiperactividad) es una condición del neurodesarrollo. En la universidad se nota menos en "no poder quedarse quieto" y más en cómo se organizan el tiempo, la atención y las tareas.</p>
+    <div class="hero screen" id="que-es">
+      <div class="lead">
+        <span class="eyebrow">01 · Informar</span>
+        <h1>¿Qué es el <span class="brand-word">TDAH</span>?</h1>
+        <p><mark class="hl">El Trastorno por Déficit de Atención e Hiperactividad</mark> (TDAH) es un trastorno del neurodesarrollo caracterizado por un patrón persistente de inatención y/o hiperactividad-impulsividad que interfiere con el funcionamiento o el desarrollo de la persona. Estas manifestaciones pueden afectar diferentes ámbitos, entre ellos el académico, social y laboral, y se presentan con distintos grados y formas de expresión.</p>
+        <p class="source">(American Psychiatric Association, 2022)</p>
+      </div>
+      <button class="scroll-cue" type="button" data-cue="entender-tdah">Entender el TDAH <span aria-hidden="true">↓</span></button>
     </div>
 
-    <div class="panel">
-      <h3>Tres ideas para empezar</h3>
-      <div class="ef-list">
-        <div class="ef"><b>Atención que se regula distinto</b><p class="small">No es que falte atención. Cuesta dirigirla hacia lo que no interesa y a veces se queda "pegada" en lo que sí (hiperfoco).</p></div>
-        <div class="ef"><b>Funciones ejecutivas</b><p class="small">Planificar, empezar una tarea, recordar pasos y calcular cuánto falta. Son las habilidades que más pide la universidad.</p></div>
-        <div class="ef"><b>Percepción del tiempo</b><p class="small">"Dos semanas" puede sentirse como "falta mucho" hasta que de golpe es mañana. Ver el tiempo ayuda más que pensarlo.</p></div>
+    <div class="screen" id="entender-tdah">
+      <h2>Entender el TDAH</h2>
+      <div class="drops">
+        <details class="drop">
+          <summary>Una forma sencilla de entenderlo</summary>
+          <div class="drop-body">
+            <p>Las investigaciones muestran diferencias en redes cerebrales relacionadas con las <b>funciones ejecutivas</b>, que son las capacidades que permiten:</p>
+            <ul class="scribble-list">
+              <li>Organizarse.</li>
+              <li>Planificar.</li>
+              <li>Iniciar tareas.</li>
+              <li>Mantener la atención.</li>
+              <li>Controlar impulsos.</li>
+              <li>Regular emociones.</li>
+              <li>Manejar el tiempo y la memoria de trabajo.</li>
+            </ul>
+          </div>
+        </details>
+        <details class="drop">
+          <summary>En términos científicos...</summary>
+          <div class="drop-body">
+            <p>Si imaginamos que el cerebro es una orquesta, en la mayoría de las personas <span class="orange">el director coordina</span> cuándo empieza cada instrumento y cuándo debe bajar el volumen.</p>
+            <p><b>En el TDAH</b>, los instrumentos están ahí y funcionan, <span class="orange">pero el director tiene más dificultad para coordinar</span> el momento adecuado.</p>
+            <h4 class="drop-sub">Por eso puede haber</h4>
+            <ul class="scribble-list">
+              <li>Ideas muy creativas y rápidas.</li>
+              <li>Gran capacidad de concentración en temas interesantes.</li>
+              <li>Pero problemas para iniciar tareas aburridas.</li>
+              <li>Dificultades con la organización y la gestión del tiempo.</li>
+            </ul>
+          </div>
+        </details>
       </div>
+      <button class="scroll-cue" type="button" data-cue="tres-conceptos">Tres conceptos <span aria-hidden="true">↓</span></button>
+    </div>
+
+    <div class="screen" id="tres-conceptos">
+      <h2>Tres conceptos para entender</h2>
+      <div class="concepts" id="concepts">
+        <div class="concept t-blue">
+          <button class="concept-title" type="button" aria-expanded="false" aria-controls="concepto-1">Neurotípico</button>
+          <div class="concept-body" id="concepto-1" hidden><p>Describe a quienes no presentan las divergencias neurocognitivas en cuestión. No significa «normal», «sano» ni «mejor adaptado».</p></div>
+        </div>
+        <div class="concept t-orange">
+          <button class="concept-title" type="button" aria-expanded="false" aria-controls="concepto-2">Neurodivergente</button>
+          <div class="concept-body" id="concepto-2" hidden><p>Se utiliza para referirse a una persona cuyo funcionamiento neurológico o neurocognitivo se aparta de las normas consideradas predominantes. Dentro de esta categoría entra el <b class="circled">TDAH</b>.</p></div>
+        </div>
+        <div class="concept t-blue">
+          <button class="concept-title" type="button" aria-expanded="false" aria-controls="concepto-3">Neurodiversidad</button>
+          <div class="concept-body" id="concepto-3" hidden><p>Es la variación neurocognitiva entre los seres humanos. Pertenece al conjunto, no solo a quienes tienen una condición.</p></div>
+        </div>
+      </div>
+      <button class="scroll-cue" type="button" data-cue="nt-vs-nd">Neurotípico vs Neurodivergente <span aria-hidden="true">↓</span></button>
+    </div>
+
+    <div class="screen" id="nt-vs-nd">
+      <h2>Neurotípico vs Neurodivergente</h2>
     </div>
 
     <div class="lead">

@@ -723,6 +723,55 @@
     $("#ct-area").focus({ preventScroll: true });
   });
 
+  /* ---------- Tres conceptos ----------
+     Al tocar un concepto, los otros dos se desvanecen y el elegido crece y se desliza hasta el centro
+     (se mide su lugar antes y después y se anima la diferencia). Tocándolo de nuevo vuelve todo. */
+  const concepts = $("#concepts");
+  if (concepts) {
+    const items = $$(".concept", concepts);
+    let busy = false;
+    const slide = (el, first) => {
+      const last = el.getBoundingClientRect();
+      el.style.transition = "none";
+      el.style.transform = `translate(${first.left + first.width / 2 - last.left - last.width / 2}px, ${first.top - last.top}px)`;
+      el.getBoundingClientRect();
+      el.style.transition = "transform 0.45s cubic-bezier(0.2, 0.7, 0.3, 1), opacity 0.25s ease";
+      el.style.transform = "";
+    };
+    const setOpen = (item, open) => {
+      const btn = $(".concept-title", item), body = $(".concept-body", item);
+      btn.setAttribute("aria-expanded", open);
+      body.hidden = !open;
+    };
+    items.forEach((item) => {
+      $(".concept-title", item).addEventListener("click", () => {
+        if (busy) return;
+        const opening = !item.classList.contains("open");
+        const calm = isCalm();
+        if (opening) {
+          item.classList.add("open");
+          concepts.classList.add("fading");
+          busy = true;
+          setTimeout(() => {
+            const first = item.getBoundingClientRect();
+            concepts.classList.add("focused");
+            setOpen(item, true);
+            if (!calm) slide(item, first);
+            busy = false;
+          }, calm ? 0 : 250);
+        } else {
+          const first = item.getBoundingClientRect();
+          setOpen(item, false);
+          item.classList.remove("open");
+          concepts.classList.remove("focused");
+          if (!calm) slide(item, first);
+          // Los otros dos vuelven a aparecer con el mismo fundido.
+          requestAnimationFrame(() => concepts.classList.remove("fading"));
+        }
+      });
+    });
+  }
+
   /* ---------- Estado inicial ---------- */
   const hash = (location.hash || "").slice(1);
   goSub(store.get("sub", "primer"));
