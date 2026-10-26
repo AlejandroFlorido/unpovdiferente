@@ -361,44 +361,110 @@
 
   /* ---------- Traductor de consignas ---------- */
   const trIds = ["que", "comunicar", "cuenta", "entregar", "fecha", "paso"];
-  const trLabels = { que: "Qué hacer", comunicar: "Qué comunicar", cuenta: "Qué tener en cuenta", entregar: "Qué entregar", fecha: "Fecha", paso: "Primer paso" };
-  const TR_VERBS = { diseñ: "diseñar", rediseñ: "rediseñar", realiz: "realizar", elabor: "elaborar", cre: "crear", desarroll: "desarrollar", produc: "producir", produzc: "producir", propon: "proponer", propong: "proponer", analiz: "analizar", investig: "investigar", present: "presentar", ilustr: "ilustrar", maquet: "maquetar", redact: "redactar", constru: "construir", construy: "construir", arm: "armar", gener: "generar", confeccion: "confeccionar", plante: "plantear", resolv: "resolver", resuelv: "resolver", explor: "explorar", relev: "relevar", fotografi: "fotografiar", dibuj: "dibujar", intervin: "intervenir", interven: "intervenir", proyect: "proyectar", escrib: "escribir", compar: "comparar", seleccion: "seleccionar", investigu: "investigar", realic: "realizar", analic: "analizar", organiz: "organizar", organic: "organizar", document: "documentar", grab: "grabar", edit: "editar", entrevist: "entrevistar", bocet: "bocetar" };
-  // Infinitivo (diseñar), subjuntivo (diseñe, diseñen), "deberán diseñar" o voseo (diseñá); la palabra entera, aunque lleve tildes o ñ
-  const TR_VERB = new RegExp("(?<![\\p{L}])(" + Object.keys(TR_VERBS).sort((a, b) => b.length - a.length).join("|") + ")(?:ar|er|ir|en|an|e|á|é|í)(?![\\p{L}])", "giu");
-  function translate(text) {
-    const t = text.replace(/\s+/g, " ").trim();
-    const out = {};
-    // Qué hacer: cada verbo de tarea en infinitivo + su objeto, en el orden en que aparecen
-    const plain = t.replace(/\s*\([^)]*\)/g, "");
-    const acts = [];
-    for (const m of plain.matchAll(TR_VERB)) {
-      if (/\b(el|la|lo|los|las|del|al|se)\s*$/i.test(plain.slice(0, m.index))) continue; // "el presente trabajo", "se propone"
-      const inf = TR_VERBS[m[1].toLowerCase()];
-      const obj = plain.slice(m.index + m[0].length).split(/\s+y\s+que\s+|\s+que\s+|[,.;:]|\s+teniendo\s/i)[0].trim();
-      const act = (inf.charAt(0).toUpperCase() + inf.slice(1) + " " + obj).trim();
-      if (!acts.some((x) => x.startsWith(inf.charAt(0).toUpperCase() + inf.slice(1)))) acts.push(act);
+  const trLabels = { que: "Paso a paso", comunicar: "Qué comunicar", cuenta: "Qué tener en cuenta", entregar: "Qué entregar", fecha: "Fecha", paso: "Primer paso" };
+  const TR_ASK = "No lo dice la consigna: preguntale al docente";
+  // Formas que no son infinitivo (subjuntivo, voseo, irregulares) → infinitivo
+  const TR_VERBS = { diseñ: "diseñar", rediseñ: "rediseñar", realiz: "realizar", elabor: "elaborar", cre: "crear", desarroll: "desarrollar", produc: "producir", produzc: "producir", propon: "proponer", propong: "proponer", analiz: "analizar", investig: "investigar", present: "presentar", ilustr: "ilustrar", maquet: "maquetar", redact: "redactar", constru: "construir", construy: "construir", arm: "armar", gener: "generar", confeccion: "confeccionar", plante: "plantear", resolv: "resolver", resuelv: "resolver", explor: "explorar", relev: "relevar", fotografi: "fotografiar", dibuj: "dibujar", intervin: "intervenir", interven: "intervenir", proyect: "proyectar", escrib: "escribir", compar: "comparar", seleccion: "seleccionar", investigu: "investigar", realic: "realizar", analic: "analizar", organiz: "organizar", organic: "organizar", document: "documentar", grab: "grabar", edit: "editar", entrevist: "entrevistar", bocet: "bocetar", dej: "dejar", elimin: "eliminar", marc: "marcar", marqu: "marcar", recort: "recortar", reduzc: "reducir", reduc: "reducir", sintetic: "sintetizar", sintetiz: "sintetizar", busqu: "buscar", busc: "buscar", revis: "revisar", corrij: "corregir", correg: "corregir", reescrib: "reescribir", narr: "narrar", describ: "describir", identifiqu: "identificar", identific: "identificar", explic: "explicar", expliqu: "explicar", justifiqu: "justificar", justific: "justificar", resum: "resumir", complet: "completar", entreg: "entregar", entregu: "entregar", sub: "subir", expong: "exponer", expon: "exponer", observ: "observar", tom: "tomar", respond: "responder", contest: "contestar", ubiqu: "ubicar", ubic: "ubicar", relacion: "relacionar", vincul: "vincular", agreg: "agregar", agregu: "agregar", tach: "tachar", subray: "subrayar", list: "listar", mir: "mirar", escuch: "escuchar", consult: "consultar", imagin: "imaginar", defin: "definir", reflexion: "reflexionar", argument: "argumentar", fundament: "fundamentar", ordená: "ordenar", orden: "ordenar", cont: "contar" };
+  const TR_IRREG = { lean: "leer", lea: "leer", "leé": "leer", piensen: "pensar", piense: "pensar", "pensá": "pensar", elijan: "elegir", elija: "elegir", "elegí": "elegir", hagan: "hacer", haga: "hacer", "hacé": "hacer", vean: "ver", vea: "ver", "mirá": "mirar", cuenten: "contar", cuente: "contar", "poné": "poner", pongan: "poner", "sacá": "sacar", saquen: "sacar", "tené": "tener", tengan: "tener", "decí": "decir", digan: "decir", "andá": "ir", vayan: "ir", "traé": "traer", traigan: "traer" };
+  // Sustantivos y adjetivos que terminan como un infinitivo
+  const TR_NOT_VERB = new Set("lugar hogar mujer poder deber placer taller collar mar par bar militar popular familiar particular similar regular escolar solar primer cualquier altar azar billar dólar éter cráter carácter alfiler mantel nivel".split(" "));
+  const TR_READ = /^(leer|ver|mirar|escuchar|consultar|buscar)$/;
+  const TR_SEQ = /^(?:primero|después|luego|más tarde|a continuación|finalmente|por último|al final|también|además|y|e)\b,?\s*/i;
+  const TR_MODAL = /^(?:se\s+(?:debe|deberá|deben|deberán|pide|solicita)\s+|deber(?:á|án|ás)\s+|deben\s+|tienen\s+que\s+|tenés\s+que\s+|tendrán\s+que\s+|hay\s+que\s+|(?:les|te)\s+(?:pedimos|pido)\s+que\s+|se\s+propone\s+)/i;
+  function trVerb(word) {
+    const w = (word || "").toLowerCase();
+    if (!w || TR_NOT_VERB.has(w)) return "";
+    if (TR_IRREG[w]) return TR_IRREG[w];
+    const m = w.match(/^(\p{L}+?)(?:ar|er|ir)(?:se|lo|la|los|las|le|les)?$/u);
+    if (m && w.length > 3) return w.replace(/(?<=(?:ar|er|ir))(?:se|lo|la|los|las|le|les)$/u, "");
+    for (const k of Object.keys(TR_VERBS).sort((a, b) => b.length - a.length)) {
+      if (w.startsWith(k) && /^(?:en|an|e|a|á|é|í)$/u.test(w.slice(k.length))) return TR_VERBS[k];
     }
-    out.que = acts.slice(0, 4).join(" · ");
-    const c = t.match(/comuni(?:que|car|quen)\s+(.+?)(?:,|\.|\s+teniendo|\s+para\s)/i);
-    out.comunicar = c ? c[1].replace(/^(el|la|los|las)\s+/i, "").trim() : "";
-    const k = t.match(/(?:teniendo en cuenta|considerando|tener en cuenta|tengan en cuenta|tené en cuenta)\s+(.+?)\./i);
-    out.cuenta = k ? k[1].split(/,\s*|\s+y\s+/).map((s) => s.trim()).filter(Boolean).join(" · ") : "";
-    const fm = t.match(/\b(PDF|JPG|PNG|editable|impres[oa]|maqueta|archivo abierto|AI|PSD|InDesign)\b/gi);
-    out.entregar = fm ? Array.from(new Set(fm.map((s) => /^(pdf|jpg|png|ai|psd)$/i.test(s) ? s.toUpperCase() : (s.toLowerCase() === "editable" ? "archivo editable" : s.toLowerCase())))).join(" + ") : "";
-    const d = t.match(/\b(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{2,4}))?\b/);
-    out.fecha = d ? pad(d[1]) + "/" + pad(d[2]) : "";
-    out.paso = out.comunicar ? "Definir el concepto en una frase" : "Releer la consigna y marcar lo que no entiendo";
-    const ev = t.match(/(?:se evalua(?:rá)?|se evaluará|se evalúa|criterios?:?)\s+(.+?)(?:\.|$)/i);
-    out.evalua = ev ? ev[1].replace(/^(el|la|los|las)\s+/i, "").split(/,\s*|\s+y\s+/).map((s) => s.replace(/^(el|la|los|las)\s+/i, "").trim()).filter(Boolean) : [];
-    return out;
+    return "";
   }
+  const trFirst = (s) => (s.match(/^\p{L}+/u) || [""])[0];
+  const trCap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  const trList = (s) => s.split(/,\s*|\s+y\s+(?!\d)/).map((x) => x.replace(/^(?:el|la|los|las)\s+/i, "").trim()).filter(Boolean);
+  function translate(text) {
+    const out = { steps: [], cuenta: [], evalua: [] };
+    // Lo que está entre comillas no se corta (títulos, frases citadas)
+    const quotes = [];
+    const t = text.replace(/\s+/g, " ").trim()
+      .replace(/"[^"]*"|“[^”]*”|«[^»]*»/g, (q) => "\u0001" + (quotes.push(q) - 1) + "\u0002");
+    const back = (s) => s.replace(/\u0001(\d+)\u0002/g, (_, i) => quotes[i]);
+    const sentences = t.split(/(?<=[.!?;])\s+/).map((s) => s.replace(/[.;]+$/, "").trim()).filter(Boolean);
+    const entrega = [];
+    for (let s of sentences) {
+      if (/^(?:se\s+)?evalua|^se\s+evalúa|^se\s+evaluará|^criterios?\b|^la\s+evaluación/i.test(s)) {
+        const ev = s.match(/(?:se evalua(?:rá)?|se evaluará|se evalúa|criterios?(?: de evaluación)?:?|evaluación:?)\s+(.+)$/i);
+        if (ev) out.evalua.push(...trList(back(ev[1])));
+        continue;
+      }
+      if (/^(?:se\s+entrega|la\s+entrega|entrega:|formato|el\s+trabajo\s+se\s+entrega|extensión)/i.test(s)) { entrega.push(back(s)); continue; }
+      if (/^(?:tener en cuenta|tené en cuenta|tengan en cuenta|importante|considerar|condiciones?:)/i.test(s)) {
+        out.cuenta.push(...trList(back(s.replace(/^(?:tener|tené|tengan) en cuenta( que)?:?\s*|^importante:?\s*|^considerar:?\s*|^condiciones?:\s*/i, "")))); continue;
+      }
+      // "..., teniendo en cuenta X, Y y Z" va a "Qué tener en cuenta"
+      const tc = s.match(/,?\s*(?:teniendo en cuenta|considerando|tomando en cuenta)\s+(.+)$/i);
+      if (tc) { out.cuenta.push(...trList(back(tc[1]))); s = s.slice(0, tc.index); }
+      // Cortar en pasos: en "después/luego/finalmente" y en ", " o " y " seguidos de un verbo
+      const cuts = [0];
+      for (const m of s.matchAll(/,\s*(?:y\s+|e\s+)?|\s+[ye]\s+|\s+(?=(?:después|luego|finalmente|por último|a continuación)\b)/giu)) {
+        const rest = s.slice(m.index + m[0].length).replace(TR_SEQ, "").replace(TR_MODAL, "");
+        if (trVerb(trFirst(rest)) || /^(?:después|luego|finalmente|por último|a continuación)\b/i.test(s.slice(m.index + m[0].length))) cuts.push(m.index, m.index + m[0].length);
+      }
+      cuts.push(s.length);
+      const parts = [];
+      for (let i = 0; i < cuts.length; i += 2) parts.push(s.slice(cuts[i], cuts[i + 1]));
+      let hold = ""; // "Luego, en grupos, elijan..." → "Elegir... (en grupos)"
+      parts.forEach((p, i) => {
+        p = p.trim(); let prev;
+        do { prev = p; p = p.replace(TR_SEQ, "").replace(TR_MODAL, "").trim(); } while (p !== prev);
+        // "Los alumnos deberán seleccionar..." → "Seleccionar..."
+        if (!trVerb(trFirst(p))) { const sm = p.match(/^(?:\p{L}+\s+){1,4}?(?:deber(?:á|án|ás)|deben|tienen que|tendrán que|van a)\s+/iu); if (sm) p = p.slice(sm[0].length); }
+        if (!p) return;
+        const inf = trVerb(trFirst(p));
+        if (inf) { out.steps.push({ verb: inf, text: trCap(inf + p.slice(trFirst(p).length)) + (hold ? " (" + hold + ")" : "") }); hold = ""; }
+        else if (parts.length > 1 && i < parts.length - 1) hold = p;
+        else if (parts.length > 1 && out.steps.length) out.steps[out.steps.length - 1].text += ", " + p;
+        else out.cuenta.push(trCap(back(p)));
+      });
+    }
+    // Frases entre comillas que no son el título de lo que hay que leer: idea clave
+    out.steps.forEach((st) => {
+      if (TR_READ.test(st.verb)) return;
+      for (const m of st.text.matchAll(/\u0001(\d+)\u0002/g)) if (!/comuni(?:que|car|quen)/i.test(st.text)) out.cuenta.push("Idea clave: " + quotes[m[1]]);
+    });
+    const plain = back(t);
+    const lim = plain.match(/(?:no más de|como máximo|máximo de|mínimo de|al menos|entre \d+ y \d+|hasta)\s+\d*\s*(?:páginas|carillas|palabras|caracteres|líneas|minutos|diapositivas|imágenes)\b|\b\d+\s*(?:páginas|carillas|palabras|caracteres|líneas|minutos|diapositivas)\b/gi);
+    if (lim) out.cuenta.push(...lim.map((x) => "Extensión: " + x));
+    const steps = out.steps.map((st) => back(st.text));
+    const c = plain.match(/comuni(?:que|car|quen)\s+(.+?)(?:,|\.|\s+teniendo|\s+para\s|$)/i);
+    const fm = plain.match(/\b(PDF|JPG|PNG|Word|editable|impres[oa]|maqueta|archivo abierto|AI|PSD|InDesign)\b/gi);
+    const formats = fm ? Array.from(new Set(fm.map((s) => /^(pdf|jpg|png|ai|psd)$/i.test(s) ? s.toUpperCase() : (s.toLowerCase() === "editable" ? "archivo editable" : /^word$/i.test(s) ? "Word" : s.toLowerCase())))) : [];
+    const d = plain.match(/\b(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{2,4}))?\b/);
+    const dw = plain.match(/\b(?:el|para el|hasta el)\s+(?:próximo\s+)?(lunes|martes|miércoles|jueves|viernes|sábado|domingo)\b|\b(?:la\s+)?(próxima clase|semana que viene|clase que viene)\b/i);
+    return {
+      que: steps.join("\n"),
+      comunicar: c ? c[1].replace(/^(el|la|los|las)\s+/i, "").trim() : "",
+      cuenta: Array.from(new Set(out.cuenta.map((x) => x.trim()).filter(Boolean))).join(" · "),
+      entregar: formats.length ? formats.join(" + ") : entrega.length ? entrega.join(" ").replace(/^se entregan?\s+/i, "").replace(/\s*(?:el|para el|hasta el)\s+\d{1,2}[\/\-]\d{1,2}.*$/i, "")
+        : out.steps.some((st) => /^(escribir|reescribir|redactar|narrar)$/.test(st.verb)) ? "Seguramente el texto que escribas (preguntá formato y extensión)" : "",
+      fecha: d ? pad(d[1]) + "/" + pad(d[2]) : (dw ? trCap(dw[0]) : ""),
+      paso: steps.length === 1 && c ? "Definir el concepto en una frase" : steps[0] || "Releer la consigna y marcar lo que no entiendo",
+      evalua: Array.from(new Set(out.evalua))
+    };
+  }
+  const trSteps = (s) => (s || "").split(/\n| · /).map((x) => x.trim()).filter(Boolean);
   let trEval = [];
   function renderTr() {
     const v = {}; trIds.forEach((id) => v[id] = $("#tr-" + id).value.trim());
-    const cell = (id, cls) => `<div class="tp-cell ${cls || ""}"><span class="lbl">${trLabels[id]}</span><span>${esc(v[id] || "—")}</span></div>`;
+    const cell = (id, cls) => `<div class="tp-cell ${cls || ""}"><span class="lbl">${trLabels[id]}</span><span${v[id] ? "" : ' class="ask"'}>${esc(v[id] || TR_ASK)}</span></div>`;
+    const steps = trSteps(v.que);
     $("#tr-card").innerHTML = `
-      <span class="tp-title">${v.que.includes(" · ") ? v.que.split(" · ").map((a, i) => (i + 1) + ". " + esc(a)).join("<br>") : esc(v.que || "Consigna")}</span>
-      <div class="tp-grid">${cell("comunicar")}${cell("cuenta")}${cell("entregar")}${cell("fecha", "date")}</div>
+      <span class="tp-title">Paso a paso</span>
+      ${steps.length ? `<ol class="tp-steps">${steps.map((s) => `<li>${esc(s)}</li>`).join("")}</ol>` : `<p class="ask">No encontramos acciones claras. Buscá los verbos (leer, escribir, armar...) y anotalos uno por renglón.</p>`}
+      <div class="tp-grid">${v.comunicar ? cell("comunicar") : ""}${cell("cuenta")}${cell("entregar")}${cell("fecha", "date")}</div>
       ${trEval.length ? `<div class="tp-cell"><span class="lbl">Se evalúa</span><ul class="scribble-list">${trEval.map((e) => `<li>${esc(e)}</li>`).join("")}</ul></div>` : ""}
       ${cell("paso", "key")}`;
     store.set("tr", { input: $("#tr-input").value, v, ev: trEval });
@@ -407,30 +473,34 @@
     const r = translate($("#tr-input").value);
     trIds.forEach((id) => $("#tr-" + id).value = r[id] || "");
     trEval = r.evalua;
-    const missing = trIds.filter((id) => !r[id]).map((id) => trLabels[id].toLowerCase());
-    $("#tr-msg").textContent = missing.length ? "Completá a mano: " + missing.join(", ") + "." : "Revisá que cada campo esté bien.";
+    const missing = ["cuenta", "entregar", "fecha"].filter((id) => !r[id]).map((id) => trLabels[id].toLowerCase());
+    $("#tr-msg").textContent = missing.length ? "La consigna no dice " + missing.join(", ").replace(/, ([^,]*)$/, " ni $1") + ": conviene preguntarlo." : "Revisá que cada paso esté bien.";
     renderTr();
   }
   $("#tr-run").onclick = runTr;
   trIds.forEach((id) => $("#tr-" + id).addEventListener("input", renderTr));
   const trSaved = store.get("tr", null);
-  if (trSaved) { $("#tr-input").value = trSaved.input; trIds.forEach((id) => $("#tr-" + id).value = trSaved.v[id] || ""); trEval = trSaved.ev || []; renderTr(); }
+  if (trSaved) { $("#tr-input").value = trSaved.input; trIds.forEach((id) => $("#tr-" + id).value = id === "que" ? trSteps(trSaved.v[id]).join("\n") : trSaved.v[id] || ""); trEval = trSaved.ev || []; renderTr(); }
   else runTr();
   $("#tr-input").addEventListener("input", () => store.set("tr", Object.assign(store.get("tr", {}), { input: $("#tr-input").value })));
   $("#tr-copy").onclick = () => {
-    const lines = trIds.map((id) => trLabels[id].toUpperCase() + ": " + ($("#tr-" + id).value || "—"));
+    const lines = ["PASO A PASO:", ...trSteps($("#tr-que").value).map((s, i) => (i + 1) + ". " + s)];
+    trIds.slice(1).forEach((id) => { const val = $("#tr-" + id).value; if (val || id !== "comunicar") lines.push(trLabels[id].toUpperCase() + ": " + (val || TR_ASK)); });
     if (trEval.length) lines.push("SE EVALÚA: " + trEval.join(", "));
     copyText(lines.join("\n"), $("#tr-msg"));
   };
   $("#tr-toplan").onclick = () => {
-    dv.title = $("#tr-que").value.split(" · ")[0] || dv.title;
+    const steps = trSteps($("#tr-que").value);
+    dv.title = (steps[0] || dv.title).slice(0, 60);
     const f = $("#tr-fecha").value.match(/(\d{1,2})\/(\d{1,2})/);
     if (f) {
       let d = new Date(today().getFullYear(), Number(f[2]) - 1, Number(f[1]));
       if (d < today()) d = new Date(d.getFullYear() + 1, d.getMonth(), d.getDate());
       dv.due = iso(d);
     }
-    if ($("#tr-paso").value) dv.stages[0].text = $("#tr-paso").value;
+    // Con dos pasos o más, las etapas son los pasos de la consigna (más revisar y entregar)
+    if (steps.length > 1) dv.stages = [...steps, "Revisar contra la consigna y entregar"].map((t) => ({ text: t, done: false, date: "" }));
+    else if ($("#tr-paso").value) dv.stages[0].text = $("#tr-paso").value;
     saveDv(); renderDv();
     goTab("herramientas", true); goSub("dividir");
   };

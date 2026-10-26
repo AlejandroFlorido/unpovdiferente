@@ -505,6 +505,11 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .tp-cell.date .lbl { color: var(--c-entrega); }
 .tp-cell ul, .tp-cell ol { margin: 0; padding-left: 1.2rem; }
 .arrow-down { font-family: var(--f-display); font-weight: 600; color: var(--accent-text); text-align: center; }
+.tp-steps { margin: 0; padding: 0; list-style: none; counter-reset: paso; display: flex; flex-direction: column; gap: 0.6rem; }
+.tp-steps li { counter-increment: paso; display: grid; grid-template-columns: 2rem 1fr; gap: 0.6rem; align-items: baseline; overflow-wrap: anywhere; }
+.tp-steps li::before { content: counter(paso); font-family: var(--f-display); font-weight: 700; color: var(--brand-2); font-size: 1.25rem; }
+.tp-card .ask { color: var(--muted); font-style: italic; }
+.trans-fields .field.wide { grid-column: 1 / -1; }
 .trans-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 1rem; }
 
 .map { display: flex; gap: 0; overflow-x: auto; padding-bottom: 0.5rem; }
