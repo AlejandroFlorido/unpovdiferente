@@ -632,10 +632,10 @@ html.calm *, html.calm *::before, html.calm *::after { transition: none !importa
 .dev-flip { position: relative; width: 100%; height: 100%; min-height: 15rem; transform-style: preserve-3d; transition: transform 0.5s ease; border-radius: var(--radius); box-shadow: 0 0 12px 1px #000000aa; }
 .dev-card:hover .dev-flip, .dev-card.flipped .dev-flip { transform: rotateY(180deg); }
 .dev-card:focus-visible { outline: 3px solid var(--brand); outline-offset: 4px; }
-.dev-face { position: absolute; inset: 0; border-radius: var(--radius); overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #090a0f; color: #fff; }
+.dev-face { position: absolute; inset: 0; border-radius: var(--radius); overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #151515; color: #fff; }
 .dev-back { display: flex; align-items: center; justify-content: center; }
-.dev-back::before { content: ""; position: absolute; width: 45%; height: 160%; background: linear-gradient(90deg, transparent, var(--brand), var(--brand), var(--brand-2), var(--brand-2), transparent); animation: dev-spin 5s linear infinite; }
-.dev-inner { position: absolute; inset: 3px; border-radius: calc(var(--radius) - 2px); overflow: hidden; background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%); display: flex; align-items: center; justify-content: center; }
+.dev-back::before { content: ""; position: absolute; width: 45%; height: 160%; background: linear-gradient(90deg, transparent, var(--brand-2), var(--brand-2), var(--brand-2), var(--brand-2), transparent); animation: dev-spin 5s linear infinite; }
+.dev-inner { position: absolute; inset: 3px; border-radius: calc(var(--radius) - 2px); overflow: hidden; background: radial-gradient(ellipse at center, #1c1c1c 0%, #151515 55%, #0b0b0b 100%); box-shadow: inset 0 0 18px 6px #000000cc; display: flex; align-items: center; justify-content: center; }
 .dev-text { position: relative; display: flex; flex-direction: column; gap: 0.5rem; padding: 1.25rem; text-align: center; }
 .dev-card .dev-text span, .dev-card .dev-desc span { color: #ffffffbb; }
 .dev-front { transform: rotateY(180deg); background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%); }
