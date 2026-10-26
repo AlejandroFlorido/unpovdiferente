@@ -252,6 +252,11 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .drop-body p { max-width: none; }
 .drop-body ul { margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
 .drop[open] .drop-body { animation: tab-in 0.3s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+/* Tres conceptos: tres desplegables lado a lado (en celular, uno debajo del otro).
+   Títulos en azul, naranja y azul de la marca. */
+.drops-3 { width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); align-items: start; gap: var(--space-grid); }
+.drop.t-blue summary { color: var(--brand-2); }
+.drop.t-orange summary { color: var(--brand); }
 .scroll-cue { position: absolute; left: 0; right: 0; margin-inline: auto; width: fit-content; bottom: 1rem; font: inherit; font-family: var(--f-display); font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--muted); background: none; border: 0; padding: 0.3rem 0; cursor: pointer; display: inline-flex; gap: 0.5rem; align-items: center; }
 .scroll-cue span { color: var(--accent-text); font-size: 1.2em; }
