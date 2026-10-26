@@ -253,6 +253,15 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .parrow path.hit { stroke: transparent; stroke-width: 22; pointer-events: stroke; }
 .parrow { transform-box: fill-box; transform-origin: center; transition: transform 0.25s ease; }
 .parrow:hover { transform: scale(1.08); }
+/* Trazo de marcador borroneado y doble, como los óvalos. */
+.parrow path:not(.hit) { filter: url(#borron-amplio); }
+.parrow path.dup { stroke-width: 1.5; opacity: 0.55; transform: translate(2px, 3px); }
+.underlined { position: relative; align-self: flex-start; margin-bottom: 0.45em; }
+.underlined.t-blue { --c: var(--brand-2); }
+.underlined.t-orange { --c: var(--brand); }
+.underlined::before, .underlined::after { content: ""; position: absolute; pointer-events: none; height: 0.35em; border-bottom: 4px solid var(--c); filter: url(#borron-amplio); }
+.underlined::before { left: -0.05em; right: -0.15em; bottom: -0.12em; border-radius: 0 0 55% 45% / 0 0 100% 70%; transform: rotate(-1deg); }
+.underlined::after { left: 0.1em; right: -0.05em; bottom: -0.24em; border-bottom-width: 3px; opacity: 0.6; border-radius: 0 0 45% 55% / 0 0 70% 100%; transform: rotate(0.8deg); }
 .psteps { list-style: none; margin: 0; padding: 0; }
 .pstep > * { position: absolute; }
 .pnum { width: 4.6cqw; height: auto; transform: translate(-50%, -50%); transition: transform 0.25s ease; }
