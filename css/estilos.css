@@ -133,6 +133,7 @@ a { color: var(--accent-text); }
 .top-inner { max-width: 72rem; margin: 0 auto; padding: 0.75rem 16px 0; display: flex; flex-direction: column; gap: 0.6rem; }
 .brand-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .brand { display: flex; align-items: center; gap: 0.6rem; }
+.brand-home { display: block; border-radius: 6px; }
 .brand-logo { display: block; height: 52px; width: auto; color: var(--ink); }
 .brand b { font-family: var(--f-display); font-size: 1.15rem; font-weight: 700; }
 .brand span { color: var(--muted); font-size: var(--step--1); }

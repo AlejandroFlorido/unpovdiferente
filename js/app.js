@@ -211,6 +211,8 @@
     e.preventDefault();
     goTab(t.getAttribute("href").slice(1), true);
   }));
+  // El logo lleva al Inicio, arriba de todo
+  $(".brand-home").addEventListener("click", (e) => { e.preventDefault(); goTab("inicio", true); });
   // Atrás / Adelante del navegador y enlaces con #seccion.
   function fromHash() {
     const h = (location.hash || "").slice(1);
