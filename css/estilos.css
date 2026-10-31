@@ -639,18 +639,10 @@ html.calm *, html.calm *::before, html.calm *::after { transition: none !importa
 .dev-card:focus-visible { outline: 3px solid var(--brand); outline-offset: 4px; }
 .dev-face { position: absolute; inset: 0; border-radius: var(--radius); overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: var(--dv-face); color: var(--dv-ink); box-shadow: var(--dv-edge); }
 .dev-back { display: flex; align-items: center; justify-content: center; }
-.dev-back::before { content: ""; position: absolute; width: 30%; height: 160%; background: linear-gradient(90deg, transparent, var(--brand-2), transparent); animation: dev-spin 6s linear infinite; }
-.dev-inner { position: absolute; inset: 2px; border-radius: calc(var(--radius) - 2px); background: var(--dv-inner); display: flex; align-items: center; justify-content: center; }
+.dev-inner { position: absolute; inset: 0; border-radius: var(--radius); background: var(--dv-inner); display: flex; align-items: center; justify-content: center; }
 .dev-text { padding: 1.25rem; text-align: center; }
 .dev-front { transform: rotateY(180deg); background: var(--dv-night); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.9rem; }
-.dev-stars { position: absolute; inset: 0; overflow: hidden; }
-.dev-stars i { position: absolute; top: 0; left: 0; background: transparent; border-radius: 50%; animation: dev-star var(--t, 30s) linear infinite; }
-.dev-stars i::after { content: ""; position: absolute; top: var(--h, 600px); left: 0; width: inherit; height: inherit; border-radius: 50%; box-shadow: inherit; }
-.dev-pov { position: relative; width: 52%; }
-.dev-role { position: relative; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 0.75rem; letter-spacing: 0.02em; color: var(--dv-role); text-align: center; padding: 0 1rem; }
-.dev-dust { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.dev-front.dusting .dev-pov, .dev-front.dusting .dev-role { visibility: hidden; }
-.dev-front .dev-stars { transition: opacity 1.4s ease 0.3s; }
-.dev-front.dusting .dev-stars { opacity: 0; }
-@keyframes dev-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@keyframes dev-star { from { transform: translateY(0); } to { transform: translateY(calc(-1 * var(--h, 600px))); } }
+.dev-role { position: relative; font-size: var(--step--1); letter-spacing: 0.04em; color: var(--dv-role); text-align: center; padding: 0 1rem; }
+/* Tarjeta de Delfina: su firma se dibuja trazo a trazo */
+.dev-firma { position: relative; width: 78%; height: auto; fill: none; stroke: var(--dv-ink); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; }
+.dev-ale .dev-firma { width: auto; height: 68%; stroke-width: 18; }
