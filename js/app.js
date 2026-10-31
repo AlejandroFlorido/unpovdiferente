@@ -1051,6 +1051,36 @@
     });
   }
 
+  // Firma que se dibuja como con birome: los trazos están en el orden en que se escriben, van a
+  // velocidad pareja y entre uno y otro la birome "viaja en el aire" más rápido, sin pausas
+  const FIRMA_DELAY = 450; // empieza cuando termina el giro
+  function firma(card, total) {
+    const strokes = $$(".dev-firma path", card).map((p) => ({ p, len: Math.ceil(p.getTotalLength()) + 1 }));
+    strokes.forEach((s, i) => {
+      const prev = strokes[i - 1];
+      if (!prev) { s.air = 0; return; }
+      const a = prev.p.getPointAtLength(prev.len - 1), b = s.p.getPointAtLength(0);
+      s.air = Math.hypot(a.x - b.x, a.y - b.y);
+    });
+    const ink = strokes.reduce((t, s) => t + s.len, 0), air = strokes.reduce((t, s) => t + s.air, 0);
+    const SPEED = (ink + air / 3) / total; // unidades de la firma por ms
+    let anims = [];
+    const hide = () => { anims.forEach((a) => a.cancel()); anims = []; strokes.forEach(({ p, len }) => { p.style.strokeDasharray = len; p.style.strokeDashoffset = isCalm() ? 0 : len; }); };
+    const draw = () => {
+      hide();
+      if (isCalm()) return;
+      let t = FIRMA_DELAY;
+      strokes.forEach(({ p, len, air }) => {
+        t += air / 3 / SPEED;
+        const d = len / SPEED;
+        anims.push(p.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: d, delay: t, easing: "linear", fill: "forwards" }));
+        t += d;
+      });
+    };
+    hide();
+    return { draw, hide };
+  }
+
   /* ---------- Estado inicial ---------- */
   const hash = (location.hash || "").slice(1);
   /* ---------- Tarjeta de desarrollador ---------- */
@@ -1066,6 +1096,7 @@
   });
   // Dorso: medio segundo después de darse vuelta, el contenido se deshace en polvo (como el chasquido de Thanos) y la tarjeta queda vacía
   $$(".dev-ale").forEach((card) => {
+    const f = firma(card, 3000), sig = $(".dev-firma", card);
     const face = $(".dev-front", card), role = $(".dev-role", card), stars = $(".dev-stars", card);
     role.innerHTML = role.textContent.split(" ").map((w) => `<span>${esc(w)}</span>`).join(" ");
     const cv = document.createElement("canvas");
@@ -1078,6 +1109,7 @@
       face.classList.remove("dusting", "dusted");
       cv.getContext("2d").clearRect(0, 0, cv.width, cv.height);
       done = false;
+      f.hide();
     }
     function snap() {
       if (done || !showing()) return;
@@ -1085,13 +1117,16 @@
       if (isCalm()) { face.classList.add("dusting", "dusted"); return; }
       const W = face.offsetWidth, H = face.offsetHeight, dpr = Math.min(window.devicePixelRatio || 1, 2);
       cv.width = W * dpr; cv.height = H * dpr;
-      // Se dibuja en un lienzo lo que se ve (POV + texto) para tomar sus puntos
+      // Se dibuja en un lienzo lo que se ve (firma + texto) para tomar sus puntos
       const off = document.createElement("canvas"); off.width = W; off.height = H;
       const g = off.getContext("2d");
       const box = face.getBoundingClientRect(), k = W / box.width;
       const at = (el) => { const r = el.getBoundingClientRect(); return [(r.left - box.left) * k, (r.top - box.top) * k, r.width * k, r.height * k]; };
-      const img = $$(".dev-pov", card).find((x) => x.offsetWidth);
-      if (img) g.drawImage(img, ...at(img));
+      const [sx, sy, sw, sh] = at(sig), vb = sig.viewBox.baseVal, ss = getComputedStyle(sig), z = sw / vb.width;
+      g.save(); g.translate(sx, sy); g.scale(z, sh / vb.height); g.translate(-vb.x, -vb.y);
+      g.strokeStyle = ss.stroke; g.lineWidth = parseFloat(ss.strokeWidth); g.lineCap = g.lineJoin = "round";
+      $$("path", sig).forEach((p) => g.stroke(new Path2D(p.getAttribute("d"))));
+      g.restore();
       const cs = getComputedStyle(role);
       g.font = cs.font; g.fillStyle = cs.color; g.textBaseline = "top";
       $$("span", role).forEach((w) => { const [x, y] = at(w); g.fillText(w.textContent, x, y + 1); });
@@ -1121,49 +1156,26 @@
         else { ctx.clearRect(0, 0, W, H); face.classList.add("dusted"); }
       })(t0);
     }
-    // 0,5 s de giro + 1,5 s de quieta
-    const arm = () => { clearTimeout(timer); if (!done) timer = setTimeout(snap, 2000); };
+    // giro + 3 s de firma dibujándose + 1,5 s de quieta
+    const arm = () => { clearTimeout(timer); if (!done) timer = setTimeout(snap, FIRMA_DELAY + 3000 + 1500); };
     const disarm = () => { clearTimeout(timer); setTimeout(() => { if (!showing()) reset(); }, 300); };
-    card.addEventListener("mouseenter", () => { over = true; arm(); });
+    card.addEventListener("mouseenter", () => { over = true; if (!done) f.draw(); arm(); });
     card.addEventListener("mouseleave", () => { over = false; disarm(); });
     // Con dedo o teclado no hay hover: tocar o Enter da vuelta la tarjeta
-    const toggle = () => { card.classList.toggle("flipped"); card.classList.contains("flipped") ? arm() : disarm(); };
+    const toggle = () => { card.classList.toggle("flipped"); if (card.classList.contains("flipped")) { if (!done) f.draw(); arm(); } else disarm(); };
     card.addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse") toggle(); });
     card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
   });
 
-  // Tarjeta de Delfina: al darse vuelta, su firma se dibuja trazo a trazo
+  // Tarjeta de Delfina: al darse vuelta, su firma se dibuja
   $$(".dev-delfi").forEach((card) => {
-    // Los trazos están en el orden en que se recorre la firma; la birome va a velocidad pareja
-    // y entre un trazo y el siguiente "viaja en el aire" más rápido, sin pausas
-    const strokes = $$(".dev-firma path", card).map((p) => ({ p, len: Math.ceil(p.getTotalLength()) + 1 }));
-    strokes.forEach((s, i) => {
-      const prev = strokes[i - 1];
-      if (!prev) { s.air = 0; return; }
-      const a = prev.p.getPointAtLength(prev.len - 1), b = s.p.getPointAtLength(0);
-      s.air = Math.hypot(a.x - b.x, a.y - b.y);
-    });
-    const ink = strokes.reduce((t, s) => t + s.len, 0), air = strokes.reduce((t, s) => t + s.air, 0);
-    const SPEED = (ink + air / 3) / 2600; // unidades de la firma por ms: toda la firma en 2,6 s
-    let anims = [], over = false;
-    const hide = () => { anims.forEach((a) => a.cancel()); anims = []; strokes.forEach(({ p, len }) => { p.style.strokeDasharray = len; p.style.strokeDashoffset = isCalm() ? 0 : len; }); };
-    const draw = () => {
-      hide();
-      if (isCalm()) return;
-      let t = 450; // empieza cuando termina el giro
-      strokes.forEach(({ p, len, air }) => {
-        t += air / 3 / SPEED;
-        const d = len / SPEED;
-        anims.push(p.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: d, delay: t, easing: "linear", fill: "forwards" }));
-        t += d;
-      });
-    };
-    hide();
+    const f = firma(card, 2600);
+    let over = false;
     const showing = () => over || card.classList.contains("flipped");
-    const leave = () => setTimeout(() => { if (!showing()) hide(); }, 300);
-    card.addEventListener("mouseenter", () => { over = true; draw(); });
+    const leave = () => setTimeout(() => { if (!showing()) f.hide(); }, 300);
+    card.addEventListener("mouseenter", () => { over = true; f.draw(); });
     card.addEventListener("mouseleave", () => { over = false; leave(); });
-    const toggle = () => { card.classList.toggle("flipped"); card.classList.contains("flipped") ? draw() : leave(); };
+    const toggle = () => { card.classList.toggle("flipped"); card.classList.contains("flipped") ? f.draw() : leave(); };
     card.addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse") toggle(); });
     card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
   });
