@@ -1134,18 +1134,27 @@
 
   // Tarjeta de Delfina: al darse vuelta, su firma se dibuja trazo a trazo
   $$(".dev-delfi").forEach((card) => {
+    // Los trazos están en el orden en que se recorre la firma; la birome va a velocidad pareja
+    // y entre un trazo y el siguiente "viaja en el aire" más rápido, sin pausas
     const strokes = $$(".dev-firma path", card).map((p) => ({ p, len: Math.ceil(p.getTotalLength()) + 1 }));
-    const total = strokes.reduce((s, x) => s + x.len, 0);
+    strokes.forEach((s, i) => {
+      const prev = strokes[i - 1];
+      if (!prev) { s.air = 0; return; }
+      const a = prev.p.getPointAtLength(prev.len - 1), b = s.p.getPointAtLength(0);
+      s.air = Math.hypot(a.x - b.x, a.y - b.y);
+    });
+    const ink = strokes.reduce((t, s) => t + s.len, 0), air = strokes.reduce((t, s) => t + s.air, 0);
+    const SPEED = (ink + air / 3) / 2600; // unidades de la firma por ms: toda la firma en 2,6 s
     let anims = [], over = false;
     const hide = () => { anims.forEach((a) => a.cancel()); anims = []; strokes.forEach(({ p, len }) => { p.style.strokeDasharray = len; p.style.strokeDashoffset = isCalm() ? 0 : len; }); };
     const draw = () => {
       hide();
       if (isCalm()) return;
-      // 2,4 s para toda la firma, cada trazo según su largo, uno detrás del otro (empieza cuando termina el giro)
-      let t = 450;
-      strokes.forEach(({ p, len }) => {
-        const d = Math.max(60, (len / total) * 2400);
-        anims.push(p.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: d, delay: t, easing: "ease-in-out", fill: "forwards" }));
+      let t = 450; // empieza cuando termina el giro
+      strokes.forEach(({ p, len, air }) => {
+        t += air / 3 / SPEED;
+        const d = len / SPEED;
+        anims.push(p.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: d, delay: t, easing: "linear", fill: "forwards" }));
         t += d;
       });
     };
