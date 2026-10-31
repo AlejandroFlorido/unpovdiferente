@@ -1065,7 +1065,7 @@
     });
   });
   // Dorso: medio segundo después de darse vuelta, el contenido se deshace en polvo (como el chasquido de Thanos) y la tarjeta queda vacía
-  $$(".dev-card").forEach((card) => {
+  $$(".dev-ale").forEach((card) => {
     const face = $(".dev-front", card), role = $(".dev-role", card), stars = $(".dev-stars", card);
     role.innerHTML = role.textContent.split(" ").map((w) => `<span>${esc(w)}</span>`).join(" ");
     const cv = document.createElement("canvas");
@@ -1128,6 +1128,33 @@
     card.addEventListener("mouseleave", () => { over = false; disarm(); });
     // Con dedo o teclado no hay hover: tocar o Enter da vuelta la tarjeta
     const toggle = () => { card.classList.toggle("flipped"); card.classList.contains("flipped") ? arm() : disarm(); };
+    card.addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse") toggle(); });
+    card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+  });
+
+  // Tarjeta de Delfina: al darse vuelta, su firma se dibuja trazo a trazo
+  $$(".dev-delfi").forEach((card) => {
+    const strokes = $$(".dev-firma path", card).map((p) => ({ p, len: Math.ceil(p.getTotalLength()) + 1 }));
+    const total = strokes.reduce((s, x) => s + x.len, 0);
+    let anims = [], over = false;
+    const hide = () => { anims.forEach((a) => a.cancel()); anims = []; strokes.forEach(({ p, len }) => { p.style.strokeDasharray = len; p.style.strokeDashoffset = isCalm() ? 0 : len; }); };
+    const draw = () => {
+      hide();
+      if (isCalm()) return;
+      // 2,4 s para toda la firma, cada trazo según su largo, uno detrás del otro (empieza cuando termina el giro)
+      let t = 450;
+      strokes.forEach(({ p, len }) => {
+        const d = Math.max(60, (len / total) * 2400);
+        anims.push(p.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: d, delay: t, easing: "ease-in-out", fill: "forwards" }));
+        t += d;
+      });
+    };
+    hide();
+    const showing = () => over || card.classList.contains("flipped");
+    const leave = () => setTimeout(() => { if (!showing()) hide(); }, 300);
+    card.addEventListener("mouseenter", () => { over = true; draw(); });
+    card.addEventListener("mouseleave", () => { over = false; leave(); });
+    const toggle = () => { card.classList.toggle("flipped"); card.classList.contains("flipped") ? draw() : leave(); };
     card.addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse") toggle(); });
     card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
   });
