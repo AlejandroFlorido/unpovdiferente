@@ -645,4 +645,4 @@ html.calm *, html.calm *::before, html.calm *::after { transition: none !importa
 .dev-role { position: relative; font-size: var(--step--1); letter-spacing: 0.04em; color: var(--dv-role); text-align: center; padding: 0 1rem; }
 /* Tarjeta de Delfina: su firma se dibuja trazo a trazo */
 .dev-firma { position: relative; width: 78%; height: auto; fill: none; stroke: var(--dv-ink); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; }
-.dev-ale .dev-firma { width: auto; height: 68%; stroke-width: 18; }
+.dev-ale .dev-firma { width: 64%; }
