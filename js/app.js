@@ -1051,6 +1051,9 @@
     });
   }
 
+  /* ---------- Estado inicial ---------- */
+  const hash = (location.hash || "").slice(1);
+  /* ---------- Tarjetas de desarrolladores ---------- */
   // Firma que se dibuja como con birome: los trazos están en el orden en que se escriben, van a
   // velocidad pareja y entre uno y otro la birome "viaja en el aire" más rápido, sin pausas
   const FIRMA_DELAY = 450; // empieza cuando termina el giro
@@ -1081,95 +1084,9 @@
     return { draw, hide };
   }
 
-  /* ---------- Estado inicial ---------- */
-  const hash = (location.hash || "").slice(1);
-  /* ---------- Tarjeta de desarrollador ---------- */
-  // Estrellas azules y naranjas: dos capas de puntos (box-shadow) que suben sin fin, como en el código de Ale
-  $$(".dev-card .dev-stars").forEach((box) => {
-    const W = 400, H = 600;
-    [[1, 40, 40], [2, 12, 80]].forEach(([size, n, t], k) => {
-      const pts = Array.from({ length: n }, (_, i) => `${Math.round(Math.random() * W)}px ${Math.round(Math.random() * H)}px ${i % 2 ? "var(--brand)" : "var(--brand-2)"}`);
-      Object.assign(box.children[k].style, { width: size + "px", height: size + "px", boxShadow: pts.join(",") });
-      box.children[k].style.setProperty("--t", t + "s");
-      box.children[k].style.setProperty("--h", H + "px");
-    });
-  });
-  // Dorso: medio segundo después de darse vuelta, el contenido se deshace en polvo (como el chasquido de Thanos) y la tarjeta queda vacía
-  $$(".dev-ale").forEach((card) => {
-    const f = firma(card, 3000), sig = $(".dev-firma", card);
-    const face = $(".dev-front", card), role = $(".dev-role", card), stars = $(".dev-stars", card);
-    role.innerHTML = role.textContent.split(" ").map((w) => `<span>${esc(w)}</span>`).join(" ");
-    const cv = document.createElement("canvas");
-    cv.className = "dev-dust";
-    face.appendChild(cv);
-    let timer = 0, raf = 0, done = false, over = false;
-    const showing = () => over || card.classList.contains("flipped");
-    function reset() {
-      clearTimeout(timer); cancelAnimationFrame(raf);
-      face.classList.remove("dusting", "dusted");
-      cv.getContext("2d").clearRect(0, 0, cv.width, cv.height);
-      done = false;
-      f.hide();
-    }
-    function snap() {
-      if (done || !showing()) return;
-      done = true;
-      if (isCalm()) { face.classList.add("dusting", "dusted"); return; }
-      const W = face.offsetWidth, H = face.offsetHeight, dpr = Math.min(window.devicePixelRatio || 1, 2);
-      cv.width = W * dpr; cv.height = H * dpr;
-      // Se dibuja en un lienzo lo que se ve (firma + texto) para tomar sus puntos
-      const off = document.createElement("canvas"); off.width = W; off.height = H;
-      const g = off.getContext("2d");
-      const box = face.getBoundingClientRect(), k = W / box.width;
-      const at = (el) => { const r = el.getBoundingClientRect(); return [(r.left - box.left) * k, (r.top - box.top) * k, r.width * k, r.height * k]; };
-      const [sx, sy, sw, sh] = at(sig), vb = sig.viewBox.baseVal, ss = getComputedStyle(sig), z = sw / vb.width;
-      g.save(); g.translate(sx, sy); g.scale(z, sh / vb.height); g.translate(-vb.x, -vb.y);
-      g.strokeStyle = ss.stroke; g.lineWidth = parseFloat(ss.strokeWidth); g.lineCap = g.lineJoin = "round";
-      $$("path", sig).forEach((p) => g.stroke(new Path2D(p.getAttribute("d"))));
-      g.restore();
-      const cs = getComputedStyle(role);
-      g.font = cs.font; g.fillStyle = cs.color; g.textBaseline = "top";
-      $$("span", role).forEach((w) => { const [x, y] = at(w); g.fillText(w.textContent, x, y + 1); });
-      let px;
-      try { px = g.getImageData(0, 0, W, H).data; } catch (e) { face.classList.add("dusting", "dusted"); return; }
-      const parts = [], S = 2;
-      for (let y = 0; y < H; y += S) for (let x = 0; x < W; x += S) {
-        const i = (y * W + x) * 4;
-        if (px[i + 3] > 60) parts.push({ x, y, c: `rgb(${px[i]},${px[i + 1]},${px[i + 2]})`, d: (x / W) * 0.7 + Math.random() * 0.5, vx: 25 + Math.random() * 55, vy: -(15 + Math.random() * 45), l: 0.8 + Math.random() * 0.6 });
-      }
-      face.classList.add("dusting");
-      const ctx = cv.getContext("2d"), t0 = performance.now();
-      const end = Math.max(...parts.map((p) => p.d + p.l), 1);
-      (function frame(now) {
-        const t = (now - t0) / 1000;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        ctx.clearRect(0, 0, W, H);
-        for (const p of parts) {
-          const s = t - p.d;
-          if (s > p.l) continue;
-          const u = Math.max(0, s), a = s <= 0 ? 1 : 1 - s / p.l;
-          ctx.globalAlpha = a;
-          ctx.fillStyle = p.c;
-          ctx.fillRect(p.x + p.vx * u + Math.sin(p.y + u * 6) * 3 * u, p.y + p.vy * u, S, S);
-        }
-        if (t < end) raf = requestAnimationFrame(frame);
-        else { ctx.clearRect(0, 0, W, H); face.classList.add("dusted"); }
-      })(t0);
-    }
-    // giro + 3 s de firma dibujándose + 1,5 s de quieta
-    const arm = () => { clearTimeout(timer); if (!done) timer = setTimeout(snap, FIRMA_DELAY + 3000 + 1500); };
-    const disarm = () => { clearTimeout(timer); setTimeout(() => { if (!showing()) reset(); }, 300); };
-    card.addEventListener("mouseenter", () => { over = true; if (!done) f.draw(); arm(); });
-    card.addEventListener("mouseleave", () => { over = false; disarm(); });
-    // Con dedo o teclado no hay hover: tocar o Enter da vuelta la tarjeta
-    const toggle = () => { card.classList.toggle("flipped"); if (card.classList.contains("flipped")) { if (!done) f.draw(); arm(); } else disarm(); };
-    card.addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse") toggle(); });
-    card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
-  });
-
-  // Tarjeta de Delfina: al darse vuelta, su firma se dibuja
-  $$(".dev-delfi").forEach((card) => {
-    const f = firma(card, 2600);
+  // Al darse vuelta, la firma se dibuja. Con dedo o teclado no hay hover: tocar o Enter da vuelta la tarjeta
+  $$(".dev-card").forEach((card) => {
+    const f = firma(card, card.classList.contains("dev-ale") ? 3000 : 2600);
     let over = false;
     const showing = () => over || card.classList.contains("flipped");
     const leave = () => setTimeout(() => { if (!showing()) f.hide(); }, 300);
