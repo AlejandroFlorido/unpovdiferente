@@ -523,9 +523,13 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .tp-card .ask { color: var(--muted); font-style: italic; }
 .tp-cell.asks { border-top-color: var(--c-aviso); }
 .tp-cell.asks .lbl { color: var(--c-aviso); }
+/* Traductor: dos columnas, Qué hacer y Cómo */
+.tp-col { display: flex; flex-direction: column; gap: 0.6rem; border-left: 4px solid var(--fc); padding-left: 0.9rem; }
+.tp-col .tp-title { color: var(--fc); }
+.tp-col .scribble-list { margin: 0; }
 /* Traductor guiado: la consigna pintada por partes */
 .f-paso { --fc: var(--brand-2); } .f-cuenta { --fc: var(--c-taller); } .f-entregar { --fc: var(--c-correccion); }
-.f-fecha { --fc: var(--c-entrega); } .f-evalua { --fc: var(--c-evaluacion); } .f-otro { --fc: var(--muted); }
+.f-fecha { --fc: var(--c-entrega); } .f-como { --fc: var(--c-taller); } .f-evalua { --fc: var(--c-evaluacion); } .f-otro { --fc: var(--muted); }
 .tr-guide { display: flex; flex-direction: column; gap: 0.75rem; }
 .tr-legend { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; font-size: var(--step--1); }
 .fkey { display: inline-flex; align-items: center; gap: 0.35rem; }
