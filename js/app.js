@@ -389,9 +389,12 @@
   const TR_CATS = {
     paso: { name: "Qué hacer", tag: "Hacer" },
     como: { name: "Cómo", tag: "Cómo" },
-    fecha: { name: "Fecha", tag: "Fecha" }
+    fecha: { name: "Fecha", tag: "Fecha" },
+    nada: { name: "Irrelevante", tag: "Irrelevante" }
   };
-  const trCat = (c) => (c === "paso" || c === "fecha" ? c : "como");
+  const trCat = (c) => (c === "paso" || c === "fecha" || c === "nada" ? c : "como");
+  // Saludos y frases de presentación: no son parte de la tarea
+  const TR_NADA = /^(?:hola|buen(?:os|as)\s+(?:días|tardes|noches)|buenas|estimad[oa]s?|querid[oa]s?|saludos|(?:les|te)\s+(?:dejo|comparto|paso|envío)|(?:a\s+continuación\s+)?(?:procedo|paso)\s+a|cualquier\s+(?:duda|consulta)|ante\s+cualquier|éxitos|muchas\s+gracias|gracias)/i;
   // Fechas: 20/10, 14 de noviembre, el jueves, antes del domingo, mañana, en 10 días, la próxima clase...
   const TR_WD = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
   const TR_MES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
@@ -467,6 +470,11 @@
       const s = s0.trim();
       if (!s) continue;
       const sp = s0.endsWith(" ") ? " " : "";
+      if (TR_NADA.test(s)) {
+        // "Buenos días estudiantes, procedo a...": la parte suelta del saludo también
+        const parts = s.split(/,\s*/);
+        if (parts.every((p) => TR_NADA.test(p) || !trVerb(trFirst(trStart(p))) && p.split(/\s+/).length < 4)) { add(back(s) + sp, "nada"); continue; }
+      }
       if (/^(?:se\s+evalu|se\s+evalú|criterios?\b|la\s+evaluación|evaluación:)/i.test(s)) { add(back(s) + sp, "evalua"); continue; }
       if (/^(?:el\s+)?(?:plazo|fecha de entrega|fecha límite|vence)/i.test(s)) { add(back(s) + sp, "fecha"); continue; }
       if (/^(?:se\s+entrega|la\s+entrega|entrega:|formato|el\s+trabajo\s+se\s+entrega|extensión|subir|enviar|entregar\s+(?:en|por|al|a\s+trav))/i.test(s)) { add(back(s) + sp, "entregar"); continue; }
@@ -506,6 +514,7 @@
         if (steps.length) dates.push(Object.assign(w, { step: steps.length - 1 })); else waiting.push(w);
         return;
       }
+      if (sg.cat === "nada") return;
       if (sg.cat !== "paso") { if (/\p{L}{3}/u.test(p)) como.push(trCap(p.replace(TR_SEQ, ""))); return; }
       const q = trStart(p), inf = trVerb(trFirst(q));
       let step = inf ? trCap(inf + q.slice(trFirst(q).length)) : trCap(q);
@@ -523,7 +532,7 @@
     // Si hay varias fechas, la de la entrega es la última
     const last = dates.slice().sort((a, b) => (a.date || "0") < (b.date || "0") ? -1 : 1).pop();
     const fecha = last ? last.label : "";
-    const all = segs.map((sg) => sg.text).join(" ");
+    const all = segs.filter((sg) => sg.cat !== "nada").map((sg) => sg.text).join(" ");
     const asks = [];
     if (!fecha) asks.push("¿Para cuándo es?");
     if (!/entreg|formato|PDF|archivo|subir|enviar|impres|campus|aula virtual|oral|expo/i.test(all)) asks.push("¿Cómo y dónde se entrega?");
