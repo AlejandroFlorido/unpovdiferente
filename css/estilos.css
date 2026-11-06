@@ -369,7 +369,9 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
   color: var(--c); background: none; border: 2px solid var(--c); border-radius: 52% 48% 55% 45% / 47% 55% 45% 53%; cursor: pointer; place-items: center; }
 .concept-back::before { content: ""; position: absolute; inset: -4px -2px -3px -4px; border: 1.5px solid var(--c); opacity: 0.55; pointer-events: none;
   border-radius: 46% 54% 44% 56% / 55% 45% 57% 43%; transform: rotate(-8deg); }
-.concept-back svg { width: 1.3rem; height: 1.3rem; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; }
+.concept-back svg { width: 1.6rem; height: 1.6rem; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; overflow: visible; }
+/* La cruz también va a mano: dos trazos con curva leve y un segundo trazo fino corrido, como el círculo */
+.concept-back svg .echo { stroke-width: 1.4; opacity: 0.6; }
 .concept.open .concept-back { display: grid; animation: fade-in 0.35s 0.5s ease both; }
 @media (max-width: 600px) { .concept.open .concept-title { padding: 3.4rem 0.8rem 1rem; } .concept-back { top: 0.7rem; right: 0.7rem; } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }

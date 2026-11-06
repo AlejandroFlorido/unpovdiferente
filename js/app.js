@@ -1018,7 +1018,8 @@
       const back = document.createElement("button");
       back.type = "button";
       back.className = "concept-back";
-      back.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 6.8 Q12.4 12.6 17.1 17.4"/><path d="M16.8 6.9 Q11.6 12.1 6.9 17.2"/></svg>';
+      back.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.4 5.8 C8.8 8.6 12.4 13.1 18.4 18.3"/><path d="M18.2 5.2 C14.3 9.1 10.6 13.4 5.6 18.6"/>'
+        + '<path class="echo" d="M6.8 4.6 C10.1 8.2 13.6 11.6 17.4 19.6"/><path class="echo" d="M16.6 6.9 C13.1 10.7 9.4 14.2 6.9 17.2"/></svg>';
       back.setAttribute("aria-label", "Cerrar y volver a los tres conceptos");
       back.addEventListener("click", () => { toggle(item); $(".concept-title", item).focus({ preventScroll: true }); });
       item.appendChild(back);
