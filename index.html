@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;500;600;700&display=swap">
 <!-- ?v= obliga al navegador a bajar el CSS y el JS nuevos después de cada cambio: subir el número al editarlos. -->
-<link rel="stylesheet" href="css/estilos.css?v=66">
+<link rel="stylesheet" href="css/estilos.css?v=67">
 
 <!-- Filtro "borroneado" para los óvalos naranjas: ondula el trazo y lo deja con huecos, como marcador seco. -->
 <svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -53,9 +53,9 @@
       <a class="tab" href="#entender" id="tab-entender">Entender<small>Informar</small></a>
       <a class="tab" href="#consignas" id="tab-consignas">Consignas<small>Orientar</small></a>
       <a class="tab" href="#herramientas" id="tab-herramientas">Herramientas<small>Acompañar</small></a>
+      <a class="tab" href="#descargables" id="tab-descargables">Descargables<small>Para imprimir</small></a>
       <a class="tab" href="#docentes" id="tab-docentes">Docentes<small>Comunicar claro</small></a>
       <a class="tab" href="#apoyo" id="tab-apoyo">Apoyo<small>Áreas pedagógicas</small></a>
-      <a class="tab" href="#descargables" id="tab-descargables">Descargables<small>Para imprimir</small></a>
       <a class="tab" href="#contacto" id="tab-contacto">Contacto<small>Psicopedagogía</small></a>
       <a class="tab" href="#equipo" id="tab-equipo">Equipo<small>Quiénes somos</small></a>
     </nav>
@@ -418,6 +418,25 @@
     </div>
   </section>
 
+  <!-- ================= DESCARGABLES =================
+       Las tarjetas las arma el script desde el arreglo DESCARGABLES (js/app.js). Los PDF van en assets/descargables/
+       y las imágenes de vista previa en assets/img/descargables/. -->
+  <section id="descargables">
+    <div class="lead">
+      <span class="eyebrow">04 · Llevar</span>
+      <h2>Descargables</h2>
+      <p>Las herramientas en papel, para imprimir, completar a mano y tener a la vista. Tocá una para ver cómo es y descargarla.</p>
+    </div>
+    <div id="dl-book"></div>
+    <div class="dl-kit">
+      <div class="lead">
+        <h3>Kit de herramientas</h3>
+        <p>Lo mismo que trae el cuadernillo, pero de a una: descargá solo la que necesitás.</p>
+      </div>
+      <div class="dl-grid" id="dl-kit"></div>
+    </div>
+  </section>
+
   <!-- ================= DOCENTES ================= -->
   <section id="docentes">
     <div class="lead">
@@ -485,24 +504,6 @@ Entrega</textarea></label>
     <div class="note">
       <p><b>¿No sabés a cuál ir?</b> Escribí a cualquiera: si no les corresponde, te derivan. Podés armar el mensaje acá abajo y llevarlo escrito.</p>
       <div class="row"><a class="btn second" href="#contacto" data-scroll="contacto">Armar un mensaje</a></div>
-    </div>
-  </section>
-  <!-- ================= DESCARGABLES =================
-       Las tarjetas las arma el script desde el arreglo DESCARGABLES (js/app.js). Los PDF van en assets/descargables/
-       y las imágenes de vista previa en assets/img/descargables/. -->
-  <section id="descargables">
-    <div class="lead">
-      <span class="eyebrow">04 · Llevar</span>
-      <h2>Descargables</h2>
-      <p>Las herramientas en papel, para imprimir, completar a mano y tener a la vista. Tocá una para ver cómo es y descargarla.</p>
-    </div>
-    <div id="dl-book"></div>
-    <div class="dl-kit">
-      <div class="lead">
-        <h3>Kit de herramientas</h3>
-        <p>Lo mismo que trae el cuadernillo, pero de a una: descargá solo la que necesitás.</p>
-      </div>
-      <div class="dl-grid" id="dl-kit"></div>
     </div>
   </section>
 <section class="contact" id="contacto" aria-labelledby="ct-title">
@@ -648,4 +649,4 @@ Entrega</textarea></label>
     <div class="row" id="dl-d-actions"></div>
   </div>
 </dialog>
-<script src="js/app.js?v=66"></script>
+<script src="js/app.js?v=67"></script>
