@@ -1092,6 +1092,66 @@
     document.addEventListener("click", (e) => { const o = openItem(); if (o && !o.contains(e.target) && !e.target.closest("button, a")) toggle(o); });
   }
 
+  /* ---------- Descargables ----------
+     Para sumar el archivo real de cada uno: poné el PDF en assets/descargables/ y escribí su nombre en "file".
+     Para que la vista previa muestre páginas reales: poné las imágenes en assets/img/descargables/ y listalas en "pages"
+     (la primera también se usa como tapa). Mientras no haya imágenes, se dibuja una tapa con el número y el nombre. */
+  const DESCARGABLES = {
+    book: { id: "cuadernillo", title: "Cuadernillo unpovdiferente", line: "Las 6 herramientas juntas",
+      desc: "Todas las herramientas del kit en un solo cuadernillo, para imprimir y llevar a la cursada.",
+      file: "", pages: [], meta: "PDF · Borrador" },
+    kit: [
+      { id: "traductor", title: "Traductor de consignas", line: "Qué hay que hacer, cuándo y cómo se evalúa", desc: "Una hoja para pasar en limpio cualquier consigna: qué hacer, qué tener en cuenta, qué entregar y qué preguntarle al docente.", file: "", pages: [] },
+      { id: "mapa", title: "Mapa de la cursada", line: "Los pasos de una entrega, de a uno", desc: "Los pasos de un trabajo, desde entender la consigna hasta entregar, para ir tachando.", file: "", pages: [] },
+      { id: "primer-paso", title: "Primer paso", line: "Para cuando no sé por dónde empezar", desc: "Cuatro preguntas cortas para encontrar la primera acción concreta de una tarea.", file: "", pages: [] },
+      { id: "dividir", title: "Dividir la entrega", line: "Para cuando el TP es enorme", desc: "Una planilla para partir un trabajo grande en partes chicas, con fecha para cada una.", file: "", pages: [] },
+      { id: "semana", title: "Mi semana", line: "Entregas y clases a la vista", desc: "Una semana en una hoja: clases, entregas y fechas importantes en un mismo lugar.", file: "", pages: [] },
+      { id: "bloques", title: "Bloques de estudio", line: "Para cuando me disperso", desc: "Bloques cortos de estudio con pausas, para marcar a medida que los vas haciendo.", file: "", pages: [] }
+    ]
+  };
+  const dlBook = $("#dl-book"), dlKit = $("#dl-kit"), dlDialog = $("#dl-dialog");
+  if (dlBook && dlKit && dlDialog) {
+    const all = [DESCARGABLES.book, ...DESCARGABLES.kit];
+    const color = (d) => (d === DESCARGABLES.book || DESCARGABLES.kit.indexOf(d) % 2 ? "t-orange" : "t-blue");
+    const num = (d) => (d === DESCARGABLES.book ? "6 en 1" : String(DESCARGABLES.kit.indexOf(d) + 1).padStart(2, "0"));
+    const cover = (d, page) => {
+      const src = page || d.pages[0];
+      return `<div class="dl-cover ${color(d)}">` + (src ? `<img src="${esc(src)}" alt="">`
+        : `<span class="dl-brand">unpovdiferente</span><span class="dl-num">${num(d)}</span><span class="dl-ttl">${esc(d.title)}</span><span class="dl-rules"><i></i><i></i><i></i></span>`) + "</div>";
+    };
+    const card = (d) => `<button class="dl-card ${color(d)}" type="button" data-dl="${d.id}" aria-haspopup="dialog">${cover(d)}`
+      + (d === DESCARGABLES.book ? "" : `<span class="dl-name">${esc(d.title)}</span><span class="dl-line">${esc(d.line)}</span>`) + "</button>";
+    const B = DESCARGABLES.book;
+    dlBook.innerHTML = `<div class="dl-book">${card(B)}<div class="dl-book-info"><span class="eyebrow">Cuadernillo</span><h3>${esc(B.title)}</h3><p>${esc(B.desc)}</p>`
+      + `<ul class="scribble-list">${DESCARGABLES.kit.map((k) => `<li>${esc(k.title)}</li>`).join("")}</ul>`
+      + `<button class="btn" type="button" data-dl="${B.id}">Ver el cuadernillo</button></div></div>`;
+    dlKit.innerHTML = DESCARGABLES.kit.map(card).join("");
+
+    let opener = null;
+    const show = (id, from) => {
+      const d = all.find((x) => x.id === id);
+      if (!d) return;
+      opener = from;
+      $("#dl-d-kind").textContent = d === B ? "Cuadernillo" : `Kit de herramientas · ${num(d)}`;
+      $("#dl-d-title").textContent = d.title;
+      $("#dl-d-desc").textContent = d.desc;
+      $("#dl-d-meta").textContent = d.meta || (d.file ? "PDF" : "PDF · Borrador");
+      $("#dl-d-view").innerHTML = d.pages.length > 1 ? d.pages.slice(0, 2).map((p) => cover(d, p)).join("") : cover(d);
+      $("#dl-d-actions").innerHTML = d.file
+        ? `<a class="btn" href="assets/descargables/${esc(d.file)}" download>Descargar PDF</a>`
+        : `<button class="btn" type="button" disabled>Descargar PDF</button><span class="example-tag">Falta el archivo</span>`;
+      dlDialog.showModal();
+      $("#dl-d-close").focus();
+    };
+    $$("[data-dl]", $("#descargables")).forEach((b) => b.addEventListener("click", () => show(b.dataset.dl, b)));
+    $("#dl-d-close").addEventListener("click", () => dlDialog.close());
+    // Tocar afuera de la vista previa (en el fondo oscuro) también la cierra; Esc la cierra solo
+    dlDialog.addEventListener("click", (e) => { if (e.target === dlDialog) {
+      const r = dlDialog.getBoundingClientRect();
+      if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) dlDialog.close(); } });
+    dlDialog.addEventListener("close", () => { if (opener) opener.focus({ preventScroll: true }); });
+  }
+
   /* ---------- Estado inicial ---------- */
   const hash = (location.hash || "").slice(1);
   /* ---------- Tarjetas de desarrolladores ---------- */
