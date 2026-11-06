@@ -986,6 +986,17 @@
       walk(el);
     };
     items.forEach((item) => splitWords($(".concept-body", item)));
+    // Salida bien visible al pie del concepto abierto (además de tocar el título, Esc o tocar afuera)
+    items.forEach((item) => {
+      const back = document.createElement("button");
+      back.type = "button";
+      back.className = "concept-back";
+      back.innerHTML = '<span aria-hidden="true">←</span> Volver a los tres';
+      back.setAttribute("aria-label", "Volver a los tres conceptos");
+      back.addEventListener("click", () => { toggle(item); $(".concept-title", item).focus({ preventScroll: true }); });
+      back.style.setProperty("--n", $$(".w", item).length);
+      $(".concept-body", item).appendChild(back);
+    });
 
     // Lleva el recuadro desde donde estaba (first) hasta su lugar nuevo, creciendo o achicándose de a poco.
     // Para que nada "tiemble", durante el movimiento no se reacomoda ningún texto: el recuadro anima su ancho y alto,
@@ -1020,8 +1031,7 @@
       $(".concept-body", item).hidden = !open;
     };
     let gone = 0;
-    items.forEach((item) => {
-      $(".concept-title", item).addEventListener("click", () => {
+    function toggle(item) {
         const calm = isCalm();
         const others = items.filter((o) => o !== item);
         const first = item.getBoundingClientRect(), firstTitle = $(".concept-title", item).getBoundingClientRect();
@@ -1047,8 +1057,12 @@
           // Los otros dos reaparecen en su lugar con el mismo fundido, mientras el elegido vuelve.
           requestAnimationFrame(() => requestAnimationFrame(() => concepts.classList.remove("fading")));
         }
-      });
-    });
+    }
+    items.forEach((item) => $(".concept-title", item).addEventListener("click", () => toggle(item)));
+    const openItem = () => items.find((i) => i.classList.contains("open"));
+    document.addEventListener("keydown", (e) => { const o = openItem(); if (e.key === "Escape" && o) toggle(o); });
+    // Tocar fuera del recuadro abierto también vuelve a los tres (salvo que sea otro botón o enlace)
+    document.addEventListener("click", (e) => { const o = openItem(); if (o && !o.contains(e.target) && !e.target.closest("button, a")) toggle(o); });
   }
 
   /* ---------- Estado inicial ---------- */

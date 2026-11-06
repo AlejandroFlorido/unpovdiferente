@@ -365,6 +365,10 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 /* El texto se "ensambla": cada palabra llega desde un lugar al azar, girada y desenfocada, y se acomoda en su sitio. */
 .concept-body .w { display: inline-block; }
 .concept.open .concept-body .w { animation: word-in 0.5s calc(0.55s + var(--i) * 22ms) cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+.concept-back { align-self: center; margin-top: 0.6rem; font: inherit; font-family: var(--f-display); font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--c); background: none; border: 2px solid var(--c); border-radius: 999px; padding: 0.55rem 1.1rem; cursor: pointer; display: inline-flex; gap: 0.5rem; align-items: center; white-space: nowrap; }
+.concept.open .concept-back { animation: fade-in 0.4s calc(0.75s + var(--n, 20) * 22ms) ease both; }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes word-in { from { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); filter: blur(5px); } to { opacity: 1; transform: none; filter: none; } }
 .scroll-cue { position: absolute; left: 0; right: 0; margin-inline: auto; width: fit-content; bottom: 1rem; font: inherit; font-family: var(--f-display); font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--muted); background: none; border: 0; padding: 0.3rem 0; cursor: pointer; display: inline-flex; gap: 0.5rem; align-items: center; }
