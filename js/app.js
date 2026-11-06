@@ -357,7 +357,7 @@
   };
   const codeHtml = (k) => `<span class="code k-${k}"><span class="shape" aria-hidden="true"></span>${TYPES[k]}</span>`;
   const legend = Object.keys(TYPES).map(codeHtml).join("");
-  $("#codes-legend").innerHTML = legend;
+  if ($("#codes-legend")) $("#codes-legend").innerHTML = legend;
   $("#wk-legend").innerHTML = legend;
   $("#wk-type").innerHTML = Object.entries(TYPES).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
 
@@ -584,7 +584,8 @@
     $("#tr-msg").textContent = trSegs.length ? "" : "Pegá una consigna primero.";
     renderTr();
   }
-  $("#tr-run").onclick = runTr;
+  // La consigna pintada y la leyenda aparecen recién cuando el estudiante desarma la suya
+  $("#tr-run").onclick = () => { runTr(); $("#tr-guide").hidden = false; };
   const trFrag = (e) => {
     const b = e.target.closest(".frag"); if (!b) return;
     if (e.type === "keydown") { if (e.key !== "Enter" && e.key !== " ") return; e.preventDefault(); }
@@ -602,7 +603,7 @@
     $(`#tr-text .frag[data-i="${i}"]`)?.focus();
   });
   const trSaved = store.get("tr", null);
-  if (trSaved && Array.isArray(trSaved.segs)) { $("#tr-input").value = trSaved.input; trSegs = trSaved.segs.map((sg) => ({ text: sg.text, cat: trCat(sg.cat) })); renderTr(); }
+  if (trSaved && Array.isArray(trSaved.segs)) { $("#tr-input").value = trSaved.input; trSegs = trSaved.segs.map((sg) => ({ text: sg.text, cat: trCat(sg.cat) })); renderTr(); $("#tr-guide").hidden = false; }
   else runTr();
   $("#tr-input").addEventListener("input", () => store.set("tr", Object.assign(store.get("tr", {}), { input: $("#tr-input").value })));
   $("#tr-copy").onclick = () => {
