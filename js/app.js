@@ -368,7 +368,7 @@
   // Sustantivos y adjetivos que terminan como un infinitivo
   const TR_NOT_VERB = new Set("lugar hogar mujer poder deber placer taller collar mar par bar militar popular familiar particular similar regular escolar solar primer cualquier altar azar billar dólar éter cráter carácter alfiler mantel nivel".split(" "));
   const TR_READ = /^(leer|ver|mirar|escuchar|consultar|buscar)$/;
-  const TR_SEQ = /^(?:primero|después|luego|más tarde|a continuación|finalmente|por último|al final|también|además|y|e)\b,?\s*/i;
+  const TR_SEQ = /^(?:primero|despu[eé]s|luego|m[aá]s tarde|a continuaci[oó]n|finalmente|por [uú]ltimo|al final|también|además|y|e)\b,?\s*/i;
   const TR_MODAL = /^(?:se\s+(?:debe|deberá|deben|deberán|pide|solicita)\s+|deber(?:á|án|ás)\s+|deben\s+|tienen\s+que\s+|tenés\s+que\s+|tendrán\s+que\s+|hay\s+que\s+|(?:les|te)\s+(?:pedimos|pido)\s+que\s+|se\s+propone\s+)/i;
   function trVerb(word) {
     const w = (word || "").toLowerCase();
@@ -394,18 +394,18 @@
   };
   const trCat = (c) => (c === "paso" || c === "fecha" || c === "nada" ? c : "como");
   // Saludos y frases de presentación: no son parte de la tarea
-  const TR_NADA = /^(?:hola|buen(?:os|as)\s+(?:días|tardes|noches)|buenas|estimad[oa]s?|querid[oa]s?|saludos|(?:les|te)\s+(?:dejo|comparto|paso|envío)|(?:a\s+continuación\s+)?(?:procedo|paso)\s+a|cualquier\s+(?:duda|consulta)|ante\s+cualquier|éxitos|muchas\s+gracias|gracias)/i;
+  const TR_NADA = /^(?:hola|buen(?:os|as)\s+(?:d[ií]as|tardes|noches)|buenas|estimad[oa]s?|querid[oa]s?|saludos|(?:les|te)\s+(?:dejo|comparto|paso|envío)|(?:a\s+continuación\s+)?(?:procedo|paso)\s+a|cualquier\s+(?:duda|consulta)|ante\s+cualquier|éxitos|muchas\s+gracias|gracias)/i;
   // Fechas: 20/10, 14 de noviembre, el jueves, antes del domingo, mañana, en 10 días, la próxima clase...
   const TR_WD = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
   const TR_MES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
   const trWdRe = "lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo", trMesRe = TR_MES.join("|") + "|setiembre";
-  const TR_DATE = new RegExp("\\s*(?<![\\p{L}\\d])(?:(?:antes|después)\\s+del?\\s+|(?:hasta|para|a más tardar|como máximo|como mucho)\\s+(?:el\\s+|la\\s+)?(?:día\\s+)?|(?:el|la|este|esta)\\s+(?:día\\s+)?)?" +
+  const TR_DATE = new RegExp("\\s*(?<![\\p{L}\\d])(?:(?:antes|después)\\s+del?\\s+|(?:hasta|para|a más tardar|como máximo|como mucho)\\s+(?:el\\s+|la\\s+)?(?:d[ií]a\\s+)?|(?:el|la|este|esta)\\s+(?:d[ií]a\\s+)?)?" +
     "(?:(?:próximo\\s+)?(?:" + trWdRe + ")(?:\\s+\\d{1,2}(?:\\s+de\\s+(?:" + trMesRe + "))?)?(?:\\s+que viene|\\s+próximo)?" +
     "|\\d{1,2}[\\/\\-]\\d{1,2}(?:[\\/\\-]\\d{2,4})?|\\d{1,2}\\s+de\\s+(?:" + trMesRe + ")(?:\\s+de\\s+\\d{4})?" +
     "|pasado mañana|(?<!la\\s)mañana|hoy|(?:la\\s+)?(?:próxima clase|clase que viene|semana que viene|próxima semana)|fin de mes|(?:en|dentro de)\\s+\\d+\\s+días)(?![\\p{L}\\d])", "iu");
   // Convierte lo que dice la consigna en una fecha real, contando desde hoy
   function trWhen(txt) {
-    const t = trClean(txt).replace(/^(?:hasta|para|a más tardar)\s+(?:el\s+)?(?:día\s+)?(?=\d)/i, "").replace(/^(?:el\s+)?(?:plazo|fecha de entrega|fecha límite)?\s*:?\s*(?:vence|es)?\s*:?\s*/i, "");
+    const t = trClean(txt).replace(/^(?:hasta|para|a más tardar)\s+(?:el\s+)?(?:d[ií]a\s+)?(?=\d)/i, "").replace(/^(?:el\s+)?(?:plazo|fecha de entrega|fecha límite)?\s*:?\s*(?:vence|es)?\s*:?\s*/i, "");
     const low = t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
     const now = today();
     let d = null, guess = false;
@@ -451,6 +451,7 @@
   };
   // Después de una coma, esto ya es "cómo": formato, extensión, modalidad...
   const TR_HOW = /^(?:en\s+)?(?:formato|extensión|tamaño|individual|grupal|en grupos?|de a \d|de forma|de manera|con un máximo|máximo|mínimo|como máximo|como mínimo|usando|utilizando|respetando|sin\s|(?:en\s+)?(?:pdf|word|jpg|png|ppt|power ?point|canva)\b)/i;
+  const TR_BREAK = /\s+(?=((?:el|este)\s+(?:trabajo|tp|práctico|practico)\b|la\s+(?:consigna|propuesta|actividad|tarea)\s+(?:es|consiste|consta)\b|(?:se\s+)?(?:evaluar[aá]n?|evalua|evalúa)\b|criterios?\b|formato\b|se\s+entrega|la\s+entrega\b|entregar\b|para\s+el\s+(?:d[ií]a\s+)?\d|despu[eé]s\b|luego\b|finalmente\b|por\s+[uú]ltimo\b|tener\s+en\s+cuenta\b|cualquier\s+duda\b))/gi;
   function trSegments(text) {
     const segs = [];
     const add = (txt, cat) => {
@@ -463,8 +464,11 @@
     };
     // Lo que está entre comillas no se corta (títulos, frases citadas)
     const quotes = [];
-    const t = text.replace(/\s+/g, " ").trim()
+    let t = text.replace(/\s+/g, " ").trim()
       .replace(/"[^"]*"|“[^”]*”|«[^»]*»/g, (q) => "\u0001" + (quotes.push(q) - 1) + "\u0002");
+    // Consigna sin puntos ni comas: ponemos cortes antes de las palabras que suelen abrir una parte nueva
+    const words = t.split(" ").length;
+    if (words > 10 && (t.match(/[.,;:!?]/g) || []).length <= words / 30) t = t.replace(TR_BREAK, ". ").replace(/\bse\. /gi, "se ");
     const back = (s) => s.replace(/\u0001(\d+)\u0002/g, (_, i) => quotes[i]);
     for (const s0 of t.match(/[^.!?;]+(?:[.!?;]+|$)\s*/g) || []) {
       const s = s0.trim();
