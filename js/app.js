@@ -396,13 +396,13 @@
   const TR_WD = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
   const TR_MES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
   const trWdRe = "lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo", trMesRe = TR_MES.join("|") + "|setiembre";
-  const TR_DATE = new RegExp("\\s*(?<![\\p{L}\\d])(?:(?:antes|después)\\s+del?\\s+|(?:hasta|para|a más tardar|como máximo|como mucho)\\s+(?:el\\s+|la\\s+)?|(?:el|la|este|esta)\\s+)?" +
+  const TR_DATE = new RegExp("\\s*(?<![\\p{L}\\d])(?:(?:antes|después)\\s+del?\\s+|(?:hasta|para|a más tardar|como máximo|como mucho)\\s+(?:el\\s+|la\\s+)?(?:día\\s+)?|(?:el|la|este|esta)\\s+(?:día\\s+)?)?" +
     "(?:(?:próximo\\s+)?(?:" + trWdRe + ")(?:\\s+\\d{1,2}(?:\\s+de\\s+(?:" + trMesRe + "))?)?(?:\\s+que viene|\\s+próximo)?" +
     "|\\d{1,2}[\\/\\-]\\d{1,2}(?:[\\/\\-]\\d{2,4})?|\\d{1,2}\\s+de\\s+(?:" + trMesRe + ")(?:\\s+de\\s+\\d{4})?" +
     "|pasado mañana|(?<!la\\s)mañana|hoy|(?:la\\s+)?(?:próxima clase|clase que viene|semana que viene|próxima semana)|fin de mes|(?:en|dentro de)\\s+\\d+\\s+días)(?![\\p{L}\\d])", "iu");
   // Convierte lo que dice la consigna en una fecha real, contando desde hoy
   function trWhen(txt) {
-    const t = trClean(txt).replace(/^(?:el\s+)?(?:plazo|fecha de entrega|fecha límite)?\s*:?\s*(?:vence|es)?\s*:?\s*/i, "");
+    const t = trClean(txt).replace(/^(?:hasta|para|a más tardar)\s+(?:el\s+)?(?:día\s+)?(?=\d)/i, "").replace(/^(?:el\s+)?(?:plazo|fecha de entrega|fecha límite)?\s*:?\s*(?:vence|es)?\s*:?\s*/i, "");
     const low = t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
     const now = today();
     let d = null, guess = false;
@@ -439,8 +439,15 @@
     if (nm) return TR_NOUN[nm[1].toLowerCase()] + " " + ((nm[2] || "").toLowerCase() === "del" ? "el " : nm[2] ? nm[2].toLowerCase() + " " : "") + p.replace(/^[\s,;:.]+/, "").slice(nm[0].length);
     // "Los alumnos deberán seleccionar..." → "seleccionar..."
     if (!trVerb(trFirst(p))) { const sm = p.match(/^(?:\p{L}+\s+){1,4}?(?:deber(?:á|án|ás)|deben|tienen que|tendrán que|van a)\s+/iu); if (sm) p = p.slice(sm[0].length); }
+    // "El trabajo consta en crear...", "La propuesta es diseñar...", "Consigna: armar..." → desde el verbo
+    if (!trVerb(trFirst(p))) {
+      const lm = p.match(/^(?:(?:[\p{L}"“”«»]+\s+){0,5}?(?:en|de|que|es|será|para|a)\s+|[\p{L}\d ]{1,25}?:\s*)(?=(\p{L}+))/iu);
+      if (lm && trVerb(lm[1]) && !TR_NOT_VERB.has(lm[1].toLowerCase())) p = p.slice(lm[0].length);
+    }
     return p;
   };
+  // Después de una coma, esto ya es "cómo": formato, extensión, modalidad...
+  const TR_HOW = /^(?:en\s+)?(?:formato|extensión|tamaño|individual|grupal|en grupos?|de a \d|de forma|de manera|con un máximo|máximo|mínimo|como máximo|como mínimo|usando|utilizando|respetando|sin\s|(?:en\s+)?(?:pdf|word|jpg|png|ppt|power ?point|canva)\b)/i;
   function trSegments(text) {
     const segs = [];
     const add = (txt, cat) => {
@@ -472,7 +479,7 @@
       const cuts = [0];
       for (const m of body.matchAll(/,\s*(?:y\s+|e\s+)?|\s+[ye]\s+|\s+(?=(?:después|luego|finalmente|por último|a continuación)\b)/giu)) {
         const after = body.slice(m.index + m[0].length);
-        if (trVerb(trFirst(trStart(after))) || /^(?:después|luego|finalmente|por último|a continuación)\b/i.test(after)) cuts.push(m.index);
+        if (trVerb(trFirst(trStart(after))) || /^(?:después|luego|finalmente|por último|a continuación)\b/i.test(after) || TR_HOW.test(after)) cuts.push(m.index);
       }
       cuts.push(body.length);
       const parts = [];
