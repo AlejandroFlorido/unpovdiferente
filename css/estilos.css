@@ -656,3 +656,79 @@ html.calm *, html.calm *::before, html.calm *::after { transition: none !importa
 /* Tarjeta de Delfina: su firma se dibuja trazo a trazo */
 .dev-firma { position: relative; width: 78%; height: auto; fill: none; stroke: var(--dv-ink); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; }
 .dev-ale .dev-firma { width: 64%; }
+
+/* ---------- Descargables ----------
+   Cada descargable se muestra como una hoja (proporción A4) con el mismo trazo hecho a mano que los recuadros
+   de Entender: borde desparejo y un segundo trazo corrido. Azul y naranja se van turnando.
+   Al tocar una, se abre la vista previa grande con el botón para descargar. */
+#descargables { display: flex; flex-direction: column; gap: var(--space-block); }
+.dl-kit { display: flex; flex-direction: column; gap: var(--space-grid); }
+.dl-kit h3 { font-family: var(--f-title); font-size: calc(var(--step-2) + 4pt); line-height: var(--lh-title); letter-spacing: -0.02em; }
+.dl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr)); gap: var(--space-grid); }
+@media (min-width: 900px) { .dl-grid { grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); } }
+@media (max-width: 520px) { .dl-grid .dl-cover { padding: 0.7rem 0.65rem; } .dl-grid .dl-cover .dl-num { font-size: 2.3rem; } .dl-grid .dl-cover .dl-ttl { font-size: 0.95rem; } .dl-grid .dl-cover .dl-brand { font-size: 0.65rem; } .dl-card .dl-name { font-size: calc(var(--step-0) + 4pt); } }
+.dl-card { --c: var(--brand-2); font: inherit; color: inherit; text-align: left; background: none; border: 0; padding: 0; cursor: pointer;
+  display: flex; flex-direction: column; gap: 0.8rem; }
+.dl-card.t-orange, .dl-cover.t-orange { --c: var(--brand); }
+.dl-card .dl-name { font-family: var(--f-title); font-size: calc(var(--step-1) + 4pt); line-height: var(--lh-sub); letter-spacing: -0.02em; color: var(--ink); }
+.dl-card .dl-line { font-size: var(--step--1); color: var(--muted); margin-top: -0.4rem; }
+
+/* La hoja: portada generada (hasta que haya imagen real) */
+.dl-cover { --c: var(--brand-2); position: relative; aspect-ratio: 1 / 1.414; background: var(--surface); color: var(--ink);
+  border: 2.5px solid var(--c); border-radius: 220px 14px 200px 12px / 12px 200px 14px 220px;
+  display: flex; flex-direction: column; justify-content: space-between; padding: 1.1rem 1rem 1rem; overflow: visible;
+  transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.dl-cover::before { content: ""; position: absolute; inset: -5px -3px -3px -6px; border: 1.5px solid var(--c); opacity: 0.55; pointer-events: none;
+  border-radius: 14px 200px 12px 220px / 220px 12px 200px 14px; transform: rotate(-0.8deg); }
+.dl-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+.dl-cover .dl-brand { font-family: var(--f-title); font-size: 0.8rem; letter-spacing: -0.01em; color: var(--muted); }
+.dl-cover .dl-num { font-family: var(--f-display); font-weight: 600; font-size: 3.4rem; line-height: 0.9; letter-spacing: -0.03em; color: var(--c); }
+.dl-cover .dl-ttl { font-family: var(--f-title); font-size: 1.25rem; line-height: var(--lh-sub); letter-spacing: -0.02em; }
+/* Renglones garabateados al pie, como una hoja para completar */
+.dl-cover .dl-rules { display: flex; flex-direction: column; gap: 0.55rem; }
+.dl-cover .dl-rules i { display: block; height: 1.5px; background: var(--line); border-radius: 2px; }
+.dl-cover .dl-rules i:nth-child(2) { width: 82%; } .dl-cover .dl-rules i:nth-child(3) { width: 64%; }
+.dl-card:hover .dl-cover, .dl-card:focus-visible .dl-cover { transform: rotate(-1.2deg) scale(1.03); }
+.dl-card:focus-visible { outline: none; }
+.dl-card:focus-visible .dl-cover { outline: 3px solid var(--focus); outline-offset: 6px; }
+/* El botón de hover general no aplica a las hojas (tienen su propio movimiento) */
+.dl-card::after { display: none !important; }
+
+/* Cuadernillo: la hoja grande al lado del texto */
+.dl-book { display: grid; grid-template-columns: minmax(12rem, 20rem) 1fr; gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center;
+  background: var(--accent-soft); border-radius: var(--radius); padding: clamp(1.25rem, 3vw, 2.5rem); }
+.dl-book .dl-card { gap: 0; }
+.dl-book .dl-cover .dl-num { font-size: 4.4rem; }
+.dl-book .dl-cover .dl-ttl { font-size: 1.6rem; }
+.dl-book-info { display: flex; flex-direction: column; gap: 0.9rem; align-items: flex-start; }
+.dl-book-info h3 { font-family: var(--f-title); font-size: calc(var(--step-3) + 4pt); line-height: var(--lh-title); letter-spacing: -0.02em; }
+.dl-book-info p { font-size: var(--step-1); line-height: var(--lh-sub); color: var(--muted); }
+.dl-book-info ul { margin: 0; }
+@media (max-width: 640px) { .dl-book { grid-template-columns: 1fr; } .dl-book .dl-card { max-width: 16rem; margin-inline: auto; width: 100%; } }
+
+/* Vista previa ampliada */
+.dl-dialog { width: min(100% - 2rem, 58rem); max-height: calc(100svh - 2rem); padding: clamp(1.25rem, 3vw, 2.25rem); border: 0; border-radius: var(--radius);
+  background: var(--bg); color: var(--ink); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25); overflow: auto; }
+.dl-dialog[open] { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(1.25rem, 3vw, 2.5rem); align-items: center; }
+.dl-dialog::backdrop { background: rgba(10, 10, 10, 0.55); }
+.dl-dialog[open], .dl-dialog[open]::backdrop { animation: dl-in 0.3s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+@keyframes dl-in { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }
+.dl-dialog[open]::backdrop { animation-name: fade-in; }
+.dl-d-view { display: flex; gap: 0.8rem; justify-content: center; padding: 0.6rem; }
+.dl-d-view .dl-cover { width: min(100%, 22rem); }
+.dl-d-view .dl-cover .dl-num { font-size: 5rem; }
+.dl-d-view .dl-cover .dl-ttl { font-size: 1.7rem; }
+.dl-d-info { display: flex; flex-direction: column; gap: 0.9rem; align-items: flex-start; padding-right: 2rem; }
+.dl-d-info h3 { font-family: var(--f-title); font-size: calc(var(--step-3) + 4pt); line-height: var(--lh-title); letter-spacing: -0.02em; }
+.dl-d-info p { font-size: var(--step-1); line-height: var(--lh-sub); }
+.dl-d-info p.small { font-size: var(--step--1); }
+.dl-d-info .btn { font-size: 1.05rem; padding: 0.7rem 1.3rem; }
+@media (max-width: 700px) { .dl-dialog[open] { grid-template-columns: 1fr; } .dl-d-info { padding-right: 0; } .dl-d-view .dl-cover { width: min(100%, 15rem); } }
+/* Cerrar: circulito con cruz hecho a mano, igual que en los tres conceptos */
+.dl-close { --c: var(--brand-2); position: absolute; top: 0.9rem; right: 0.9rem; width: 2.6rem; height: 2.6rem; padding: 0; z-index: 1;
+  display: grid; place-items: center; color: var(--c); background: var(--bg); border: 2px solid var(--c); border-radius: 52% 48% 55% 45% / 47% 55% 45% 53%; cursor: pointer; }
+.dl-close::before { content: ""; position: absolute; inset: -4px -2px -3px -4px; border: 1.5px solid var(--c); opacity: 0.55; pointer-events: none;
+  border-radius: 46% 54% 44% 56% / 55% 45% 57% 43%; transform: rotate(-8deg); }
+.dl-close svg { width: 1.6rem; height: 1.6rem; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; overflow: visible; }
+.dl-close svg .echo { stroke-width: 1.4; opacity: 0.6; }
+html.calm .dl-dialog[open], html.calm .dl-dialog[open]::backdrop { animation: none; }
