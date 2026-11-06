@@ -1012,16 +1012,16 @@
       walk(el);
     };
     items.forEach((item) => splitWords($(".concept-body", item)));
-    // Salida bien visible al pie del concepto abierto (además de tocar el título, Esc o tocar afuera)
+    // Salida bien visible: un circulito con una cruz arriba a la derecha del concepto abierto
+    // (además de tocar el título, Esc o tocar afuera)
     items.forEach((item) => {
       const back = document.createElement("button");
       back.type = "button";
       back.className = "concept-back";
-      back.innerHTML = '<span aria-hidden="true">←</span> Volver a los tres';
-      back.setAttribute("aria-label", "Volver a los tres conceptos");
+      back.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 6.8 Q12.4 12.6 17.1 17.4"/><path d="M16.8 6.9 Q11.6 12.1 6.9 17.2"/></svg>';
+      back.setAttribute("aria-label", "Cerrar y volver a los tres conceptos");
       back.addEventListener("click", () => { toggle(item); $(".concept-title", item).focus({ preventScroll: true }); });
-      back.style.setProperty("--n", $$(".w", item).length);
-      $(".concept-body", item).appendChild(back);
+      item.appendChild(back);
     });
 
     // Lleva el recuadro desde donde estaba (first) hasta su lugar nuevo, creciendo o achicándose de a poco.
