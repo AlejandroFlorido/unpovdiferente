@@ -313,13 +313,11 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .drop-body { margin: 0 1.4rem; padding: 0.9rem 0 1.4rem; border-top: 1px dashed var(--line); display: flex; flex-direction: column; gap: 0.9rem; font-family: "General Sans", var(--f-body); }
 .drop-body p { max-width: none; }
 .drop-body ul { margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
-/* Apertura simple: la tarjeta se estira de a poco y el contenido aparece con un fundido corto
-   (el estirado funciona en los navegadores que ya lo permiten; en el resto se abre de una, con el fundido). */
+/* Apertura y cierre: la tarjeta se estira o se encoge de a poco y el contenido aparece o se va con un fundido
+   (lo hace el script, igual en todos los navegadores). La pantalla arranca desde arriba y no centrada,
+   así el título y las tarjetas no saltan cuando una se abre. */
 :root { interpolate-size: allow-keywords; }
-.drop::details-content { block-size: 0; overflow: hidden; transition: block-size 0.35s ease, content-visibility 0.35s allow-discrete; }
-.drop[open]::details-content { block-size: auto; }
-.drop[open] .drop-body { animation: drop-in 0.35s ease both; }
-@keyframes drop-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+#entender-tdah { justify-content: flex-start; padding-top: max(3.5rem, 18svh); }
 /* Tres conceptos: tres recuadros lado a lado (en celular, uno debajo del otro), cada uno con el borde
    y el título en su color: azul, naranja, azul. Al abrir uno, los otros dos se desvanecen y el elegido
    crece hasta el centro (el movimiento lo hace el script); se cierra tocando el título de nuevo. */
@@ -361,10 +359,22 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .concepts.fading .concept:not(.open) { opacity: 0; transform: scale(0.95); filter: blur(4px); pointer-events: none; }
 .concepts.gone .concept:not(.open) { display: none; }
 .concepts.focused .concept.open { grid-column: 1 / -1; justify-self: center; width: min(100%, 44rem); }
-.concept.open .concept-title { font-size: calc(clamp(2rem, 5vw, 3.4rem) + 4pt); padding-block: 2rem 1.2rem; }
+.concept.open .concept-title { font-size: calc(clamp(2rem, 5vw, 3.4rem) + 4pt); padding-block: 2rem 1.2rem; padding-inline: 3.6rem; }
 /* El texto se "ensambla": cada palabra llega desde un lugar al azar, girada y desenfocada, y se acomoda en su sitio. */
 .concept-body .w { display: inline-block; }
 .concept.open .concept-body .w { animation: word-in 0.5s calc(0.55s + var(--i) * 22ms) cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+/* Cerrar: circulito con una cruz arriba a la derecha, con el mismo trazo hecho a mano que los recuadros
+   (círculo desparejo y un segundo trazo corrido). Solo se ve con el concepto abierto. */
+.concept-back { display: none; position: absolute; top: 0.9rem; right: 0.9rem; width: 2.6rem; height: 2.6rem; padding: 0; z-index: 1;
+  color: var(--c); background: none; border: 2px solid var(--c); border-radius: 52% 48% 55% 45% / 47% 55% 45% 53%; cursor: pointer; place-items: center; }
+.concept-back::before { content: ""; position: absolute; inset: -4px -2px -3px -4px; border: 1.5px solid var(--c); opacity: 0.55; pointer-events: none;
+  border-radius: 46% 54% 44% 56% / 55% 45% 57% 43%; transform: rotate(-8deg); }
+.concept-back svg { width: 1.6rem; height: 1.6rem; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; overflow: visible; }
+/* La cruz también va a mano: dos trazos con curva leve y un segundo trazo fino corrido, como el círculo */
+.concept-back svg .echo { stroke-width: 1.4; opacity: 0.6; }
+.concept.open .concept-back { display: grid; animation: fade-in 0.35s 0.5s ease both; }
+@media (max-width: 600px) { .concept.open .concept-title { padding: 3.4rem 0.8rem 1rem; } .concept-back { top: 0.7rem; right: 0.7rem; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes word-in { from { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); filter: blur(5px); } to { opacity: 1; transform: none; filter: none; } }
 .scroll-cue { position: absolute; left: 0; right: 0; margin-inline: auto; width: fit-content; bottom: 1rem; font: inherit; font-family: var(--f-display); font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--muted); background: none; border: 0; padding: 0.3rem 0; cursor: pointer; display: inline-flex; gap: 0.5rem; align-items: center; }

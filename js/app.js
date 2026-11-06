@@ -949,6 +949,32 @@
     $("#ct-area").focus({ preventScroll: true });
   });
 
+  /* ---------- Desplegables de "Entender el TDAH" ----------
+     Se abren y se cierran estirando la tarjeta de a poco; el contenido entra y sale con un fundido. */
+  $$(".drop").forEach((d) => {
+    const sum = $("summary", d), body = $(".drop-body", d);
+    let anim = null;
+    sum.addEventListener("click", (e) => {
+      e.preventDefault();
+      const opening = !d.open || d.classList.contains("closing");
+      const from = d.offsetHeight;
+      if (anim) anim.cancel();
+      body.getAnimations().forEach((a) => a.cancel());
+      d.classList.remove("closing");
+      if (isCalm()) { d.open = opening; return; }
+      d.open = true;
+      const full = d.offsetHeight, closed = sum.offsetHeight + (d.offsetHeight - d.clientHeight);
+      d.style.overflow = "hidden";
+      if (opening) body.animate([{ opacity: 0, transform: "translateY(-6px)" }, { opacity: 1, transform: "none" }], { duration: 300, delay: 80, easing: "ease", fill: "backwards" });
+      else { d.classList.add("closing"); body.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, easing: "ease", fill: "forwards" }); }
+      anim = d.animate([{ height: `${from}px` }, { height: `${opening ? full : closed}px` }], { duration: 350, easing: "cubic-bezier(0.4, 0, 0.2, 1)" });
+      anim.onfinish = () => {
+        anim = null; d.style.overflow = "";
+        if (!opening) { d.open = false; d.classList.remove("closing"); body.getAnimations().forEach((a) => a.cancel()); }
+      };
+    });
+  });
+
   /* ---------- Tres conceptos ----------
      Al tocar un concepto, crece y se desliza hasta el centro mientras los otros dos se desvanecen en su lugar
      (todo a la vez, sin pausa). Después el texto se arma palabra por palabra. Tocándolo de nuevo vuelve todo.
@@ -986,6 +1012,18 @@
       walk(el);
     };
     items.forEach((item) => splitWords($(".concept-body", item)));
+    // Salida bien visible: un circulito con una cruz arriba a la derecha del concepto abierto
+    // (además de tocar el título, Esc o tocar afuera)
+    items.forEach((item) => {
+      const back = document.createElement("button");
+      back.type = "button";
+      back.className = "concept-back";
+      back.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.4 5.8 C8.8 8.6 12.4 13.1 18.4 18.3"/><path d="M18.2 5.2 C14.3 9.1 10.6 13.4 5.6 18.6"/>'
+        + '<path class="echo" d="M6.8 4.6 C10.1 8.2 13.6 11.6 17.4 19.6"/><path class="echo" d="M16.6 6.9 C13.1 10.7 9.4 14.2 6.9 17.2"/></svg>';
+      back.setAttribute("aria-label", "Cerrar y volver a los tres conceptos");
+      back.addEventListener("click", () => { toggle(item); $(".concept-title", item).focus({ preventScroll: true }); });
+      item.appendChild(back);
+    });
 
     // Lleva el recuadro desde donde estaba (first) hasta su lugar nuevo, creciendo o achicándose de a poco.
     // Para que nada "tiemble", durante el movimiento no se reacomoda ningún texto: el recuadro anima su ancho y alto,
@@ -1020,8 +1058,7 @@
       $(".concept-body", item).hidden = !open;
     };
     let gone = 0;
-    items.forEach((item) => {
-      $(".concept-title", item).addEventListener("click", () => {
+    function toggle(item) {
         const calm = isCalm();
         const others = items.filter((o) => o !== item);
         const first = item.getBoundingClientRect(), firstTitle = $(".concept-title", item).getBoundingClientRect();
@@ -1047,8 +1084,12 @@
           // Los otros dos reaparecen en su lugar con el mismo fundido, mientras el elegido vuelve.
           requestAnimationFrame(() => requestAnimationFrame(() => concepts.classList.remove("fading")));
         }
-      });
-    });
+    }
+    items.forEach((item) => $(".concept-title", item).addEventListener("click", () => toggle(item)));
+    const openItem = () => items.find((i) => i.classList.contains("open"));
+    document.addEventListener("keydown", (e) => { const o = openItem(); if (e.key === "Escape" && o) toggle(o); });
+    // Tocar fuera del recuadro abierto también vuelve a los tres (salvo que sea otro botón o enlace)
+    document.addEventListener("click", (e) => { const o = openItem(); if (o && !o.contains(e.target) && !e.target.closest("button, a")) toggle(o); });
   }
 
   /* ---------- Estado inicial ---------- */
