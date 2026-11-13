@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;500;600;700&display=swap">
 <!-- ?v= obliga al navegador a bajar el CSS y el JS nuevos después de cada cambio: subir el número al editarlos. -->
-<link rel="stylesheet" href="css/estilos.css?v=90">
+<link rel="stylesheet" href="css/estilos.css?v=91">
 
 <!-- Filtro "borroneado" para los óvalos naranjas: ondula el trazo y lo deja con huecos, como marcador seco. -->
 <svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -623,4 +623,28 @@ Entrega</textarea></label>
     <div class="row" id="dl-d-actions"></div>
   </div>
 </dialog>
-<script src="js/app.js?v=90"></script>
+<!-- Instrucciones para imprimir el cuadernillo: dos pasos; ">" pasa al segundo y "<" vuelve, con un fundido -->
+<dialog class="dl-dialog dl-howto" id="dl-howto" aria-labelledby="dl-h-title">
+  <button class="dl-close" type="button" id="dl-h-close" aria-label="Cerrar las instrucciones"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.4 5.8 C8.8 8.6 12.4 13.1 18.4 18.3"/><path d="M18.2 5.2 C14.3 9.1 10.6 13.4 5.6 18.6"/><path class="echo" d="M6.8 4.6 C10.1 8.2 13.6 11.6 17.4 19.6"/><path class="echo" d="M16.6 6.9 C13.1 10.7 9.4 14.2 6.9 17.2"/></svg></button>
+  <span class="eyebrow">Cuadernillo · Cómo imprimirlo</span>
+  <div class="dl-step" data-step="1">
+    <h3 id="dl-h-title">Descargá el interior del cuadernillo de organizadores</h3>
+    <p>Este archivo PDF contiene las páginas interiores del cuadernillo, en hojas tamaño A4. Las páginas ya están ordenadas para imprimir en doble faz, así que no hace falta reacomodarlas: solo enviá el archivo a la impresora.</p>
+  </div>
+  <div class="dl-step" data-step="2" hidden>
+    <h3>Para imprimirlo</h3>
+    <ul class="scribble-list">
+      <li>Abrí el PDF y elegí Imprimir.</li>
+      <li>Seleccioná el tamaño de hoja A4 y la escala 100 % o “Tamaño real”.</li>
+      <li>Activá la opción Doble faz (también aparece como “Impresión a dos caras” o “Dúplex”) y elegí girar por el borde largo.</li>
+      <li>Si tu impresora no imprime en doble faz automáticamente, imprimí primero las páginas impares, volvé a colocar las hojas en la bandeja e imprimí las pares.</li>
+    </ul>
+    <p>Una vez impreso, podés anillarlo, abrocharlo o guardarlo en una carpeta para usarlo durante toda la cursada.</p>
+  </div>
+  <div class="dl-step-nav">
+    <button class="dl-arrow" type="button" id="dl-h-prev" aria-label="Paso anterior" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 4.8 C12.1 7.9 9.6 10.4 7.6 12.2 C9.9 14.3 12.4 16.6 15.4 19.4"/><path class="echo" d="M14 6.4 C11.6 8.8 9.6 10.8 8.6 12.4 C10.6 14.2 12.6 16.2 14.4 18"/></svg></button>
+    <span class="dl-count" id="dl-h-count">1 / 2</span>
+    <button class="dl-arrow" type="button" id="dl-h-next" aria-label="Paso siguiente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.8 4.8 C11.9 7.9 14.4 10.4 16.4 12.2 C14.1 14.3 11.6 16.6 8.6 19.4"/><path class="echo" d="M10 6.4 C12.4 8.8 14.4 10.8 15.4 12.4 C13.4 14.2 11.4 16.2 9.6 18"/></svg></button>
+  </div>
+</dialog>
+<script src="js/app.js?v=91"></script>

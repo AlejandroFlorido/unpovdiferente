@@ -803,6 +803,33 @@ html.calm *, html.calm *::before, html.calm *::after { transition: none !importa
 .dl-close svg { width: 1.6rem; height: 1.6rem; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; overflow: visible; }
 .dl-close svg .echo { stroke-width: 1.4; opacity: 0.6; }
 html.calm .dl-dialog[open], html.calm .dl-dialog[open]::backdrop { animation: none; }
+/* Cuadernillo: la vista previa pasa sus páginas con un fundido corto; debajo, "<", número de página y ">" */
+.dl-slides { display: flex; flex-direction: column; align-items: center; gap: 0.9rem; width: min(100%, 22rem); }
+.dl-slides .dl-cover { width: 100%; }
+.dl-slides .dl-cover img { object-fit: contain; background: #fff; transition: opacity 0.15s ease; }
+.dl-slides .dl-cover img.out { opacity: 0; }
+.dl-step-nav { display: flex; align-items: center; justify-content: center; gap: 1rem; }
+.dl-count { font-size: var(--step--1); color: var(--muted); font-variant-numeric: tabular-nums; min-width: 3.2rem; text-align: center; }
+/* Flechas "<" ">" trazadas a mano, chicas y suaves, como el "<" de la tarjeta de colaboradores */
+.dl-arrow { --c: var(--brand-2); position: relative; width: 2.3rem; height: 2.3rem; padding: 0; display: grid; place-items: center;
+  color: var(--c); background: none; border: 1.5px solid var(--c); opacity: 0.8; cursor: pointer; border-radius: 48% 52% 45% 55% / 55% 47% 53% 45%; }
+.dl-arrow::before { content: ""; position: absolute; inset: -3px -4px -2px -3px; border: 1px solid var(--c); opacity: 0.5; pointer-events: none;
+  border-radius: 54% 46% 56% 44% / 45% 55% 43% 57%; transform: rotate(7deg); }
+.dl-arrow:hover:not(:disabled) { opacity: 1; }
+.dl-arrow:disabled { opacity: 0.3; cursor: default; }
+.dl-arrow svg { width: 1.3rem; height: 1.3rem; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.dl-arrow svg .echo { stroke-width: 1.2; opacity: 0.6; }
+.dl-book-info .row { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+/* Instrucciones para imprimir: una columna, dos pasos que se cambian con un fundido */
+.dl-howto { width: min(100% - 2rem, 38rem); }
+.dl-howto[open] { display: flex; flex-direction: column; align-items: stretch; gap: 1rem; }
+.dl-howto .eyebrow { padding-right: 3rem; }
+.dl-step { display: flex; flex-direction: column; gap: 0.9rem; transition: opacity 0.2s ease, filter 0.2s ease; }
+.dl-step.out { opacity: 0; filter: blur(3px); }
+.dl-step h3 { font-family: var(--f-title); font-size: calc(var(--step-2) + 4pt); line-height: var(--lh-sub); letter-spacing: -0.02em; padding-right: 2.5rem; }
+.dl-step p, .dl-step li { font-size: var(--step-0); line-height: var(--lh-sub); }
+.dl-step ul { margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.dl-howto .dl-step-nav { margin-top: 0.4rem; }
 /* Apoyo: las tarjetas de áreas miden lo mismo; si una despliega su equipo, la otra no se estira */
 #areas { align-items: stretch; }
 #areas:has(.area-more[open]) { align-items: start; }
