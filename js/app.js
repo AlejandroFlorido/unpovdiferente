@@ -1235,12 +1235,13 @@
      (la primera también se usa como tapa). Mientras no haya imágenes, se dibuja una tapa con el número y el nombre. */
   const IMG = "assets/img/descargables/";
   const DESCARGABLES = {
-    // El cuadernillo: "pages" son sus páginas distintas (sin la hoja en blanco ni repetidas), que la vista previa pasa
-    // de a una. "cover" es la tapa de la tarjeta: vacía, se dibuja la tapa con el nombre hasta que llegue la imagen.
+    // El cuadernillo: "pages" son la portada, sus páginas distintas (sin la hoja en blanco ni repetidas) y la contraportada,
+    // que la vista previa pasa de a una. "cover" es la tapa de la tarjeta. "extra" es la segunda descarga (la portada).
     book: { id: "cuadernillo", title: "Cuadernillo unpovdiferente", line: "Las 6 fichas juntas",
       desc: "Todas las fichas del kit en un solo cuadernillo, para imprimir y llevar a la cursada.",
-      file: "cuadernillo-unpovdiferente.pdf", cover: "", meta: "PDF · 22 páginas A4 · listo para doble faz",
-      pages: [1, 2, 3, 4, 5, 6, 7].map((n) => `${IMG}cuadernillo/pagina-${n}.webp`) },
+      file: "cuadernillo-unpovdiferente.pdf", cover: `${IMG}cuadernillo/portada.webp`, meta: "PDF · 22 páginas A4 · listo para doble faz",
+      label: "Descargar cuadernillo", extra: { file: "portada-cuadernillo.pdf", label: "Descargar portada" },
+      pages: [`${IMG}cuadernillo/portada.webp`, ...[1, 2, 3, 4, 5, 6, 7].map((n) => `${IMG}cuadernillo/pagina-${n}.webp`), `${IMG}cuadernillo/contraportada.webp`] },
     kit: [
       { id: "desglosar", title: "Ficha para desglosar tareas", line: "Una consigna, varios pasos", desc: "Qué hay que entregar, qué pide la consigna, qué materiales necesitás, los pasos, la primera acción y un check list final.", file: "ficha-desglosar-tareas.pdf", pages: [IMG + "ficha-desglosar-tareas.webp"] },
       { id: "organizador", title: "Organizador de entregas y proyectos", line: "Anticipar también es una forma de avanzar", desc: "Cada proyecto con su materia, etapas o entregas parciales, fechas, estado y próximo paso.", file: "organizador-entregas.pdf?v=2", pages: [IMG + "organizador-entregas.webp?v=2"] },
@@ -1270,8 +1271,8 @@
     dlKit.innerHTML = DESCARGABLES.kit.map(card).join("");
 
     let opener = null;
-    // Vista previa del cuadernillo: pasa sola por todas sus páginas, una vez, 1 s cada una (con "Sin animaciones" no
-    // pasa sola). "<" y ">" navegan a mano y frenan el paso automático.
+    // Vista previa del cuadernillo: pasa sola por todas sus páginas, 3 s cada una, y al llegar a la última vuelve a empezar
+    // (con "Sin animaciones" no pasa sola). "<" y ">" navegan a mano y frenan el paso automático.
     let slideTimer = 0;
     const stopSlides = () => { clearInterval(slideTimer); slideTimer = 0; };
     const slides = (d) => {
@@ -1292,7 +1293,7 @@
         setTimeout(() => { set(); img.classList.remove("out"); }, 150);
       };
       $$("#dl-d-view [data-go]").forEach((b) => b.addEventListener("click", () => { stopSlides(); go(i + Number(b.dataset.go)); }));
-      if (!isCalm()) slideTimer = setInterval(() => { if (i >= n - 1) { stopSlides(); return; } go(i + 1); }, 1000);
+      if (!isCalm()) slideTimer = setInterval(() => go(i + 1), 3000);
     };
     const show = (id, from) => {
       const d = all.find((x) => x.id === id);
@@ -1306,7 +1307,8 @@
       if (d === B && d.pages.length > 1) slides(d);
       else $("#dl-d-view").innerHTML = d.pages.length > 1 ? d.pages.slice(0, 2).map((p) => cover(d, p)).join("") : cover(d);
       $("#dl-d-actions").innerHTML = d.file
-        ? `<a class="btn" href="assets/descargables/${esc(d.file)}" download>Descargar PDF</a>`
+        ? `<a class="btn" href="assets/descargables/${esc(d.file)}" download>${esc(d.label || "Descargar " + d.title.charAt(0).toLowerCase() + d.title.slice(1))}</a>`
+          + (d.extra ? `<a class="btn ghost" href="assets/descargables/${esc(d.extra.file)}" download>${esc(d.extra.label)}</a>` : "")
         : `<button class="btn" type="button" disabled>Descargar PDF</button><span class="example-tag">${d.soon ? "Próximamente" : "Falta el archivo"}</span>`;
       dlDialog.showModal();
       $("#dl-d-close").focus();
