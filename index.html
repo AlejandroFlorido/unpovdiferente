@@ -71,7 +71,7 @@
         <h1>Sabés lo que tenés que hacer. <em>Te ayudamos a empezar.</em></h1>
         <p>Herramientas cortas y concretas para organizar entregas, entender consignas y sostener el estudio. Pensadas con estudiantes con TDAH y útiles para toda la cursada.</p>
         <div class="row" style="margin-top:0.5rem">
-          <button class="btn" type="button" data-go="herramientas" data-sub="primer">Necesito empezar algo</button>
+          <button class="btn" type="button" data-go="herramientas" data-sub="bloques">Necesito empezar algo</button>
           <button class="btn second" type="button" data-go="consignas">Tengo una consigna confusa</button>
         </div>
       </div>
@@ -110,12 +110,12 @@
         <button class="line-card" type="button" data-go="consignas">
           <span class="num">02 · ORIENTAR</span>
           <h3>Ordenar la información</h3>
-          <ul class="scribble-list"><li>Traductor de consignas</li><li>Mapa de la cursada</li><li>Códigos visuales para la cursada</li></ul>
+          <ul class="scribble-list"><li>Traductor de consignas</li><li>Mapa de la cursada</li></ul>
         </button>
         <button class="line-card" type="button" data-go="herramientas">
           <span class="num">03 · ACOMPAÑAR</span>
           <h3>Hacer, paso a paso</h3>
-          <ul class="scribble-list"><li>Primer paso para arrancar</li><li>Dividir una entrega en etapas</li><li>Calendario semanal y bloques de estudio</li></ul>
+          <ul class="scribble-list"><li>Dividir una entrega en etapas</li><li>Bloques de estudio para arrancar y sostener</li></ul>
         </button>
       </div>
     </div>
@@ -303,36 +303,12 @@
       <p>Elegí una sola. Todo lo que escribas queda guardado en este navegador.</p>
     </div>
     <div class="subtabs" role="tablist" aria-label="Herramientas">
-      <button class="subtab" role="tab" id="st-primer" aria-controls="tool-primer" aria-selected="true">Primer paso<span>No sé por dónde empezar</span></button>
-      <button class="subtab" role="tab" id="st-dividir" aria-controls="tool-dividir" aria-selected="false" tabindex="-1">Dividir la entrega<span>El TP es enorme</span></button>
-      <button class="subtab" role="tab" id="st-semana" aria-controls="tool-semana" aria-selected="false" tabindex="-1">Mi semana<span>Entregas y clases</span></button>
+      <button class="subtab" role="tab" id="st-dividir" aria-controls="tool-dividir" aria-selected="true">Dividir la entrega<span>El TP es enorme</span></button>
       <button class="subtab" role="tab" id="st-bloques" aria-controls="tool-bloques" aria-selected="false" tabindex="-1">Bloques de estudio<span>Me disperso</span></button>
     </div>
 
-    <!-- Primer paso -->
-    <div class="grid-2" id="tool-primer" role="tabpanel" aria-labelledby="st-primer">
-      <div class="panel">
-        <div class="steps-bar" id="wz-bar" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-        <p class="small muted" id="wz-count"></p>
-        <label class="wizard-q" for="wz-input" id="wz-q"></label>
-        <p class="small muted" id="wz-help"></p>
-        <input type="text" id="wz-input">
-        <div class="row">
-          <button class="btn ghost" type="button" id="wz-back">Atrás</button>
-          <button class="btn" type="button" id="wz-next">Siguiente</button>
-        </div>
-      </div>
-      <div class="first-step">
-        <span class="eyebrow">Tu primer paso</span>
-        <p class="big" id="wz-result"></p>
-        <p class="small">Hacelo ahora, en un bloque corto. No hace falta terminar todo: alcanza con arrancar.</p>
-        <dl class="recap" id="wz-recap"></dl>
-        <div class="row"><button class="btn" type="button" data-go="herramientas" data-sub="bloques">Empezar un bloque de 10 min</button></div>
-      </div>
-    </div>
-
     <!-- Dividir la entrega -->
-    <div class="panel" id="tool-dividir" role="tabpanel" aria-labelledby="st-dividir" hidden>
+    <div class="panel" id="tool-dividir" role="tabpanel" aria-labelledby="st-dividir">
       <div class="grid-2">
         <label class="field" for="dv-title">¿Qué tenés que hacer?<input type="text" id="dv-title"></label>
         <label class="field" for="dv-due">Fecha de entrega<input type="date" id="dv-due"></label>
@@ -349,39 +325,6 @@
         <button class="btn ghost" type="button" id="dv-reset">Volver a las 8 etapas base</button>
       </div>
       <p class="small muted">La etapa resaltada es la siguiente. Las 8 etapas base siguen el proceso de un proyecto de diseño; podés renombrarlas.</p>
-    </div>
-
-    <!-- Mi semana -->
-    <div id="tool-semana" role="tabpanel" aria-labelledby="st-semana" hidden style="display:flex;flex-direction:column;gap:1.25rem">
-      <div class="grid-2">
-        <div class="panel">
-          <span class="eyebrow">Próxima fecha importante</span>
-          <div class="countdown" id="wk-next"></div>
-        </div>
-        <form class="panel" id="wk-form">
-          <span class="eyebrow">Agregar</span>
-          <label class="field" for="wk-title">Qué<input type="text" id="wk-title" placeholder="Ej.: Entrega TP 03 Tipografía" required></label>
-          <div class="row" style="align-items:end">
-            <label class="field" for="wk-type" style="flex:1 1 9rem">Tipo<select id="wk-type"></select></label>
-            <label class="field" for="wk-date" style="flex:1 1 9rem">Día<input type="date" id="wk-date" required></label>
-            <label class="field" for="wk-time" style="flex:1 1 6rem">Hora<input type="time" id="wk-time"></label>
-          </div>
-          <div class="row"><button class="btn" type="submit">Agregar a mi semana</button></div>
-        </form>
-      </div>
-      <div class="panel">
-        <div class="week-head">
-          <h3 id="wk-label"></h3>
-          <div class="row">
-            <button class="btn ghost" type="button" id="wk-prev" aria-label="Semana anterior">←</button>
-            <button class="btn ghost" type="button" id="wk-today">Hoy</button>
-            <button class="btn ghost" type="button" id="wk-nextw" aria-label="Semana siguiente">→</button>
-          </div>
-        </div>
-        <div class="codes" id="wk-legend"></div>
-        <div class="week" id="wk-grid"></div>
-        <p class="small muted" id="wk-sample-note"></p>
-      </div>
     </div>
 
     <!-- Bloques de estudio -->
