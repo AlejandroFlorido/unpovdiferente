@@ -237,7 +237,6 @@
     const t = subTabs.find((x) => x.id === "st-" + key);
     if (!t) return;
     selectIn(subTabs, t);
-    $("#tool-semana").style.display = key === "semana" ? "flex" : "none";
     const panel = document.getElementById(t.getAttribute("aria-controls"));
     subTabs.forEach((x) => document.getElementById(x.getAttribute("aria-controls")).classList.remove("entering"));
     if (currentSub && currentSub !== key && !isCalm()) { void panel.offsetWidth; panel.classList.add("entering"); }
@@ -258,8 +257,8 @@
   /* ---------- Carrusel de situaciones ---------- */
   const situations = [
     { q: "No es que no escuché. Perdí el hilo.", t: "Atención sostenida", x: "En una clase larga la atención va y viene sin que lo decidas. Tener la consigna por escrito y una estructura fija para tomar apuntes ayuda a retomar.", l: ["Ver cómo desarmar una consigna", "consignas"] },
-    { q: "Sé que tengo que hacerlo. No sé por dónde empezar.", t: "Iniciar tareas", x: "No es falta de interés. Empezar una tarea es una función ejecutiva, y cuesta más cuando la tarea es grande y difusa. Achicar el primer paso destraba.", l: ["Usar Primer paso", "herramientas", "primer"] },
-    { q: "La entrega es en dos semanas y todavía no puedo empezar.", t: "Percepción del tiempo", x: "El tiempo lejano se siente abstracto. Ver los días que faltan y tener fechas intermedias lo vuelve concreto.", l: ["Armar mi semana", "herramientas", "semana"] },
+    { q: "Sé que tengo que hacerlo. No sé por dónde empezar.", t: "Iniciar tareas", x: "No es falta de interés. Empezar una tarea es una función ejecutiva, y cuesta más cuando la tarea es grande y difusa. Achicar el primer paso destraba.", l: ["Empezar con un bloque de 10 minutos", "herramientas", "bloques"] },
+    { q: "La entrega es en dos semanas y todavía no puedo empezar.", t: "Percepción del tiempo", x: "El tiempo lejano se siente abstracto. Ver los días que faltan y tener fechas intermedias lo vuelve concreto.", l: ["Poner fechas intermedias", "herramientas", "dividir"] },
     { q: "Entendí la consigna, pero no sé cómo organizarla.", t: "Planificación", x: "Entender qué hay que hacer y saber en qué orden hacerlo son dos cosas distintas. Partir el TP en etapas convierte una tarea en una lista.", l: ["Dividir la entrega", "herramientas", "dividir"] },
     { q: "Me siento a estudiar y a los diez minutos estoy en otra cosa.", t: "Regulación de la atención", x: "Bloques cortos con un objetivo único y pausas planificadas funcionan mejor que sesiones largas a pura fuerza de voluntad.", l: ["Probar bloques de estudio", "herramientas", "bloques"] }
   ];
@@ -358,8 +357,6 @@
   const codeHtml = (k) => `<span class="code k-${k}"><span class="shape" aria-hidden="true"></span>${TYPES[k]}</span>`;
   const legend = Object.keys(TYPES).map(codeHtml).join("");
   if ($("#codes-legend")) $("#codes-legend").innerHTML = legend;
-  $("#wk-legend").innerHTML = legend;
-  $("#wk-type").innerHTML = Object.entries(TYPES).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
 
   /* ---------- Traductor de consignas ---------- */
   // Formas que no son infinitivo (subjuntivo, voseo, irregulares) → infinitivo
@@ -737,33 +734,6 @@
   }
   renderMap();
 
-  /* ---------- Primer paso ---------- */
-  const wzQs = [
-    ["¿Qué tengo que hacer?", "Escribilo como te salga. Ejemplo: el TP de editorial.", "Pieza editorial para Diseño 2"],
-    ["¿Por dónde empiezo?", "Elegí la parte más chica o la que menos te cuesta.", "Releer la consigna"],
-    ["¿Qué necesito?", "Lo que tiene que estar a mano para arrancar.", "Consigna impresa y un lápiz"],
-    ["¿Cuál es el primer paso?", "Algo que puedas hacer en menos de 10 minutos. Empezá con un verbo.", "Subrayar en la consigna qué hay que entregar"]
-  ];
-  let wz = store.get("wz", { i: 3, a: wzQs.map((q) => q[2]), sample: true });
-  function renderWz() {
-    $$("#wz-bar i").forEach((el, j) => el.classList.toggle("on", j <= wz.i));
-    $("#wz-count").textContent = "Pregunta " + (wz.i + 1) + " de 4";
-    $("#wz-q").textContent = wzQs[wz.i][0];
-    $("#wz-help").textContent = wzQs[wz.i][1];
-    $("#wz-input").value = wz.a[wz.i] || "";
-    $("#wz-back").disabled = wz.i === 0;
-    $("#wz-next").textContent = wz.i === 3 ? "Listo" : "Siguiente";
-    $("#wz-result").textContent = wz.a[3] || "Respondé las cuatro preguntas";
-    $("#wz-recap").innerHTML = wzQs.slice(0, 3).map((q, j) => `<dt>${esc(q[0].replace(/[¿?]/g, ""))}</dt><dd>${esc(wz.a[j] || "—")}</dd>`).join("")
-      + (wz.sample ? `<dt></dt><dd><span class="example-tag">Ejemplo</span> Reemplazalo con lo tuyo.</dd>` : "");
-    store.set("wz", wz);
-  }
-  $("#wz-input").addEventListener("input", (e) => { wz.a[wz.i] = e.target.value; wz.sample = false; renderWz(); });
-  $("#wz-next").onclick = () => { if (wz.i < 3) { wz.i++; renderWz(); $("#wz-input").focus(); } else { $("#wz-result").focus?.(); } };
-  $("#wz-back").onclick = () => { if (wz.i > 0) { wz.i--; renderWz(); $("#wz-input").focus(); } };
-  $("#wz-input").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); $("#wz-next").click(); } });
-  renderWz();
-
   /* ---------- Dividir la entrega ---------- */
   const BASE = ["Entender la consigna", "Buscar información", "Seleccionar referencias", "Definir concepto", "Hacer bocetos", "Diseñar", "Revisar", "Entregar"];
   const mkStages = () => BASE.map((t) => ({ text: t, done: false, date: "" }));
@@ -818,64 +788,6 @@
     saveDv(); renderDv();
   };
   renderDv();
-
-  /* ---------- Mi semana ---------- */
-  const monday = (d) => { const x = new Date(d); const w = (x.getDay() + 6) % 7; x.setDate(x.getDate() - w); x.setHours(0, 0, 0, 0); return x; };
-  let wk = store.get("wk", null);
-  if (!wk) {
-    const m = monday(today());
-    wk = { sample: true, items: [
-      { id: 1, title: "Teórico Historia del Diseño", type: "teorica", date: iso(m), time: "09:00" },
-      { id: 2, title: "Taller Tipografía", type: "taller", date: iso(addDays(m, 1)), time: "14:00" },
-      { id: 3, title: "Corrección de bocetos TP 03", type: "correccion", date: iso(addDays(m, 3)), time: "14:00" },
-      { id: 4, title: "Cambio de aula: Morfología pasa al 204", type: "aviso", date: iso(addDays(m, 2)), time: "" },
-      { id: 5, title: "Parcial Comunicación", type: "evaluacion", date: iso(addDays(m, 9)), time: "18:00" },
-      { id: 6, title: "Entrega TP 03 Pieza editorial", type: "entrega", date: iso(addDays(today(), 12)), time: "23:59" }
-    ] };
-  }
-  let wkStart = monday(today());
-  const saveWk = () => store.set("wk", wk);
-  function renderWk() {
-    const end = addDays(wkStart, 6);
-    $("#wk-label").textContent = `Semana del ${wkStart.getDate()} de ${MONTHS[wkStart.getMonth()]} al ${end.getDate()} de ${MONTHS[end.getMonth()]}`;
-    const t = iso(today());
-    let html = "";
-    for (let i = 0; i < 7; i++) {
-      const d = addDays(wkStart, i), di = iso(d);
-      const items = wk.items.filter((x) => x.date === di).sort((a, b) => (a.time || "99").localeCompare(b.time || "99"));
-      html += `<div class="day ${di === t ? "today" : ""} ${items.length ? "has" : ""}"><h4><span>${DAYS[i]} ${d.getDate()}</span>${di === t ? "<span>Hoy</span>" : ""}</h4>`
-        + (items.length ? items.map((x) => `<div class="ev k-${x.type}"><span class="meta"><span class="shape" aria-hidden="true"></span>${TYPES[x.type].split(" ")[0]}${x.time ? " · " + esc(x.time) : ""}</span><b>${esc(x.title)}</b><button class="icon-btn del" type="button" data-del="${x.id}" aria-label="Quitar ${esc(x.title)}">×</button></div>`).join("") : `<span class="small muted empty">Libre</span>`)
-        + `</div>`;
-    }
-    $("#wk-grid").innerHTML = html;
-    $("#wk-sample-note").innerHTML = wk.sample ? `<span class="example-tag">Ejemplo</span> Estos eventos son de muestra. <button class="icon-btn small" type="button" id="wk-clear" style="font-size:inherit;color:var(--accent)">Borrar ejemplos</button>` : "";
-    const clr = $("#wk-clear"); if (clr) clr.onclick = () => { wk = { sample: false, items: [] }; saveWk(); renderWk(); };
-    const next = wk.items.filter((x) => (x.type === "entrega" || x.type === "evaluacion") && x.date >= t).sort((a, b) => a.date.localeCompare(b.date))[0];
-    if (next) {
-      const n = daysBetween(today(), fromIso(next.date));
-      $("#wk-next").innerHTML = `<span class="days">${n}</span><div><b>${n === 1 ? "día" : "días"} para</b><br>${esc(next.title)}<br>${codeHtml(next.type)}</div>`;
-    } else $("#wk-next").innerHTML = `<p class="muted">No tenés entregas ni evaluaciones cargadas. Agregá la próxima para ver cuántos días faltan.</p>`;
-  }
-  $("#wk-grid").addEventListener("click", (e) => {
-    const b = e.target.closest("[data-del]");
-    if (b) { wk.items = wk.items.filter((x) => x.id !== Number(b.dataset.del)); saveWk(); renderWk(); }
-  });
-  $("#wk-form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const title = $("#wk-title").value.trim(), date = $("#wk-date").value;
-    if (!title || !date) return;
-    if (wk.sample) wk = { sample: false, items: [] };
-    wk.items.push({ id: Date.now(), title, type: $("#wk-type").value, date, time: $("#wk-time").value });
-    saveWk();
-    wkStart = monday(fromIso(date));
-    $("#wk-title").value = ""; $("#wk-time").value = "";
-    renderWk();
-  });
-  $("#wk-date").value = iso(today());
-  $("#wk-prev").onclick = () => { wkStart = addDays(wkStart, -7); renderWk(); };
-  $("#wk-nextw").onclick = () => { wkStart = addDays(wkStart, 7); renderWk(); };
-  $("#wk-today").onclick = () => { wkStart = monday(today()); renderWk(); };
-  renderWk();
 
   /* ---------- Bloques de estudio ---------- */
   const C = 2 * Math.PI * 52;
@@ -1296,7 +1208,8 @@
     card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
   });
 
-  goSub(store.get("sub", "primer"));
+  goSub(store.get("sub", "dividir"));
+  if (!currentSub) goSub("dividir"); // si quedó guardada una herramienta que ya no existe
   goTab(sectionIds.includes(hash) ? hash : "inicio", false);
   // El navegador salta solo hasta el #ancla al cargar: la pestaña tiene que arrancar desde arriba.
   if (hash) window.addEventListener("load", () => window.scrollTo(0, 0));
