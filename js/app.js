@@ -591,7 +591,7 @@
      IA_URL es la dirección del intermediario (Cloudflare Worker, carpeta worker/ del repo).
      Vacía = la página usa solo el traductor automático de arriba, como siempre.
      Si la IA falla, tarda o se llegó al límite del día, se avisa y se usa el automático. */
-  const IA_URL = "";
+  const IA_URL = "https://unpov-traductor.floridosalejandro.workers.dev/";
   let trAi = null;
   const trDay = (s) => { if (!s) return ""; const d = fromIso(s); return TR_WD[d.getDay()].slice(0, 3) + " " + pad(d.getDate()) + "/" + pad(d.getMonth() + 1); };
   function renderAi() {
