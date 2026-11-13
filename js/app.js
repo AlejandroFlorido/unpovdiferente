@@ -637,9 +637,9 @@
     // Si la IA está saturada, se reintenta sola hasta 3 veces (los intentos fallidos no gastan el límite del día)
     for (let intento = 0; intento < 3 && err === "ia"; intento++) {
       if (intento) { msg.textContent = "La IA está ocupada. Probando de nuevo…"; await new Promise((ok) => setTimeout(ok, 1500 * intento)); }
-      if (intento && Date.now() - t0 > 40000) break;
+      if (intento && Date.now() - t0 > 25000) break;
       try {
-        const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 30000);
+        const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 45000);
         const r = await fetch(IA_URL, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ consigna: input }), signal: ctl.signal });
         clearTimeout(t);
         const data = await r.json().catch(() => ({}));
