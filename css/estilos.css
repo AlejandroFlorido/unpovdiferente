@@ -524,6 +524,14 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .tp-card .ask { color: var(--muted); font-style: italic; }
 .tp-cell.asks { border-top-color: var(--c-aviso); }
 .tp-cell.asks .lbl { color: var(--c-aviso); }
+/* Traductor con IA: entrega y evaluación con su color */
+.tp-cell.entrega { border-top-color: var(--c-correccion); }
+.tp-cell.entrega .lbl { color: var(--c-correccion); }
+.tp-cell.evalua { border-top-color: var(--c-evaluacion); }
+.tp-cell.evalua .lbl { color: var(--c-evaluacion); }
+.tp-cell .scribble-list { margin: 0.2rem 0 0; }
+.tp-ia { align-self: flex-start; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+#tr-run[aria-busy="true"] { cursor: progress; }
 /* Traductor: dos columnas, Qué hacer y Cómo */
 .tp-col { display: flex; flex-direction: column; gap: 0.6rem; border-left: 4px solid var(--fc); padding-left: 0.9rem; }
 .tp-col .tp-title { color: var(--fc); }

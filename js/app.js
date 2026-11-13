@@ -585,7 +585,78 @@
     renderTr();
   }
   // La consigna pintada y la leyenda aparecen recién cuando el estudiante desarma la suya
-  $("#tr-run").onclick = () => { runTr(); $("#tr-guide").hidden = false; };
+  const runPlain = () => { trAi = null; runTr(); $("#tr-guide").hidden = false; };
+
+  /* ---------- Traductor con IA ----------
+     IA_URL es la dirección del intermediario (Cloudflare Worker, carpeta worker/ del repo).
+     Vacía = la página usa solo el traductor automático de arriba, como siempre.
+     Si la IA falla, tarda o se llegó al límite del día, se avisa y se usa el automático. */
+  const IA_URL = "";
+  let trAi = null;
+  const trDay = (s) => { if (!s) return ""; const d = fromIso(s); return TR_WD[d.getDay()].slice(0, 3) + " " + pad(d.getDate()) + "/" + pad(d.getMonth() + 1); };
+  function renderAi() {
+    const a = trAi.res;
+    const steps = a.pasos.map((p) => p.texto);
+    const stepDue = a.pasos.map((p) => trDay(p.fecha));
+    const fecha = a.fecha_entrega ? trDay(a.fecha_entrega) + (a.para_cuando && !/\d/.test(a.para_cuando) ? " · " + a.para_cuando : "") : a.para_cuando;
+    trRes = {
+      steps, stepDue, como: a.como, fecha, due: a.fecha_entrega, entrega: a.entrega, evalua: a.se_evalua, asks: a.preguntar,
+      dates: a.pasos.map((p, i) => ({ step: i, date: p.fecha })).filter((d) => d.date),
+      paso: a.primer_paso || steps[0] || "Releer la consigna y marcar qué hay que hacer"
+    };
+    const r = trRes;
+    const ul = (arr, none) => arr.length ? `<ul class="scribble-list">${arr.map((e) => `<li>${esc(e)}</li>`).join("")}</ul>` : `<span class="ask">${none}</span>`;
+    $("#tr-card").innerHTML = `
+      <span class="tp-ia">Traducido con IA · revisalo con la consigna</span>
+      <div class="tp-col f-paso">
+        <span class="tp-title">Qué hacer</span>
+        ${r.steps.length ? `<ol class="tp-steps">${r.steps.map((s, i) => `<li><span>${esc(s)}${r.stepDue[i] ? `<span class="due">${esc(r.stepDue[i])}</span>` : ""}</span></li>`).join("")}</ol>` : `<p class="ask">No encontramos acciones en este texto.</p>`}
+      </div>
+      <div class="tp-col f-como">
+        <span class="tp-title">Cómo</span>
+        ${r.como.length ? `<ul class="scribble-list">${r.como.map((e) => `<li>${esc(e)}</li>`).join("")}</ul>` : `<p class="ask">La consigna no dice cómo. Preguntalo en clase.</p>`}
+      </div>
+      <div class="tp-grid">
+        <div class="tp-cell date"><span class="lbl">Para cuándo</span><span${r.fecha ? "" : ' class="ask"'}>${esc(r.fecha || "No lo dice la consigna")}</span></div>
+        <div class="tp-cell key"><span class="lbl">Primer paso</span><span>${esc(r.paso)}</span></div>
+        <div class="tp-cell entrega"><span class="lbl">Entrega</span>${ul(r.entrega, "No lo dice la consigna")}</div>
+        <div class="tp-cell evalua"><span class="lbl">Qué se evalúa</span>${ul(r.evalua, "No lo dice la consigna")}</div>
+      </div>
+      ${r.asks.length ? `<div class="tp-cell asks"><span class="lbl">Preguntale al docente</span><ul class="scribble-list">${r.asks.map((e) => `<li>${esc(e)}</li>`).join("")}</ul></div>` : ""}`;
+    $("#tr-guide").hidden = true;
+    store.set("tr", { input: trAi.input, segs: trSegs, ai: trAi });
+  }
+  const TR_AI_ERR = {
+    limite: "Llegaste a las traducciones con IA de hoy. Mañana se renuevan. Mientras, la desarmamos con el traductor automático.",
+    largo: "La consigna es muy larga para la IA. La desarmamos con el traductor automático.",
+    vacio: "Pegá una consigna primero."
+  };
+  async function runAi() {
+    const input = $("#tr-input").value.trim(), btn = $("#tr-run"), msg = $("#tr-msg");
+    if (input.length < 15) { msg.textContent = "Pegá una consigna primero."; return; }
+    btn.disabled = true; btn.setAttribute("aria-busy", "true"); msg.textContent = "Traduciendo con IA…";
+    let err = "ia";
+    try {
+      const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 25000);
+      const r = await fetch(IA_URL, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ consigna: input }), signal: ctl.signal });
+      clearTimeout(t);
+      const data = await r.json().catch(() => ({}));
+      if (r.ok && data.ok && data.resultado) {
+        trAi = { input: $("#tr-input").value, res: data.resultado };
+        trSel = -1; renderAi();
+        msg.textContent = typeof data.restantes === "number" ? `Listo. Te ${data.restantes === 1 ? "queda 1 traducción" : "quedan " + data.restantes + " traducciones"} con IA hoy.` : "";
+        err = "";
+      } else err = data.error || "ia";
+    } catch (e) { err = "ia"; }
+    btn.disabled = false; btn.removeAttribute("aria-busy");
+    if (!err) return;
+    if (err === "vacio") { msg.textContent = TR_AI_ERR.vacio; return; }
+    runPlain();
+    msg.textContent = TR_AI_ERR[err] || "La IA no responde ahora. La desarmamos con el traductor automático: revisá las partes y corregilas tocándolas.";
+  }
+  $("#tr-run").onclick = () => (IA_URL ? runAi() : runPlain());
+  if (IA_URL) { $("#tr-noai").hidden = false; $("#tr-ia-note").hidden = false; }
+  $("#tr-noai").onclick = () => { runPlain(); $("#tr-msg").textContent = ""; };
   const trFrag = (e) => {
     const b = e.target.closest(".frag"); if (!b) return;
     if (e.type === "keydown") { if (e.key !== "Enter" && e.key !== " ") return; e.preventDefault(); }
@@ -603,7 +674,8 @@
     $(`#tr-text .frag[data-i="${i}"]`)?.focus();
   });
   const trSaved = store.get("tr", null);
-  if (trSaved && Array.isArray(trSaved.segs)) { $("#tr-input").value = trSaved.input; trSegs = trSaved.segs.map((sg) => ({ text: sg.text, cat: trCat(sg.cat) })); renderTr(); $("#tr-guide").hidden = false; }
+  if (IA_URL && trSaved && trSaved.ai && trSaved.ai.res) { $("#tr-input").value = trSaved.ai.input; trSegs = trSegments(trSaved.ai.input); trAi = trSaved.ai; renderAi(); }
+  else if (trSaved && Array.isArray(trSaved.segs)) { $("#tr-input").value = trSaved.input; trSegs = trSaved.segs.map((sg) => ({ text: sg.text, cat: trCat(sg.cat) })); renderTr(); $("#tr-guide").hidden = false; }
   else runTr();
   $("#tr-input").addEventListener("input", () => store.set("tr", Object.assign(store.get("tr", {}), { input: $("#tr-input").value })));
   $("#tr-copy").onclick = () => {
@@ -611,6 +683,8 @@
     const lines = ["QUÉ HACER:", ...r.steps.map((s, i) => (i + 1) + ". " + s + (r.stepDue[i] ? " (" + r.stepDue[i] + ")" : ""))];
     lines.push("", "CÓMO:", ...(r.como.length ? r.como.map((c) => "- " + c) : ["- No lo dice la consigna"]));
     lines.push("", "PARA CUÁNDO: " + (r.fecha || "No lo dice la consigna"), "PRIMER PASO: " + r.paso);
+    if (r.entrega) lines.push("ENTREGA: " + (r.entrega.join(" · ") || "No lo dice la consigna"));
+    if (r.evalua) lines.push("QUÉ SE EVALÚA: " + (r.evalua.join(" · ") || "No lo dice la consigna"));
     if (r.asks.length) lines.push("PREGUNTAR AL DOCENTE: " + r.asks.join(" "));
     copyText(lines.join("\n"), $("#tr-msg"));
   };

@@ -1,0 +1,18 @@
+# Solo hace falta si se publica desde la terminal con `npx wrangler deploy`.
+# Publicando desde la web de Cloudflare (ver README.md) este archivo no se usa.
+name = "unpov-traductor"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+PROVIDER = "gemini"
+DAILY_LIMIT = "10"
+ALLOWED_ORIGINS = "https://alejandroflorido.github.io,http://localhost:8000,http://127.0.0.1:8000"
+
+# Base KV para el límite diario: crearla con `npx wrangler kv namespace create LIMITS`
+# y pegar acá el id que devuelve.
+[[kv_namespaces]]
+binding = "LIMITS"
+id = "PEGAR_ACA_EL_ID"
+
+# La clave NO va en este archivo: `npx wrangler secret put GEMINI_API_KEY`
