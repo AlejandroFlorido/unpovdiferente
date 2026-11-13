@@ -3,7 +3,7 @@
 `worker.js` es un Cloudflare Worker (gratis) que está entre la página y la IA:
 
 - Guarda la clave de la IA como **secreto**: nunca llega al navegador ni al repo.
-- Solo atiende pedidos que vienen de la página (`alejandroflorido.github.io`) o de `localhost:8000` para pruebas.
+- Solo atiende pedidos que vienen de la página (`alejandroflorido.github.io` y `tdah-unpovdiferente.pages.dev`) o de `localhost:8000` para pruebas.
 - Limita a **10 traducciones por persona por día** (cuenta por conexión; la dirección se guarda como un código, no en claro). Las fallidas no cuentan.
 - Devuelve siempre el mismo JSON: `pasos`, `como`, `entrega`, `se_evalua`, `fecha_entrega`, `para_cuando`, `primer_paso`, `preguntar`.
 

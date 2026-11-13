@@ -16,7 +16,7 @@
 
 // Si un modelo falla (saturado, dado de baja...), se prueba con el siguiente
 const DEFAULT_MODEL = { gemini: "gemini-flash-latest,gemini-flash-lite-latest,gemini-2.5-flash", claude: "claude-haiku-5-5" };
-const DEFAULT_ORIGINS = "https://alejandroflorido.github.io,http://localhost:8000,http://127.0.0.1:8000";
+const DEFAULT_ORIGINS = "https://alejandroflorido.github.io,https://tdah-unpovdiferente.pages.dev,http://localhost:8000,http://127.0.0.1:8000";
 const MAX_CHARS = 5000;
 
 const PROMPT = `Sos un asistente de unpovdiferente, una web para estudiantes universitarios con TDAH o dificultades de aprendizaje.
