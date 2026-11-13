@@ -789,39 +789,99 @@
   };
   renderDv();
 
-  /* ---------- Bloques de estudio ---------- */
+  /* ---------- Bloques de estudio ----------
+     El reloj se mide con la hora real (no se atrasa si la pestaña queda en segundo plano).
+     Al terminar un bloque o una pausa: campanita suave (opcional) y aviso del navegador si la pestaña no está a la vista. */
   const C = 2 * Math.PI * 52;
   const ring = $("#tm-ring");
   ring.style.strokeDasharray = C;
-  let tm = { focus: 10, phase: "focus", left: 600, total: 600, running: false, done: store.get("blocks", 0) };
+  const BREAK = 5 * 60;
+  // Bloques del día: se reinician cada día
+  const savedBlocks = store.get("blocks", null);
+  const todayKey = () => iso(today());
+  let blocksDay = savedBlocks && typeof savedBlocks === "object" && savedBlocks.d === todayKey() ? savedBlocks : { d: todayKey(), n: 0 };
+  const saveBlocks = () => store.set("blocks", blocksDay);
+  let tm = { focus: 10, phase: "focus", left: 600, total: 600, running: false, endAt: 0 };
   let tick = null;
+  const alerts = store.get("tmAlerts", { sound: true, notify: false });
+  $("#tm-sound").checked = alerts.sound;
+  $("#tm-notify").checked = alerts.notify && "Notification" in window && Notification.permission === "granted";
+  if (!("Notification" in window)) $("#tm-notify").closest("label").hidden = true;
+  $("#tm-sound").onchange = (e) => { alerts.sound = e.target.checked; store.set("tmAlerts", alerts); if (alerts.sound) chime([659.25]); };
+  $("#tm-notify").onchange = async (e) => {
+    alerts.notify = false;
+    if (e.target.checked) {
+      try { alerts.notify = (await Notification.requestPermission()) === "granted"; } catch (err) {}
+      e.target.checked = alerts.notify;
+    }
+    store.set("tmAlerts", alerts);
+  };
+  // Campanita: notas suaves, volumen bajo, entrada y salida graduales (nada de pitidos)
+  let audio = null;
+  function chime(notes) {
+    if (!alerts.sound) return;
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === "suspended") audio.resume();
+      notes.forEach((f, i) => {
+        const t = audio.currentTime + i * 0.45, o = audio.createOscillator(), g = audio.createGain();
+        o.type = "sine"; o.frequency.value = f;
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.05, t + 0.08);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 1.6);
+        o.connect(g).connect(audio.destination);
+        o.start(t); o.stop(t + 1.7);
+      });
+    } catch (e) {}
+  }
+  function notify(text) {
+    if (!alerts.notify || !document.hidden || !("Notification" in window) || Notification.permission !== "granted") return;
+    try { new Notification("unpovdiferente", { body: text, icon: "assets/icons/favicon.png", silent: true }); } catch (e) {}
+  }
   $("#tm-presets").innerHTML = [10, 15, 25].map((m) => `<button class="chip-btn" type="button" data-m="${m}" aria-pressed="false">${m} min</button>`).join("");
   function setPreset(m) { stopTm(); tm.focus = m; tm.phase = "focus"; tm.total = tm.left = m * 60; renderTm(); }
   $$("#tm-presets button").forEach((b) => b.onclick = () => setPreset(Number(b.dataset.m)));
   function renderTm() {
+    if (blocksDay.d !== todayKey()) { blocksDay = { d: todayKey(), n: 0 }; saveBlocks(); }
     $("#tm-time").textContent = pad(Math.floor(tm.left / 60)) + ":" + pad(tm.left % 60);
     $("#tm-phase").textContent = tm.phase === "focus" ? "Bloque de foco" : "Pausa: levantate, tomá agua";
     ring.style.strokeDashoffset = C * (1 - tm.left / tm.total);
     ring.classList.toggle("pause", tm.phase !== "focus");
     $("#tm-start").textContent = tm.running ? "Pausar" : (tm.left < tm.total ? "Seguir" : "Empezar");
     $$("#tm-presets button").forEach((b) => b.setAttribute("aria-pressed", Number(b.dataset.m) === tm.focus));
-    $("#tm-done-label").textContent = tm.done ? `Bloques completados hoy: ${tm.done}` : "Todavía no completaste bloques hoy.";
-    $("#tm-blocks").innerHTML = "<i></i>".repeat(Math.min(tm.done, 24));
+    $("#tm-done-label").textContent = blocksDay.n ? `Bloques completados hoy: ${blocksDay.n}` : "Todavía no completaste bloques hoy.";
+    $("#tm-blocks").innerHTML = "<i></i>".repeat(Math.min(blocksDay.n, 24));
   }
   function stopTm() { clearInterval(tick); tick = null; tm.running = false; }
-  $("#tm-start").onclick = () => {
-    if (tm.running) { stopTm(); renderTm(); return; }
-    tm.running = true;
-    tick = setInterval(() => {
-      tm.left--;
-      if (tm.left <= 0) {
-        if (tm.phase === "focus") { tm.done++; store.set("blocks", tm.done); tm.phase = "break"; tm.total = tm.left = 5 * 60; }
-        else { tm.phase = "focus"; tm.total = tm.left = tm.focus * 60; stopTm(); }
+  function step() {
+    tm.left = Math.max(0, Math.ceil((tm.endAt - Date.now()) / 1000));
+    if (tm.left <= 0) {
+      if (tm.phase === "focus") {
+        blocksDay.n++; saveBlocks();
+        // La pausa empieza justo cuando terminó el bloque (aunque la pestaña haya estado en segundo plano)
+        tm.phase = "break"; tm.total = BREAK; tm.endAt += BREAK * 1000;
+        chime([523.25, 659.25]);
+        notify("Terminaste el bloque. Tomate 5 minutos: levantate, tomá agua.");
+        tm.left = Math.max(0, Math.ceil((tm.endAt - Date.now()) / 1000));
       }
-      renderTm();
-    }, 1000);
+      if (tm.left <= 0 && tm.phase === "break") {
+        tm.phase = "focus"; tm.total = tm.left = tm.focus * 60; stopTm();
+        chime([659.25, 523.25]);
+        notify("Terminó la pausa. Cuando quieras, empezá otro bloque.");
+      }
+    }
+    renderTm();
+  }
+  $("#tm-start").onclick = () => {
+    if (tm.running) { step(); stopTm(); renderTm(); return; }
+    // El primer toque habilita el sonido en el navegador
+    if (alerts.sound) { try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); } catch (e) {} }
+    tm.running = true;
+    tm.endAt = Date.now() + tm.left * 1000;
+    tick = setInterval(step, 500);
     renderTm();
   };
+  document.addEventListener("visibilitychange", () => { if (tm.running) step(); });
   $("#tm-reset").onclick = () => setPreset(tm.focus);
   renderTm();
 
