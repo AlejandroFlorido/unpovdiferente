@@ -801,7 +801,7 @@
   const todayKey = () => iso(today());
   let blocksDay = savedBlocks && typeof savedBlocks === "object" && savedBlocks.d === todayKey() ? savedBlocks : { d: todayKey(), n: 0 };
   const saveBlocks = () => store.set("blocks", blocksDay);
-  let tm = { focus: 10, phase: "focus", left: 600, total: 600, running: false, endAt: 0 };
+  let tm = { focus: 600, phase: "focus", left: 600, total: 600, running: false, endAt: 0 };
   let tick = null;
   const alerts = store.get("tmAlerts", { sound: true, notify: false });
   $("#tm-sound").checked = alerts.sound;
@@ -838,8 +838,10 @@
     if (!alerts.notify || !document.hidden || !("Notification" in window) || Notification.permission !== "granted") return;
     try { new Notification("unpovdiferente", { body: text, icon: "assets/icons/favicon.png", silent: true }); } catch (e) {}
   }
-  $("#tm-presets").innerHTML = [10, 15, 25].map((m) => `<button class="chip-btn" type="button" data-m="${m}" aria-pressed="false">${m} min</button>`).join("");
-  function setPreset(m) { stopTm(); tm.focus = m; tm.phase = "focus"; tm.total = tm.left = m * 60; renderTm(); }
+  // tm.focus va en segundos. "10 s (prueba)" sirve para ver el ciclo completo (sonido, aviso, pausa de 5 s) sin esperar
+  const brk = () => (tm.focus < 60 ? 5 : BREAK);
+  $("#tm-presets").innerHTML = [[600, "10 min"], [900, "15 min"], [1500, "25 min"], [10, "10 s (prueba)"]].map(([sec, l]) => `<button class="chip-btn" type="button" data-m="${sec}" aria-pressed="false">${l}</button>`).join("");
+  function setPreset(sec) { stopTm(); tm.focus = sec; tm.phase = "focus"; tm.total = tm.left = sec; renderTm(); }
   $$("#tm-presets button").forEach((b) => b.onclick = () => setPreset(Number(b.dataset.m)));
   function renderTm() {
     if (blocksDay.d !== todayKey()) { blocksDay = { d: todayKey(), n: 0 }; saveBlocks(); }
@@ -859,13 +861,13 @@
       if (tm.phase === "focus") {
         blocksDay.n++; saveBlocks();
         // La pausa empieza justo cuando terminó el bloque (aunque la pestaña haya estado en segundo plano)
-        tm.phase = "break"; tm.total = BREAK; tm.endAt += BREAK * 1000;
+        tm.phase = "break"; tm.total = brk(); tm.endAt += brk() * 1000;
         chime([523.25, 659.25]);
-        notify("Terminaste el bloque. Tomate 5 minutos: levantate, tomá agua.");
+        notify(`Terminaste el bloque. ${tm.focus < 60 ? "Pausa de prueba" : "Tomate 5 minutos"}: levantate, tomá agua.`);
         tm.left = Math.max(0, Math.ceil((tm.endAt - Date.now()) / 1000));
       }
       if (tm.left <= 0 && tm.phase === "break") {
-        tm.phase = "focus"; tm.total = tm.left = tm.focus * 60; stopTm();
+        tm.phase = "focus"; tm.total = tm.left = tm.focus; stopTm();
         chime([659.25, 523.25]);
         notify("Terminó la pausa. Cuando quieras, empezá otro bloque.");
       }
