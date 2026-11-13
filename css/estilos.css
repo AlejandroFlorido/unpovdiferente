@@ -842,3 +842,11 @@ html.calm .dl-dialog[open], html.calm .dl-dialog[open]::backdrop { animation: no
 .dl-cover { width: 100%; }
 .dl-cover.has-img { padding: 0; aspect-ratio: auto; display: block; }
 .dl-cover.has-img img { position: static; display: block; width: 100%; height: auto; }
+
+/* Instrucciones dentro de la vista previa: recuadro suave debajo del botón de descarga */
+.dl-d-howto { align-self: stretch; display: flex; flex-direction: column; gap: 0.8rem; border-top: 1px dashed var(--line); padding-top: 1rem; }
+.dl-d-howto[hidden] { display: none; }
+.dl-d-howto h4 { font-family: var(--f-title); font-size: calc(var(--step-1) + 4pt); line-height: var(--lh-sub); letter-spacing: -0.02em; }
+.dl-d-howto .dl-step p, .dl-d-howto .dl-step li { font-size: var(--step--1); }
+.dl-d-howto .dl-step-nav { justify-content: flex-start; }
+.dl-dialog { overflow-y: auto; }
