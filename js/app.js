@@ -951,28 +951,47 @@
   /* ---------- Apoyo: áreas pedagógicas ----------
      BORRADOR: completar con los datos reales de la facultad.
      Los campos vacíos se muestran como "A completar". */
+  // Áreas reales de la FAU (UNNE). Para sumar una: copiar un bloque. Los datos vacíos no se muestran.
   const AREAS = [
-    { id: "psicopedagogia", nombre: "Gabinete psicopedagógico", que: "Acompaña dificultades de aprendizaje, organización del estudio y estrategias para cursar y rendir.", cuando: "Si te cuesta sostener la cursada, empezar tareas o preparar exámenes.", tel: "", mail: "", horario: "", lugar: "" },
-    { id: "orientacion", nombre: "Orientación pedagógica / tutorías", que: "Tutores que ayudan a planificar la cursada, elegir cuántas materias hacer y armar un plan de estudio.", cuando: "Al inscribirte a materias o si te atrasaste con la carrera.", tel: "", mail: "", horario: "", lugar: "" },
-    { id: "accesibilidad", nombre: "Área de accesibilidad e inclusión", que: "Gestiona adecuaciones razonables: más tiempo en exámenes, consignas por escrito, otros formatos de evaluación.", cuando: "Si necesitás ajustes en la cursada o en las evaluaciones.", tel: "", mail: "", horario: "", lugar: "" },
-    { id: "bienestar", nombre: "Bienestar estudiantil", que: "Orientación en salud, salud mental, becas y situaciones personales que afectan la cursada.", cuando: "Si te sentís desbordada o desbordado, o necesitás una consulta con profesionales.", tel: "", mail: "", horario: "", lugar: "" },
-    { id: "academica", nombre: "Secretaría académica / de alumnos", que: "Trámites, regularidad, fechas de examen, cambios de comisión y reclamos sobre la cursada.", cuando: "Para consultas administrativas o si un problema con una materia no se resuelve con la cátedra.", tel: "", mail: "", horario: "", lugar: "" }
+    { id: "psicosocial", nombre: "Gabinete Psicosocial", sub: "Delegación de Asuntos Sociales · Campus Resistencia",
+      que: "Profesionales que escuchan y acompañan lo personal, emocional o social que te está afectando en la cursada.",
+      cuando: ["Si te sentís desbordada o desbordado.", "Si algo personal te está costando sostener la cursada."],
+      lugar: "Delegación de Asuntos Sociales, Campus Resistencia, Las Heras 727", mail: "", tel: "", redes: "",
+      grupos: [{ titulo: "Quiénes atienden", items: [
+        { nombre: "Lic. Fiorenza Uberti", detalle: "08:00 a 15:00 h" },
+        { nombre: "Lic. José Basterra", detalle: "13:00 a 20:00 h" }] }] },
+    { id: "tutorias", nombre: "Sistema de Tutorías de la FAU", sub: "Secretaría de Desarrollo y Dirección de Carreras",
+      que: "Tutores académicos, tutores pares y un equipo interdisciplinario que acompañan tu recorrido por la carrera.",
+      cuando: ["¿Tenés alguna duda sobre alguna asignatura?", "¿Querés consultar sobre el sistema de becas?",
+        "¿Querés profundizar algún contenido de alguna asignatura?", "¿Tenés dificultades con los exámenes o con los horarios?"],
+      lugar: "", tel: "", mail: "sistemadetutoriasfau@gmail.com", redes: "Facebook: Sistema de Tutorías FAU UNNE",
+      grupos: [
+        { titulo: "Coordinación general", items: [{ nombre: "Arq. Sergio Enrique Portel" }] },
+        { titulo: "Equipo interdisciplinario", items: [
+          { nombre: "Corina Edit Velardez", detalle: "Licenciada en Trabajo Social" },
+          { nombre: "Natalia Farina", detalle: "Psicóloga" },
+          { nombre: "David Luna", detalle: "Profesor en Ciencias de la Educación" }] },
+        { titulo: "Coordinación de tutores pares", items: [{ nombre: "Arq. Bruno Aguirre" }] },
+        { titulo: "Tutores académicos y tutores pares", items: [{ nombre: "Arquitectura" }, { nombre: "Diseño Gráfico" }] }] }
   ];
-  const todo = '<span class="todo">A completar</span>';
-  const contactRow = (label, v, href) => `<dt>${label}</dt><dd>${v ? (href ? `<a href="${esc(href)}">${esc(v)}</a>` : esc(v)) : todo}</dd>`;
-  $("#areas").innerHTML = AREAS.map((a) => `
+  const contactRow = (label, v, href) => v ? `<dt>${label}</dt><dd>${href ? `<a href="${esc(href)}">${esc(v)}</a>` : esc(v)}</dd>` : "";
+  const list = (items) => `<ul class="scribble-list">${items.map((i) => `<li>${i}</li>`).join("")}</ul>`;
+  $("#areas").innerHTML = AREAS.map((a) => {
+    const rows = contactRow("Dónde", a.lugar) + contactRow("Teléfono", a.tel, a.tel ? "tel:" + a.tel.replace(/[^\d+]/g, "") : "")
+      + contactRow("Mail", a.mail, a.mail ? "mailto:" + a.mail : "") + contactRow("Redes", a.redes);
+    const cuando = Array.isArray(a.cuando) ? list(a.cuando.map(esc)) : `<p>${esc(a.cuando)}</p>`;
+    const grupos = (a.grupos || []).map((g) => `<div class="area-group"><h4>${esc(g.titulo)}</h4>`
+      + list(g.items.map((p) => `<b>${esc(p.nombre)}</b>${p.detalle ? ` <span class="muted">· ${esc(p.detalle)}</span>` : ""}`)) + "</div>").join("");
+    return `
     <article class="area">
-      <h3>${esc(a.nombre)}</h3>
+      <div class="area-head"><h3>${esc(a.nombre)}</h3>${a.sub ? `<p class="area-sub">${esc(a.sub)}</p>` : ""}</div>
       <p class="small">${esc(a.que)}</p>
-      <p class="when"><b>Cuándo ir:</b> ${esc(a.cuando)}</p>
-      <dl class="contact-list">
-        ${contactRow("Teléfono", a.tel, a.tel ? "tel:" + a.tel.replace(/[^\d+]/g, "") : "")}
-        ${contactRow("Mail", a.mail, a.mail ? "mailto:" + a.mail : "")}
-        ${contactRow("Horario", a.horario)}
-        ${contactRow("Dónde", a.lugar)}
-      </dl>
+      <div class="area-when"><h4>Cuándo ir</h4>${cuando}</div>
+      ${rows ? `<dl class="contact-list">${rows}</dl>` : ""}
+      ${grupos}
       <div class="row"><a class="btn ghost" href="#contacto" data-scroll="contacto" data-area="${esc(a.id)}">Escribir a esta área</a></div>
-    </article>`).join("");
+    </article>`;
+  }).join("");
 
   /* ---------- Contacto (pie): arma el mensaje, no envía nada ---------- */
   const ct = store.get("contacto", {});
