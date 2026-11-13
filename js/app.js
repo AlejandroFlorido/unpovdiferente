@@ -50,6 +50,24 @@
   $("#pref-space").onclick = () => { prefs.spaced = !prefs.spaced; applyPrefs(); };
   $("#pref-theme").onclick = () => { prefs.theme = isDark() ? "light" : "dark"; applyPrefs(); };
   $("#pref-calm").onclick = () => { prefs.calm = !isCalm(); prefs.calmSet = true; applyPrefs(); };
+  // Revisión: "Saltar al contenido" lleva el foco a la pestaña visible sin tocar el #hash.
+  $(".skip-link")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    const sec = [...document.querySelectorAll("main > section")].find((x) => !x.hidden) || $("main");
+    sec.focus();
+  });
+  // Revisión: los ajustes de lectura van juntos en un menú "Aa Lectura" (menos botones a la vista).
+  const prefsBtn = $("#prefs-toggle"), prefsPanel = $("#prefs-panel");
+  if (prefsBtn && prefsPanel) {
+    const setPrefsOpen = (open) => { prefsPanel.hidden = !open; prefsBtn.setAttribute("aria-expanded", open); };
+    const prefsDot = () => prefsBtn.classList.toggle("has-on",
+      prefs.size !== 0 || !!prefs.spaced || $("#pref-calm").getAttribute("aria-pressed") === "true");
+    prefsBtn.addEventListener("click", () => setPrefsOpen(prefsPanel.hidden));
+    prefsPanel.addEventListener("click", () => requestAnimationFrame(prefsDot));
+    document.addEventListener("click", (e) => { if (!prefsPanel.hidden && !e.target.closest(".prefs-menu")) setPrefsOpen(false); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !prefsPanel.hidden) { setPrefsOpen(false); prefsBtn.focus(); } });
+    requestAnimationFrame(prefsDot);
+  }
   applyPrefs();
 
   /* ---------- Cursor ---------- */
@@ -221,12 +239,15 @@
   window.addEventListener("popstate", fromHash);
   window.addEventListener("hashchange", fromHash);
   // Enlace a la pestaña siguiente al final de cada sección.
+  // Revisión: también "Anterior" a la izquierda, para no depender de la barra de pestañas.
+  const tabLink = (j, label, cls, txt) => '<a class="' + cls + '" href="' + mainTabs[j].getAttribute("href") + '" data-go="' + sectionIds[j] + '"><small>' + label + '</small><span>' + txt + '</span></a>';
   sections.forEach((sec, i) => {
-    const next = mainTabs[i + 1];
-    if (!next) return;
+    const prev = mainTabs[i - 1], next = mainTabs[i + 1];
+    if (!prev && !next) return;
     const box = document.createElement("div");
     box.className = "next-tab";
-    box.innerHTML = '<a href="' + next.getAttribute("href") + '" data-go="' + sectionIds[i + 1] + '"><small>Siguiente</small><span>' + esc(next.firstChild.textContent.trim()) + ' →</span></a>';
+    box.innerHTML = (prev ? tabLink(i - 1, "Anterior", "prev", "← " + esc(prev.firstChild.textContent.trim())) : "<span></span>")
+      + (next ? tabLink(i + 1, "Siguiente", "next", esc(next.firstChild.textContent.trim()) + " →") : "");
     sec.appendChild(box);
   });
 
