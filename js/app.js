@@ -637,7 +637,7 @@
     btn.disabled = true; btn.setAttribute("aria-busy", "true"); msg.textContent = "Traduciendo con IA…";
     let err = "ia";
     try {
-      const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 25000);
+      const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 45000);
       const r = await fetch(IA_URL, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ consigna: input }), signal: ctl.signal });
       clearTimeout(t);
       const data = await r.json().catch(() => ({}));

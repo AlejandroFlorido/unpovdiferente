@@ -14,7 +14,8 @@
 //
 // Cambiar de IA no toca la página: se cambia PROVIDER (y su clave) acá y listo.
 
-const DEFAULT_MODEL = { gemini: "gemini-flash-latest", claude: "claude-haiku-5-5" };
+// Si un modelo falla (saturado, dado de baja...), se prueba con el siguiente
+const DEFAULT_MODEL = { gemini: "gemini-flash-latest,gemini-flash-lite-latest,gemini-2.5-flash", claude: "claude-haiku-5-5" };
 const DEFAULT_ORIGINS = "https://alejandroflorido.github.io,http://localhost:8000,http://127.0.0.1:8000";
 const MAX_CHARS = 5000;
 
@@ -68,8 +69,9 @@ async function callGemini(env, model, system, consigna) {
   });
   if (!r.ok) throw new Error("gemini " + r.status + " " + (await r.text()).slice(0, 300));
   const data = await r.json();
-  const text = (data.candidates?.[0]?.content?.parts || []).map((p) => p.text || "").join("");
-  return JSON.parse(text);
+  const text = (data.candidates?.[0]?.content?.parts || []).filter((p) => !p.thought).map((p) => p.text || "").join("");
+  if (!text) throw new Error("gemini sin texto: " + JSON.stringify(data).slice(0, 300));
+  return leerJson(text);
 }
 
 async function callClaude(env, model, system, consigna) {
@@ -84,8 +86,15 @@ async function callClaude(env, model, system, consigna) {
   });
   if (!r.ok) throw new Error("claude " + r.status + " " + (await r.text()).slice(0, 300));
   const data = await r.json();
-  const text = (data.content || []).map((p) => p.text || "").join("");
-  return JSON.parse(text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1));
+  return leerJson((data.content || []).map((p) => p.text || "").join(""));
+}
+
+// Acepta el JSON aunque venga envuelto en ```json ... ``` o con texto alrededor
+function leerJson(text) {
+  try { return JSON.parse(text); } catch (e) {}
+  const a = text.indexOf("{"), b = text.lastIndexOf("}");
+  if (a < 0 || b < a) throw new Error("respuesta sin JSON: " + text.slice(0, 200));
+  return JSON.parse(text.slice(a, b + 1));
 }
 
 // Lo que vuelve de la IA se limpia: solo textos cortos, en el formato que espera la página
@@ -132,16 +141,19 @@ export default {
     if (usadas >= limit) return json({ ok: false, error: "limite", restantes: 0 }, 429);
 
     const provider = env.PROVIDER === "claude" ? "claude" : "gemini";
-    const model = env.MODEL || DEFAULT_MODEL[provider];
+    const models = (env.MODEL || DEFAULT_MODEL[provider]).split(",").map((m) => m.trim()).filter(Boolean);
     const system = PROMPT.replace("{HOY}", hoy.iso).replace("{DIA_HOY}", hoy.dia);
     let resultado;
-    try {
-      const crudo = provider === "claude" ? await callClaude(env, model, system, consigna) : await callGemini(env, model, system, consigna);
-      resultado = limpiar(crudo);
-    } catch (e) {
-      console.log("Error de la IA:", String(e && e.message || e));
-      return json({ ok: false, error: "ia" }, 502);
+    for (const model of models) {
+      try {
+        const crudo = provider === "claude" ? await callClaude(env, model, system, consigna) : await callGemini(env, model, system, consigna);
+        resultado = limpiar(crudo);
+        break;
+      } catch (e) {
+        console.error("Error de la IA (" + model + "): " + String(e && e.message || e));
+      }
     }
+    if (!resultado) return json({ ok: false, error: "ia" }, 502);
     // Solo cuenta si la traducción salió bien
     if (env.LIMITS) await env.LIMITS.put(key, String(usadas + 1), { expirationTtl: 2 * 86400 });
     return json({ ok: true, restantes: Math.max(0, limit - usadas - 1), resultado });
