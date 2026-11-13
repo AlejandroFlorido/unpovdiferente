@@ -892,8 +892,10 @@
     const rows = contactRow("Dónde", a.lugar) + contactRow("Teléfono", a.tel, a.tel ? "tel:" + a.tel.replace(/[^\d+]/g, "") : "")
       + contactRow("Mail", a.mail, a.mail ? "mailto:" + a.mail : "") + contactRow("Redes", a.redes);
     const cuando = Array.isArray(a.cuando) ? list(a.cuando.map(esc)) : `<p>${esc(a.cuando)}</p>`;
-    const grupos = (a.grupos || []).map((g) => `<div class="area-group"><h4>${esc(g.titulo)}</h4>`
+    let grupos = (a.grupos || []).map((g) => `<div class="area-group"><h4>${esc(g.titulo)}</h4>`
       + list(g.items.map((p) => `<b>${esc(p.nombre)}</b>${p.detalle ? ` <span class="muted">· ${esc(p.detalle)}</span>` : ""}`)) + "</div>").join("");
+    // Si el equipo es largo, queda plegado debajo de un botón sin contorno para que la tarjeta no pese tanto
+    if ((a.grupos || []).length > 1) grupos = `<details class="area-more"><summary>${esc(a.equipoTitulo || "Equipo y áreas")}</summary><div class="area-more-body">${grupos}</div></details>`;
     return `
     <article class="area">
       <div class="area-head"><h3>${esc(a.nombre)}</h3>${a.sub ? `<p class="area-sub">${esc(a.sub)}</p>` : ""}</div>
@@ -961,8 +963,8 @@
 
   /* ---------- Desplegables de "Entender el TDAH" ----------
      Se abren y se cierran estirando la tarjeta de a poco; el contenido entra y sale con un fundido. */
-  $$(".drop").forEach((d) => {
-    const sum = $("summary", d), body = $(".drop-body", d);
+  $$(".drop, .area-more").forEach((d) => {
+    const sum = $("summary", d), body = $(".drop-body, .area-more-body", d);
     let anim = null;
     sum.addEventListener("click", (e) => {
       e.preventDefault();
