@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;500;600;700&display=swap">
 <!-- ?v= obliga al navegador a bajar el CSS y el JS nuevos después de cada cambio: subir el número al editarlos. -->
-<link rel="stylesheet" href="css/estilos.css?v=87">
+<link rel="stylesheet" href="css/estilos.css?v=88">
 
 <!-- Filtro "borroneado" para los óvalos naranjas: ondula el trazo y lo deja con huecos, como marcador seco. -->
 <svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -506,11 +506,32 @@ Entrega</textarea></label>
       <li class="person"><img class="avatar" src="assets/img/equipo/agustin.png" alt="Foto de Gonzalo Agustín Villalba Brizuela" width="247" height="247" loading="lazy"><div><b>Gonzalo Agustín Villalba Brizuela</b><span>Director del proyecto</span></div></li>
       <li class="person"><img class="avatar" src="assets/img/equipo/selene.png" alt="Foto de Selene Vaquer" width="247" height="247" loading="lazy"><div><b>Selene Vaquer</b><span>Directora del proyecto</span></div></li>
     </ul>
+    <button class="scroll-cue" type="button" data-cue="colaboradores">Colaboradores <span aria-hidden="true">↓</span></button>
+  </div>
+
+  <div class="screen" id="colaboradores">
+    <button class="scroll-cue up" type="button" data-cue="quienes"><span aria-hidden="true">↑</span> Quiénes hacemos unpovdiferente</button>
+    <div class="lead">
+      <span class="eyebrow">Acompañan</span>
+      <h2>Colaboradores</h2>
+    </div>
+    <ul class="collab-list">
+      <li class="collab">
+        <span class="collab-role">Institución colaboradora</span>
+        <h3>Instituto de Neurodivergencias y Derecho (INyD)</h3>
+        <p>Una comisión pionera a nivel nacional dedicada a promover la inclusión plena y el ejercicio efectivo de los derechos de las personas neurodivergentes. El INyD trabaja desde una perspectiva jurídica, transdisciplinaria y de divulgación para transformar prácticas institucionales y garantizar la equidad, la no discriminación y la accesibilidad, reconociendo la diversidad neurológica y la experiencia vivida como fuentes fundamentales de conocimiento e innovación.</p>
+      </li>
+      <li class="collab">
+        <span class="collab-role">Abogada · Directora del INyD</span>
+        <h3>Nancy Pontón</h3>
+        <p>Su participación en el proyecto se centra en el acompañamiento y la orientación continua durante todo el proceso, brindando asesoramiento sobre la información abordada y la revisión de las piezas desarrolladas bajo una perspectiva normativa y de derechos.</p>
+      </li>
+    </ul>
     <button class="scroll-cue" type="button" data-cue="desarrolladores">Desarrolladores <span aria-hidden="true">↓</span></button>
   </div>
 
   <div class="screen last" id="desarrolladores">
-    <button class="scroll-cue up" type="button" data-cue="quienes"><span aria-hidden="true">↑</span> Quiénes hacemos unpovdiferente</button>
+    <button class="scroll-cue up" type="button" data-cue="colaboradores"><span aria-hidden="true">↑</span> Colaboradores</button>
     <div class="lead">
       <span class="eyebrow">Equipo web</span>
       <h2>Desarrolladores</h2>
@@ -591,4 +612,4 @@ Entrega</textarea></label>
     <div class="row" id="dl-d-actions"></div>
   </div>
 </dialog>
-<script src="js/app.js?v=87"></script>
+<script src="js/app.js?v=88"></script>
