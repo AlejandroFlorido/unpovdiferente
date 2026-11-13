@@ -869,3 +869,63 @@ html.calm .dl-dialog[open], html.calm .dl-dialog[open]::backdrop { animation: no
   75% { transform: translateY(calc(var(--s) * 0.1875)) rotate(67.5deg); }
   100% { transform: translateY(0) rotate(90deg); }
 }
+
+/* =====================================================================
+   Revisión experta (versión de prueba). Todo lo nuevo está acá abajo.
+   ===================================================================== */
+
+/* Saltar al contenido: invisible hasta que se llega con Tab. */
+.skip-link { position: absolute; left: 16px; top: -100px; z-index: 50; background: var(--accent); color: var(--accent-ink);
+  font-family: var(--f-display); font-weight: 600; padding: 0.6rem 1rem; border-radius: var(--radius); text-decoration: none; }
+.skip-link:focus { top: 8px; }
+
+/* Ajustes de lectura juntos en un menú: un botón "Aa Lectura" + modo oscuro a la vista. */
+.prefs { flex-wrap: nowrap; }
+.prefs-menu { position: relative; }
+.prefs-toggle { display: inline-flex; align-items: center; gap: 0.4rem; min-height: 36px; padding-inline: 0.85rem; }
+.prefs-toggle .aa { font-family: var(--f-display); font-weight: 700; letter-spacing: -0.02em; }
+.prefs-toggle[aria-expanded="true"] { border-color: var(--accent); }
+.prefs-dot { display: none; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.prefs-toggle.has-on .prefs-dot { display: inline-block; }
+.prefs-panel { position: absolute; right: 0; top: calc(100% + 8px); z-index: 30; width: max-content; min-width: 13rem;
+  display: flex; flex-direction: column; gap: 0.4rem; padding: 0.75rem; background: var(--surface);
+  border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 10px 30px rgba(0,0,0,0.12); }
+.prefs-panel[hidden] { display: none !important; }
+.prefs-title { margin: 0 0 0.2rem; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.prefs-panel .chip-btn { text-align: left; border-radius: var(--radius); min-height: 40px; padding-inline: 0.9rem; }
+.prefs-panel .chip-btn[aria-pressed]::after { content: ""; }
+.prefs-panel .chip-btn[aria-pressed="true"]::before { content: "✓ "; }
+.theme-switch { height: 36px; }
+.theme-switch .knob { width: 30px; height: 30px; }
+.theme-switch[aria-checked="true"] .knob { transform: translateX(calc(3.6rem - 36px)); }
+
+/* Pestañas: sin la segunda línea en mayúsculas (menos ruido); Contacto y Equipo
+   quedan a la derecha como un grupo aparte. */
+.tab small { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.tab { padding: 0.7rem 0.8rem 0.8rem; font-size: 1rem; }
+@media (min-width: 900px) {
+  #tab-contacto { margin-left: auto; }
+}
+/* En pantallas angostas, un desvanecido a la derecha avisa que hay más pestañas. */
+@media (max-width: 899px) {
+  .tabs { -webkit-mask-image: linear-gradient(to right, #000 85%, transparent);
+          mask-image: linear-gradient(to right, #000 85%, transparent); }
+}
+
+/* Celular: cabecera más baja (logo más chico) para dejar más pantalla al contenido. */
+@media (max-width: 600px) {
+  .brand-row { flex-wrap: nowrap; }
+  .brand-logo { height: 40px; }
+  .top-inner { gap: 0.3rem; padding-top: 0.5rem; }
+}
+
+/* Al final de cada pestaña: Anterior a la izquierda, Siguiente a la derecha. */
+.next-tab { justify-content: space-between; align-items: flex-end; gap: 1rem; }
+.next-tab a.prev { text-align: left; }
+.next-tab a.prev span { text-decoration-color: var(--line); }
+.next-tab a { padding: 0.4rem 0; }
+
+/* Objetivos táctiles cómodos con el dedo. */
+@media (pointer: coarse) {
+  .prefs-panel .chip-btn { min-height: 44px; }
+}
