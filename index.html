@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;500;600;700&display=swap">
 <!-- ?v= obliga al navegador a bajar el CSS y el JS nuevos después de cada cambio: subir el número al editarlos. -->
-<link rel="stylesheet" href="css/estilos.css?v=67">
+<link rel="stylesheet" href="css/estilos.css?v=75">
 
 <!-- Filtro "borroneado" para los óvalos naranjas: ondula el trazo y lo deja con huecos, como marcador seco. -->
 <svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -257,7 +257,7 @@
     <div class="lead">
       <span class="eyebrow">02 · Orientar</span>
       <h2>Traductor de consignas</h2>
-      <p>Pegá una consigna larga o confusa. La separamos en partes y las pintamos según qué son: qué hacer, qué tener en cuenta, qué entregar y cuándo. La herramienta sugiere, vos decidís: tocá una parte para cambiarla.</p>
+      <p>Pegá la consigna y te la separamos en <b>qué hacer</b> y <b>cómo</b>.</p>
     </div>
 
     <div class="grid-2">
@@ -265,9 +265,10 @@
         <label class="field" for="tr-input">Consigna original <span class="example-tag">Ejemplo</span>
           <textarea id="tr-input">Realizar una pieza gráfica que comunique el concepto de "identidad barrial", teniendo en cuenta el público adolescente, el uso de tipografía expresiva y una paleta de no más de tres colores. Se entrega en PDF y archivo editable el 20/10. Se evaluará el concepto, la resolución gráfica y la fundamentación.</textarea>
         </label>
-        <div class="row"><button class="btn" type="button" id="tr-run">Desarmar consigna</button><span class="small muted" id="tr-msg"></span></div>
-        <div class="tr-guide" id="tr-guide">
-          <p class="small muted">Cada color es una parte de la consigna. Si alguna está mal, tocala y elegí qué es.</p>
+        <p class="small muted" id="tr-ia-note" hidden>La consigna se manda a una inteligencia artificial para traducirla. No pegues datos personales.</p>
+        <div class="row"><button class="btn" type="button" id="tr-run">Desarmar consigna</button><button class="btn ghost" type="button" id="tr-noai" hidden>Desarmar sin IA</button><span class="small muted" id="tr-msg" aria-live="polite"></span></div>
+        <div class="tr-guide" id="tr-guide" hidden>
+          <p class="small muted">Si alguna parte quedó mal, tocala y cambiala.</p>
           <div class="tr-legend" id="tr-legend" aria-hidden="true"></div>
           <div class="tr-text" id="tr-text" aria-label="Consigna separada en partes"></div>
           <div class="tr-pick" id="tr-pick" hidden></div>
@@ -283,7 +284,7 @@
       </div>
     </div>
 
-    <div class="lead">
+    <div class="lead map-lead">
       <h2>Mapa de la cursada</h2>
       <p class="small muted">Una materia no es solo "clase, TP, entrega". Marcá en qué punto estás para ver qué sigue.</p>
     </div>
@@ -292,11 +293,6 @@
       <div class="map-detail" id="map-detail" aria-live="polite"></div>
     </div>
 
-    <div class="lead">
-      <h2>Códigos visuales de la cursada</h2>
-      <p class="small muted">Cada tipo de información tiene siempre la misma forma, color y palabra. Así se reconoce de un vistazo, en el calendario, en el aula virtual o en un cartel. La forma permite distinguirlos aunque no se perciban bien los colores.</p>
-    </div>
-    <div class="codes" id="codes-legend"></div>
   </section>
 
   <!-- ================= HERRAMIENTAS ================= -->
@@ -649,4 +645,4 @@ Entrega</textarea></label>
     <div class="row" id="dl-d-actions"></div>
   </div>
 </dialog>
-<script src="js/app.js?v=67"></script>
+<script src="js/app.js?v=75"></script>

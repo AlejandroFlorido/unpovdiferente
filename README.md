@@ -12,7 +12,7 @@ Incluye además una sección para docentes con una plantilla de consigna clara.
 
 ## Cómo verlo
 
-Es un sitio estático, sin pasos de compilación: GitHub Pages publica la carpeta tal cual. Para verlo en tu compu, abrí `index.html` en el navegador (o, mejor, levantá un servidor local con `python3 -m http.server` y entrá a `http://localhost:8000`). Los datos que carga cada estudiante quedan solo en su navegador (localStorage).
+Es un sitio estático, sin pasos de compilación: GitHub Pages publica la carpeta tal cual. Para verlo en tu compu, abrí `index.html` en el navegador (o, mejor, levantá un servidor local con `python3 -m http.server` y entrá a `http://localhost:8000`). Los datos que carga cada estudiante quedan solo en su navegador (localStorage). La única excepción es el traductor de consignas con IA: la consigna que se traduce pasa por el intermediario de `worker/` hacia la IA.
 
 ## Estructura de carpetas
 
@@ -20,6 +20,7 @@ Es un sitio estático, sin pasos de compilación: GitHub Pages publica la carpet
 index.html              estructura y textos de todas las pestañas
 css/estilos.css         todos los estilos (colores, tipografía, modo oscuro)
 js/app.js               todo el comportamiento (pestañas, herramientas, preferencias)
+worker/                 intermediario del traductor con IA (Cloudflare Worker, ver worker/README.md)
 assets/
   fonts/                fuente propia Unpovdiferente Bold (woff2 + ttf)
   icons/                favicon claro/oscuro y apple-touch-icon

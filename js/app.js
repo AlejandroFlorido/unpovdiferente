@@ -357,7 +357,7 @@
   };
   const codeHtml = (k) => `<span class="code k-${k}"><span class="shape" aria-hidden="true"></span>${TYPES[k]}</span>`;
   const legend = Object.keys(TYPES).map(codeHtml).join("");
-  $("#codes-legend").innerHTML = legend;
+  if ($("#codes-legend")) $("#codes-legend").innerHTML = legend;
   $("#wk-legend").innerHTML = legend;
   $("#wk-type").innerHTML = Object.entries(TYPES).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
 
@@ -368,7 +368,7 @@
   // Sustantivos y adjetivos que terminan como un infinitivo
   const TR_NOT_VERB = new Set("lugar hogar mujer poder deber placer taller collar mar par bar militar popular familiar particular similar regular escolar solar primer cualquier altar azar billar dólar éter cráter carácter alfiler mantel nivel".split(" "));
   const TR_READ = /^(leer|ver|mirar|escuchar|consultar|buscar)$/;
-  const TR_SEQ = /^(?:primero|después|luego|más tarde|a continuación|finalmente|por último|al final|también|además|y|e)\b,?\s*/i;
+  const TR_SEQ = /^(?:primero|despu[eé]s|luego|m[aá]s tarde|a continuaci[oó]n|finalmente|por [uú]ltimo|al final|también|además|y|e)\b,?\s*/i;
   const TR_MODAL = /^(?:se\s+(?:debe|deberá|deben|deberán|pide|solicita)\s+|deber(?:á|án|ás)\s+|deben\s+|tienen\s+que\s+|tenés\s+que\s+|tendrán\s+que\s+|hay\s+que\s+|(?:les|te)\s+(?:pedimos|pido)\s+que\s+|se\s+propone\s+)/i;
   function trVerb(word) {
     const w = (word || "").toLowerCase();
@@ -385,25 +385,27 @@
   const trCap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
   const trList = (s) => s.split(/,\s*|\s+y\s+(?!\d)/).map((x) => x.replace(/^(?:el|la|los|las)\s+/i, "").trim()).filter(Boolean);
   // Partes de la consigna: el traductor sugiere y el estudiante corrige tocando cada parte
+  // Dos columnas nada más: qué hay que hacer (acciones) y cómo (todo lo demás). La fecha se marca aparte.
   const TR_CATS = {
     paso: { name: "Qué hacer", tag: "Hacer" },
-    cuenta: { name: "Qué tener en cuenta", tag: "Tener en cuenta" },
-    entregar: { name: "Qué entregar", tag: "Entrega" },
+    como: { name: "Cómo", tag: "Cómo" },
     fecha: { name: "Fecha", tag: "Fecha" },
-    evalua: { name: "Cómo se evalúa", tag: "Se evalúa" },
-    otro: { name: "Contexto (no es tarea)", tag: "Contexto" }
+    nada: { name: "Irrelevante", tag: "Irrelevante" }
   };
+  const trCat = (c) => (c === "paso" || c === "fecha" || c === "nada" ? c : "como");
+  // Saludos y frases de presentación: no son parte de la tarea
+  const TR_NADA = /^(?:hola|buen(?:os|as)\s+(?:d[ií]as|tardes|noches)|buenas|estimad[oa]s?|querid[oa]s?|saludos|(?:les|te)\s+(?:dejo|comparto|paso|envío)|(?:a\s+continuación\s+)?(?:procedo|paso)\s+a|cualquier\s+(?:duda|consulta)|ante\s+cualquier|éxitos|muchas\s+gracias|gracias)/i;
   // Fechas: 20/10, 14 de noviembre, el jueves, antes del domingo, mañana, en 10 días, la próxima clase...
   const TR_WD = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
   const TR_MES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
   const trWdRe = "lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo", trMesRe = TR_MES.join("|") + "|setiembre";
-  const TR_DATE = new RegExp("\\s*(?<![\\p{L}\\d])(?:(?:antes|después)\\s+del?\\s+|(?:hasta|para|a más tardar|como máximo|como mucho)\\s+(?:el\\s+|la\\s+)?|(?:el|la|este|esta)\\s+)?" +
+  const TR_DATE = new RegExp("\\s*(?<![\\p{L}\\d])(?:(?:antes|después)\\s+del?\\s+|(?:hasta|para|a más tardar|como máximo|como mucho)\\s+(?:el\\s+|la\\s+)?(?:d[ií]a\\s+)?|(?:el|la|este|esta)\\s+(?:d[ií]a\\s+)?)?" +
     "(?:(?:próximo\\s+)?(?:" + trWdRe + ")(?:\\s+\\d{1,2}(?:\\s+de\\s+(?:" + trMesRe + "))?)?(?:\\s+que viene|\\s+próximo)?" +
     "|\\d{1,2}[\\/\\-]\\d{1,2}(?:[\\/\\-]\\d{2,4})?|\\d{1,2}\\s+de\\s+(?:" + trMesRe + ")(?:\\s+de\\s+\\d{4})?" +
     "|pasado mañana|(?<!la\\s)mañana|hoy|(?:la\\s+)?(?:próxima clase|clase que viene|semana que viene|próxima semana)|fin de mes|(?:en|dentro de)\\s+\\d+\\s+días)(?![\\p{L}\\d])", "iu");
   // Convierte lo que dice la consigna en una fecha real, contando desde hoy
   function trWhen(txt) {
-    const t = trClean(txt).replace(/^(?:el\s+)?(?:plazo|fecha de entrega|fecha límite)?\s*(?:vence|es)?\s*/i, "");
+    const t = trClean(txt).replace(/^(?:hasta|para|a más tardar)\s+(?:el\s+)?(?:d[ií]a\s+)?(?=\d)/i, "").replace(/^(?:el\s+)?(?:plazo|fecha de entrega|fecha límite)?\s*:?\s*(?:vence|es)?\s*:?\s*/i, "");
     const low = t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
     const now = today();
     let d = null, guess = false;
@@ -440,8 +442,16 @@
     if (nm) return TR_NOUN[nm[1].toLowerCase()] + " " + ((nm[2] || "").toLowerCase() === "del" ? "el " : nm[2] ? nm[2].toLowerCase() + " " : "") + p.replace(/^[\s,;:.]+/, "").slice(nm[0].length);
     // "Los alumnos deberán seleccionar..." → "seleccionar..."
     if (!trVerb(trFirst(p))) { const sm = p.match(/^(?:\p{L}+\s+){1,4}?(?:deber(?:á|án|ás)|deben|tienen que|tendrán que|van a)\s+/iu); if (sm) p = p.slice(sm[0].length); }
+    // "El trabajo consta en crear...", "La propuesta es diseñar...", "Consigna: armar..." → desde el verbo
+    if (!trVerb(trFirst(p))) {
+      const lm = p.match(/^(?:(?:[\p{L}"“”«»]+\s+){0,5}?(?:en|de|que|es|será|para|a)\s+|[\p{L}\d ]{1,25}?:\s*)(?=(\p{L}+))/iu);
+      if (lm && trVerb(lm[1]) && !TR_NOT_VERB.has(lm[1].toLowerCase())) p = p.slice(lm[0].length);
+    }
     return p;
   };
+  // Después de una coma, esto ya es "cómo": formato, extensión, modalidad...
+  const TR_HOW = /^(?:en\s+)?(?:formato|extensión|tamaño|individual|grupal|en grupos?|de a \d|de forma|de manera|con un máximo|máximo|mínimo|como máximo|como mínimo|usando|utilizando|respetando|sin\s|(?:en\s+)?(?:pdf|word|jpg|png|ppt|power ?point|canva)\b)/i;
+  const TR_BREAK = /\s+(?=((?:el|este)\s+(?:trabajo|tp|práctico|practico)\b|la\s+(?:consigna|propuesta|actividad|tarea)\s+(?:es|consiste|consta)\b|(?:se\s+)?(?:evaluar[aá]n?|evalua|evalúa)\b|criterios?\b|formato\b|se\s+entrega|la\s+entrega\b|entregar\b|para\s+el\s+(?:d[ií]a\s+)?\d|despu[eé]s\b|luego\b|finalmente\b|por\s+[uú]ltimo\b|tener\s+en\s+cuenta\b|cualquier\s+duda\b))/gi;
   function trSegments(text) {
     const segs = [];
     const add = (txt, cat) => {
@@ -454,13 +464,21 @@
     };
     // Lo que está entre comillas no se corta (títulos, frases citadas)
     const quotes = [];
-    const t = text.replace(/\s+/g, " ").trim()
+    let t = text.replace(/\s+/g, " ").trim()
       .replace(/"[^"]*"|“[^”]*”|«[^»]*»/g, (q) => "\u0001" + (quotes.push(q) - 1) + "\u0002");
+    // Consigna sin puntos ni comas: ponemos cortes antes de las palabras que suelen abrir una parte nueva
+    const words = t.split(" ").length;
+    if (words > 10 && (t.match(/[.,;:!?]/g) || []).length <= words / 30) t = t.replace(TR_BREAK, ". ").replace(/\bse\. /gi, "se ");
     const back = (s) => s.replace(/\u0001(\d+)\u0002/g, (_, i) => quotes[i]);
     for (const s0 of t.match(/[^.!?;]+(?:[.!?;]+|$)\s*/g) || []) {
       const s = s0.trim();
       if (!s) continue;
       const sp = s0.endsWith(" ") ? " " : "";
+      if (TR_NADA.test(s)) {
+        // "Buenos días estudiantes, procedo a...": la parte suelta del saludo también
+        const parts = s.split(/,\s*/);
+        if (parts.every((p) => TR_NADA.test(p) || !trVerb(trFirst(trStart(p))) && p.split(/\s+/).length < 4)) { add(back(s) + sp, "nada"); continue; }
+      }
       if (/^(?:se\s+evalu|se\s+evalú|criterios?\b|la\s+evaluación|evaluación:)/i.test(s)) { add(back(s) + sp, "evalua"); continue; }
       if (/^(?:el\s+)?(?:plazo|fecha de entrega|fecha límite|vence)/i.test(s)) { add(back(s) + sp, "fecha"); continue; }
       if (/^(?:se\s+entrega|la\s+entrega|entrega:|formato|el\s+trabajo\s+se\s+entrega|extensión|subir|enviar|entregar\s+(?:en|por|al|a\s+trav))/i.test(s)) { add(back(s) + sp, "entregar"); continue; }
@@ -473,7 +491,7 @@
       const cuts = [0];
       for (const m of body.matchAll(/,\s*(?:y\s+|e\s+)?|\s+[ye]\s+|\s+(?=(?:después|luego|finalmente|por último|a continuación)\b)/giu)) {
         const after = body.slice(m.index + m[0].length);
-        if (trVerb(trFirst(trStart(after))) || /^(?:después|luego|finalmente|por último|a continuación)\b/i.test(after)) cuts.push(m.index);
+        if (trVerb(trFirst(trStart(after))) || /^(?:después|luego|finalmente|por último|a continuación)\b/i.test(after) || TR_HOW.test(after)) cuts.push(m.index);
       }
       cuts.push(body.length);
       const parts = [];
@@ -484,12 +502,12 @@
       });
       if (tail) add(back(tail) + sp, "cuenta");
     }
-    return segs;
+    // Lo que no es una acción ni una fecha va a "Cómo"
+    return segs.map((sg) => ({ text: sg.text, cat: trCat(sg.cat) }));
   }
   const trClean = (s) => s.replace(/^[\s,;:.]+|[\s,;:.]+$/g, "").replace(/^(?:y|e)\s+/i, "");
-  function trBuild(segs, text) {
-    const of = (cat) => segs.filter((s) => s.cat === cat).map((s) => trClean(s.text)).filter(Boolean);
-    const steps = [], verbs = [], cuenta = [], dates = [];
+  function trBuild(segs) {
+    const steps = [], verbs = [], como = [], dates = [];
     let waiting = [];
     segs.forEach((sg) => {
       const p = trClean(sg.text);
@@ -500,10 +518,14 @@
         if (steps.length) dates.push(Object.assign(w, { step: steps.length - 1 })); else waiting.push(w);
         return;
       }
-      if (sg.cat !== "paso") return;
+      if (sg.cat === "nada") return;
+      if (sg.cat !== "paso") { if (/\p{L}{3}/u.test(p)) como.push(trCap(p.replace(TR_SEQ, ""))); return; }
       const q = trStart(p), inf = trVerb(trFirst(q));
-      const step = inf ? trCap(inf + q.slice(trFirst(q).length)) : trCap(q);
-      if (/^(?:en\s+|con\s+|de\s+)/i.test(q) && steps.length && !inf) steps[steps.length - 1] += ", " + q; // una parte suelta movida a "Hacer"
+      let step = inf ? trCap(inf + q.slice(trFirst(q).length)) : trCap(q);
+      // ", fundamentándolo con los artículos..." es parte del cómo
+      const g = step.match(/,\s*(\p{L}+?(?:[aá]ndo|i[eé]ndo)(?:lo|la|los|las)?\s+.+)$/u);
+      if (g) { como.push(trCap(g[1])); step = step.slice(0, g.index); }
+      if (/^(?:en\s+|con\s+|de\s+)/i.test(q) && steps.length && !inf) steps[steps.length - 1] += ", " + q; // una parte suelta movida a "Qué hacer"
       else if (step) {
         steps.push(step); verbs.push(inf);
         waiting.forEach((w) => dates.push(Object.assign(w, { step: steps.length - 1 }))); waiting = [];
@@ -511,45 +533,23 @@
     });
     waiting.forEach((w) => dates.push(Object.assign(w, { step: -1 })));
     const stepDue = steps.map((_, i) => dates.length > 1 ? dates.filter((d) => d.step === i).map((d) => d.label).join(" · ") : "");
-    of("cuenta").forEach((c) => cuenta.push(...trList(c.replace(TR_SEQ, "").replace(/^(?:teniendo|tomando|tener|tené|tengan) en cuenta(?: que)?:?\s*|^considerando\s*|^considerar:?\s*|^importante:?\s*|^condiciones?:\s*/i, ""))));
-    const plain = text.replace(/\s+/g, " ");
-    const c = plain.match(/comuni(?:que|car|quen)\s+(.+?)(?:,|\.|\s+teniendo|\s+para\s|$)/i);
-    // ", fundamentándolo con los artículos..." también es algo a tener en cuenta
-    steps.forEach((st) => {
-      const g = st.match(/,\s*(\p{L}+?)([aá]ndo|i[eé]ndo)(?:lo|la|los|las)?\s+(.+)$/u);
-      if (g) cuenta.push(trCap(/^[aá]/.test(g[2]) ? g[1] + "ar " + g[3] : g[1] + g[2].replace("é", "e") + " " + g[3]));
-    });
-    // Frases entre comillas dentro de un paso (que no sean lo que hay que leer): idea clave
-    steps.forEach((st, i) => {
-      if (TR_READ.test(verbs[i] || "") || /comuni(?:que|car|quen)/i.test(st)) return;
-      for (const m of st.matchAll(/"[^"]*"|“[^”]*”|«[^»]*»/g)) cuenta.push("Idea clave: " + m[0]);
-    });
-    const lim = plain.match(/(?:no más de|como máximo|máximo de|mínimo de|al menos|entre \d+ y \d+|hasta)\s+\d*\s*(?:páginas|carillas|palabras|caracteres|líneas|minutos|diapositivas|imágenes)\b|\b\d+\s*(?:páginas|carillas|palabras|caracteres|líneas|minutos|diapositivas)\b/gi);
-    if (lim) cuenta.push(...lim.map((x) => "Extensión: " + x));
-    const ent = of("entregar").join(" ");
-    const fm = ent.match(/\b(PDF|JPG|PNG|Word|editable|impres[oa]|maqueta|archivo abierto|AI|PSD|InDesign|campus|aula virtual|mail)\b/gi);
-    const formats = fm ? Array.from(new Set(fm.map((s) => /^(pdf|jpg|png|ai|psd)$/i.test(s) ? s.toUpperCase() : s.toLowerCase() === "editable" ? "archivo editable" : /^word$/i.test(s) ? "Word" : s.toLowerCase()))) : [];
-    let entregar = formats.length ? formats.join(" + ") : trCap(ent.replace(/^se\s+entregan?\s+/i, "").replace(/^entrega:?\s*/i, ""));
-    let guess = false;
-    if (!entregar && verbs.some((v) => /^(escribir|reescribir|redactar|narrar)$/.test(v))) { entregar = "Seguramente el texto que escribas"; guess = true; }
     // Si hay varias fechas, la de la entrega es la última
     const last = dates.slice().sort((a, b) => (a.date || "0") < (b.date || "0") ? -1 : 1).pop();
     const fecha = last ? last.label : "";
-    const evalua = of("evalua").flatMap((e) => trList(e.replace(/^(?:se\s+(?:evalua(?:rá)?|evaluará|evalúa|van a evaluar)|criterios?(?: de evaluación)?:?|(?:la\s+)?evaluación:?)\s*/i, "")));
+    const all = segs.filter((sg) => sg.cat !== "nada").map((sg) => sg.text).join(" ");
     const asks = [];
-    if (!fecha) asks.push("¿Cuándo se entrega?");
-    if (!formats.length && (!entregar || guess)) asks.push("¿En qué formato y con qué extensión se entrega?");
-    if (!evalua.length) asks.push("¿Qué se va a evaluar?");
+    if (!fecha) asks.push("¿Para cuándo es?");
+    if (!/entreg|formato|PDF|archivo|subir|enviar|impres|campus|aula virtual|oral|expo/i.test(all)) asks.push("¿Cómo y dónde se entrega?");
+    if (!/evalu|criterio|nota|aprueba/i.test(all)) asks.push("¿Qué se va a evaluar?");
     return {
-      steps, stepDue, dates, due: last ? last.date : "", guessDate: dates.some((d) => d.guess), comunicar: c ? c[1].replace(/^(el|la|los|las)\s+/i, "").trim() : "",
-      cuenta: Array.from(new Set(cuenta.map((x) => x.trim()).filter(Boolean))), entregar, fecha, evalua: Array.from(new Set(evalua)), asks,
-      paso: steps.length === 1 && c ? "Definir el concepto en una frase" : steps[0] || "Releer la consigna y marcar lo que no entiendo"
+      steps, stepDue, dates, due: last ? last.date : "", guessDate: dates.some((d) => d.guess),
+      como: Array.from(new Set(como)), fecha, asks,
+      paso: steps[0] || "Releer la consigna y marcar qué hay que hacer"
     };
   }
   let trSegs = [], trSel = -1, trRes = null;
-  const TR_ASK = "No lo dice la consigna";
   function renderTr() {
-    const r = trRes = trBuild(trSegs, $("#tr-input").value);
+    const r = trRes = trBuild(trSegs);
     // Consigna resaltada por partes
     let n = 0;
     $("#tr-text").innerHTML = trSegs.map((s, i) => `<span role="button" tabindex="0" class="frag f-${s.cat}${i === trSel ? " sel" : ""}" data-i="${i}" aria-pressed="${i === trSel}" aria-label="${esc(TR_CATS[s.cat].name)}: ${esc(trClean(s.text))}"><span class="ftag" aria-hidden="true">${s.cat === "paso" ? ++n : TR_CATS[s.cat].tag}</span>${esc(s.text.trim().replace(/^[,;]\s*/, ""))}</span>`).join(" ");
@@ -560,16 +560,22 @@
       pick.innerHTML = `<span class="small"><b>Esta parte es:</b> "${esc(trClean(trSegs[trSel].text))}"</span>
         <div class="row">${Object.entries(TR_CATS).map(([k, v]) => `<button type="button" class="btn ghost fpick f-${k}" data-cat="${k}" aria-pressed="${trSegs[trSel].cat === k}">${v.name}</button>`).join("")}</div>`;
     }
-    const cell = (lbl, val, cls) => `<div class="tp-cell ${cls || ""}"><span class="lbl">${lbl}</span><span${val ? "" : ' class="ask"'}>${esc(val || TR_ASK)}</span></div>`;
-    const list = (lbl, arr, cls) => arr.length ? `<div class="tp-cell ${cls || ""}"><span class="lbl">${lbl}</span><ul class="scribble-list">${arr.map((e) => `<li>${esc(e)}</li>`).join("")}</ul></div>` : cell(lbl, "", cls);
+    const list = (lbl, arr, cls) => `<div class="tp-cell ${cls || ""}"><span class="lbl">${lbl}</span><ul class="scribble-list">${arr.map((e) => `<li>${esc(e)}</li>`).join("")}</ul></div>`;
     $("#tr-card").innerHTML = `
-      <span class="tp-title">Paso a paso</span>
-      ${r.steps.length ? `<ol class="tp-steps">${r.steps.map((s, i) => `<li><span>${esc(s)}${r.stepDue[i] ? `<span class="due">${esc(r.stepDue[i])}</span>` : ""}</span></li>`).join("")}</ol>` : `<p class="ask">No encontramos acciones. Tocá en la consigna las partes que dicen qué hacer y marcalas como "Qué hacer".</p>`}
-      <div class="tp-grid">${r.comunicar ? cell("Qué comunicar", r.comunicar) : ""}${list("Qué tener en cuenta", r.cuenta)}${cell("Qué entregar", r.entregar)}${cell(r.dates.length > 1 ? "Fecha final" : "Fecha", r.fecha, "date")}</div>
+      <div class="tp-col f-paso">
+        <span class="tp-title">Qué hacer</span>
+        ${r.steps.length ? `<ol class="tp-steps">${r.steps.map((s, i) => `<li><span>${esc(s)}${r.stepDue[i] ? `<span class="due">${esc(r.stepDue[i])}</span>` : ""}</span></li>`).join("")}</ol>` : `<p class="ask">No encontramos acciones. Tocá en la consigna lo que dice qué hacer y marcalo como "Qué hacer".</p>`}
+      </div>
+      <div class="tp-col f-como">
+        <span class="tp-title">Cómo</span>
+        ${r.como.length ? `<ul class="scribble-list">${r.como.map((e) => `<li>${esc(e)}</li>`).join("")}</ul>` : `<p class="ask">La consigna no dice cómo. Preguntalo en clase.</p>`}
+      </div>
+      <div class="tp-grid">
+        <div class="tp-cell date"><span class="lbl">${r.dates.length > 1 ? "Fecha final" : "Para cuándo"}</span><span${r.fecha ? "" : ' class="ask"'}>${esc(r.fecha || "No lo dice la consigna")}</span></div>
+        <div class="tp-cell key"><span class="lbl">Primer paso</span><span>${esc(r.paso)}</span></div>
+      </div>
       ${r.guessDate ? `<p class="small muted">Las fechas con día de la semana están calculadas desde hoy. Si la consigna es de otra semana, ajustalas en "Dividir la entrega".</p>` : ""}
-      ${r.evalua.length ? list("Se evalúa", r.evalua) : ""}
-      ${r.asks.length ? list("Preguntale al docente", r.asks, "asks") : ""}
-      ${cell("Primer paso", r.paso, "key")}`;
+      ${r.asks.length ? list("Preguntale al docente", r.asks, "asks") : ""}`;
     store.set("tr", { input: $("#tr-input").value, segs: trSegs });
   }
   function runTr() {
@@ -578,7 +584,79 @@
     $("#tr-msg").textContent = trSegs.length ? "" : "Pegá una consigna primero.";
     renderTr();
   }
-  $("#tr-run").onclick = runTr;
+  // La consigna pintada y la leyenda aparecen recién cuando el estudiante desarma la suya
+  const runPlain = () => { trAi = null; runTr(); $("#tr-guide").hidden = false; };
+
+  /* ---------- Traductor con IA ----------
+     IA_URL es la dirección del intermediario (Cloudflare Worker, carpeta worker/ del repo).
+     Vacía = la página usa solo el traductor automático de arriba, como siempre.
+     Si la IA falla, tarda o se llegó al límite del día, se avisa y se usa el automático. */
+  const IA_URL = "https://unpov-traductor.floridosalejandro.workers.dev/";
+  let trAi = null;
+  const trDay = (s) => { if (!s) return ""; const d = fromIso(s); return TR_WD[d.getDay()].slice(0, 3) + " " + pad(d.getDate()) + "/" + pad(d.getMonth() + 1); };
+  function renderAi() {
+    const a = trAi.res;
+    const steps = a.pasos.map((p) => p.texto);
+    const stepDue = a.pasos.map((p) => trDay(p.fecha));
+    const fecha = a.fecha_entrega ? trDay(a.fecha_entrega) + (a.para_cuando && !/\d/.test(a.para_cuando) ? " · " + a.para_cuando : "") : a.para_cuando;
+    trRes = {
+      steps, stepDue, como: a.como, fecha, due: a.fecha_entrega, entrega: a.entrega, evalua: a.se_evalua, asks: a.preguntar,
+      dates: a.pasos.map((p, i) => ({ step: i, date: p.fecha })).filter((d) => d.date),
+      paso: a.primer_paso || steps[0] || "Releer la consigna y marcar qué hay que hacer"
+    };
+    const r = trRes;
+    const ul = (arr, none) => arr.length ? `<ul class="scribble-list">${arr.map((e) => `<li>${esc(e)}</li>`).join("")}</ul>` : `<span class="ask">${none}</span>`;
+    $("#tr-card").innerHTML = `
+      <span class="tp-ia">Traducido con IA · revisalo con la consigna</span>
+      <div class="tp-col f-paso">
+        <span class="tp-title">Qué hacer</span>
+        ${r.steps.length ? `<ol class="tp-steps">${r.steps.map((s, i) => `<li><span>${esc(s)}${r.stepDue[i] ? `<span class="due">${esc(r.stepDue[i])}</span>` : ""}</span></li>`).join("")}</ol>` : `<p class="ask">No encontramos acciones en este texto.</p>`}
+      </div>
+      <div class="tp-col f-como">
+        <span class="tp-title">Cómo</span>
+        ${r.como.length ? `<ul class="scribble-list">${r.como.map((e) => `<li>${esc(e)}</li>`).join("")}</ul>` : `<p class="ask">La consigna no dice cómo. Preguntalo en clase.</p>`}
+      </div>
+      <div class="tp-grid">
+        <div class="tp-cell date"><span class="lbl">Para cuándo</span><span${r.fecha ? "" : ' class="ask"'}>${esc(r.fecha || "No lo dice la consigna")}</span></div>
+        <div class="tp-cell key"><span class="lbl">Primer paso</span><span>${esc(r.paso)}</span></div>
+        <div class="tp-cell entrega"><span class="lbl">Entrega</span>${ul(r.entrega, "No lo dice la consigna")}</div>
+        <div class="tp-cell evalua"><span class="lbl">Qué se evalúa</span>${ul(r.evalua, "No lo dice la consigna")}</div>
+      </div>
+      ${r.asks.length ? `<div class="tp-cell asks"><span class="lbl">Preguntale al docente</span><ul class="scribble-list">${r.asks.map((e) => `<li>${esc(e)}</li>`).join("")}</ul></div>` : ""}`;
+    $("#tr-guide").hidden = true;
+    store.set("tr", { input: trAi.input, segs: trSegs, ai: trAi });
+  }
+  const TR_AI_ERR = {
+    limite: "Llegaste a las traducciones con IA de hoy. Mañana se renuevan. Mientras, la desarmamos con el traductor automático.",
+    largo: "La consigna es muy larga para la IA. La desarmamos con el traductor automático.",
+    vacio: "Pegá una consigna primero."
+  };
+  async function runAi() {
+    const input = $("#tr-input").value.trim(), btn = $("#tr-run"), msg = $("#tr-msg");
+    if (input.length < 15) { msg.textContent = "Pegá una consigna primero."; return; }
+    btn.disabled = true; btn.setAttribute("aria-busy", "true"); msg.textContent = "Traduciendo con IA…";
+    let err = "ia";
+    try {
+      const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 45000);
+      const r = await fetch(IA_URL, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ consigna: input }), signal: ctl.signal });
+      clearTimeout(t);
+      const data = await r.json().catch(() => ({}));
+      if (r.ok && data.ok && data.resultado) {
+        trAi = { input: $("#tr-input").value, res: data.resultado };
+        trSel = -1; renderAi();
+        msg.textContent = typeof data.restantes === "number" ? `Listo. Te ${data.restantes === 1 ? "queda 1 traducción" : "quedan " + data.restantes + " traducciones"} con IA hoy.` : "";
+        err = "";
+      } else err = data.error || "ia";
+    } catch (e) { err = "ia"; }
+    btn.disabled = false; btn.removeAttribute("aria-busy");
+    if (!err) return;
+    if (err === "vacio") { msg.textContent = TR_AI_ERR.vacio; return; }
+    runPlain();
+    msg.textContent = TR_AI_ERR[err] || "La IA no responde ahora. La desarmamos con el traductor automático: revisá las partes y corregilas tocándolas.";
+  }
+  $("#tr-run").onclick = () => (IA_URL ? runAi() : runPlain());
+  if (IA_URL) { $("#tr-noai").hidden = false; $("#tr-ia-note").hidden = false; }
+  $("#tr-noai").onclick = () => { runPlain(); $("#tr-msg").textContent = ""; };
   const trFrag = (e) => {
     const b = e.target.closest(".frag"); if (!b) return;
     if (e.type === "keydown") { if (e.key !== "Enter" && e.key !== " ") return; e.preventDefault(); }
@@ -596,17 +674,18 @@
     $(`#tr-text .frag[data-i="${i}"]`)?.focus();
   });
   const trSaved = store.get("tr", null);
-  if (trSaved && Array.isArray(trSaved.segs)) { $("#tr-input").value = trSaved.input; trSegs = trSaved.segs; renderTr(); }
+  if (IA_URL && trSaved && trSaved.ai && trSaved.ai.res) { $("#tr-input").value = trSaved.ai.input; trSegs = trSegments(trSaved.ai.input); trAi = trSaved.ai; renderAi(); }
+  else if (trSaved && Array.isArray(trSaved.segs)) { $("#tr-input").value = trSaved.input; trSegs = trSaved.segs.map((sg) => ({ text: sg.text, cat: trCat(sg.cat) })); renderTr(); $("#tr-guide").hidden = false; }
   else runTr();
   $("#tr-input").addEventListener("input", () => store.set("tr", Object.assign(store.get("tr", {}), { input: $("#tr-input").value })));
   $("#tr-copy").onclick = () => {
     const r = trRes;
-    const lines = ["PASO A PASO:", ...r.steps.map((s, i) => (i + 1) + ". " + s + (r.stepDue[i] ? " (" + r.stepDue[i] + ")" : ""))];
-    if (r.comunicar) lines.push("QUÉ COMUNICAR: " + r.comunicar);
-    lines.push("QUÉ TENER EN CUENTA: " + (r.cuenta.join(", ") || TR_ASK), "QUÉ ENTREGAR: " + (r.entregar || TR_ASK), "FECHA: " + (r.fecha || TR_ASK));
-    if (r.evalua.length) lines.push("SE EVALÚA: " + r.evalua.join(", "));
+    const lines = ["QUÉ HACER:", ...r.steps.map((s, i) => (i + 1) + ". " + s + (r.stepDue[i] ? " (" + r.stepDue[i] + ")" : ""))];
+    lines.push("", "CÓMO:", ...(r.como.length ? r.como.map((c) => "- " + c) : ["- No lo dice la consigna"]));
+    lines.push("", "PARA CUÁNDO: " + (r.fecha || "No lo dice la consigna"), "PRIMER PASO: " + r.paso);
+    if (r.entrega) lines.push("ENTREGA: " + (r.entrega.join(" · ") || "No lo dice la consigna"));
+    if (r.evalua) lines.push("QUÉ SE EVALÚA: " + (r.evalua.join(" · ") || "No lo dice la consigna"));
     if (r.asks.length) lines.push("PREGUNTAR AL DOCENTE: " + r.asks.join(" "));
-    lines.push("PRIMER PASO: " + r.paso);
     copyText(lines.join("\n"), $("#tr-msg"));
   };
   $("#tr-toplan").onclick = () => {
