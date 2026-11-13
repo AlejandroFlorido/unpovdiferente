@@ -695,8 +695,9 @@ html.calm *, html.calm *::before, html.calm *::after { transition: none !importa
 #descargables { display: flex; flex-direction: column; gap: var(--space-block); }
 .dl-kit { display: flex; flex-direction: column; gap: var(--space-grid); }
 .dl-kit h3 { font-family: var(--f-title); font-size: calc(var(--step-2) + 4pt); line-height: var(--lh-title); letter-spacing: -0.02em; }
-.dl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr)); gap: var(--space-grid); }
-@media (min-width: 900px) { .dl-grid { grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); } }
+/* 6 fichas: 2 filas de 3 en pantalla ancha, 3 filas de 2 en angosta (nunca una fila incompleta) */
+.dl-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-grid); }
+@media (min-width: 760px) { .dl-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 62rem; margin-inline: auto; } }
 @media (max-width: 520px) { .dl-grid .dl-cover { padding: 0.7rem 0.65rem; } .dl-grid .dl-cover .dl-num { font-size: 2.3rem; } .dl-grid .dl-cover .dl-ttl { font-size: 0.95rem; } .dl-grid .dl-cover .dl-brand { font-size: 0.65rem; } .dl-card .dl-name { font-size: calc(var(--step-0) + 4pt); } }
 .dl-card { --c: var(--brand-2); font: inherit; color: inherit; text-align: left; background: none; border: 0; padding: 0; cursor: pointer;
   display: flex; flex-direction: column; gap: 0.8rem; }
