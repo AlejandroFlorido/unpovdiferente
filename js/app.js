@@ -951,28 +951,47 @@
   /* ---------- Apoyo: áreas pedagógicas ----------
      BORRADOR: completar con los datos reales de la facultad.
      Los campos vacíos se muestran como "A completar". */
+  // Áreas reales de la FAU (UNNE). Para sumar una: copiar un bloque. Los datos vacíos no se muestran.
   const AREAS = [
-    { id: "psicopedagogia", nombre: "Gabinete psicopedagógico", que: "Acompaña dificultades de aprendizaje, organización del estudio y estrategias para cursar y rendir.", cuando: "Si te cuesta sostener la cursada, empezar tareas o preparar exámenes.", tel: "", mail: "", horario: "", lugar: "" },
-    { id: "orientacion", nombre: "Orientación pedagógica / tutorías", que: "Tutores que ayudan a planificar la cursada, elegir cuántas materias hacer y armar un plan de estudio.", cuando: "Al inscribirte a materias o si te atrasaste con la carrera.", tel: "", mail: "", horario: "", lugar: "" },
-    { id: "accesibilidad", nombre: "Área de accesibilidad e inclusión", que: "Gestiona adecuaciones razonables: más tiempo en exámenes, consignas por escrito, otros formatos de evaluación.", cuando: "Si necesitás ajustes en la cursada o en las evaluaciones.", tel: "", mail: "", horario: "", lugar: "" },
-    { id: "bienestar", nombre: "Bienestar estudiantil", que: "Orientación en salud, salud mental, becas y situaciones personales que afectan la cursada.", cuando: "Si te sentís desbordada o desbordado, o necesitás una consulta con profesionales.", tel: "", mail: "", horario: "", lugar: "" },
-    { id: "academica", nombre: "Secretaría académica / de alumnos", que: "Trámites, regularidad, fechas de examen, cambios de comisión y reclamos sobre la cursada.", cuando: "Para consultas administrativas o si un problema con una materia no se resuelve con la cátedra.", tel: "", mail: "", horario: "", lugar: "" }
+    { id: "psicosocial", nombre: "Gabinete Psicosocial", sub: "Delegación de Asuntos Sociales · Campus Resistencia",
+      que: "Profesionales que escuchan y acompañan lo personal, emocional o social que te está afectando en la cursada.",
+      cuando: ["Si te sentís desbordada o desbordado.", "Si algo personal te está costando sostener la cursada."],
+      lugar: "Delegación de Asuntos Sociales, Campus Resistencia, Las Heras 727", mail: "", tel: "", redes: "",
+      grupos: [{ titulo: "Quiénes atienden", items: [
+        { nombre: "Lic. Fiorenza Uberti", detalle: "08:00 a 15:00 h" },
+        { nombre: "Lic. José Basterra", detalle: "13:00 a 20:00 h" }] }] },
+    { id: "tutorias", nombre: "Sistema de Tutorías de la FAU", sub: "Secretaría de Desarrollo y Dirección de Carreras",
+      que: "Tutores académicos, tutores pares y un equipo interdisciplinario que acompañan tu recorrido por la carrera.",
+      cuando: ["¿Tenés alguna duda sobre alguna asignatura?", "¿Querés consultar sobre el sistema de becas?",
+        "¿Querés profundizar algún contenido de alguna asignatura?", "¿Tenés dificultades con los exámenes o con los horarios?"],
+      lugar: "", tel: "", mail: "sistemadetutoriasfau@gmail.com", redes: "Facebook: Sistema de Tutorías FAU UNNE",
+      grupos: [
+        { titulo: "Coordinación general", items: [{ nombre: "Arq. Sergio Enrique Portel" }] },
+        { titulo: "Equipo interdisciplinario", items: [
+          { nombre: "Corina Edit Velardez", detalle: "Licenciada en Trabajo Social" },
+          { nombre: "Natalia Farina", detalle: "Psicóloga" },
+          { nombre: "David Luna", detalle: "Profesor en Ciencias de la Educación" }] },
+        { titulo: "Coordinación de tutores pares", items: [{ nombre: "Arq. Bruno Aguirre" }] },
+        { titulo: "Tutores académicos y tutores pares", items: [{ nombre: "Arquitectura" }, { nombre: "Diseño Gráfico" }] }] }
   ];
-  const todo = '<span class="todo">A completar</span>';
-  const contactRow = (label, v, href) => `<dt>${label}</dt><dd>${v ? (href ? `<a href="${esc(href)}">${esc(v)}</a>` : esc(v)) : todo}</dd>`;
-  $("#areas").innerHTML = AREAS.map((a) => `
+  const contactRow = (label, v, href) => v ? `<dt>${label}</dt><dd>${href ? `<a href="${esc(href)}">${esc(v)}</a>` : esc(v)}</dd>` : "";
+  const list = (items) => `<ul class="scribble-list">${items.map((i) => `<li>${i}</li>`).join("")}</ul>`;
+  $("#areas").innerHTML = AREAS.map((a) => {
+    const rows = contactRow("Dónde", a.lugar) + contactRow("Teléfono", a.tel, a.tel ? "tel:" + a.tel.replace(/[^\d+]/g, "") : "")
+      + contactRow("Mail", a.mail, a.mail ? "mailto:" + a.mail : "") + contactRow("Redes", a.redes);
+    const cuando = Array.isArray(a.cuando) ? list(a.cuando.map(esc)) : `<p>${esc(a.cuando)}</p>`;
+    const grupos = (a.grupos || []).map((g) => `<div class="area-group"><h4>${esc(g.titulo)}</h4>`
+      + list(g.items.map((p) => `<b>${esc(p.nombre)}</b>${p.detalle ? ` <span class="muted">· ${esc(p.detalle)}</span>` : ""}`)) + "</div>").join("");
+    return `
     <article class="area">
-      <h3>${esc(a.nombre)}</h3>
+      <div class="area-head"><h3>${esc(a.nombre)}</h3>${a.sub ? `<p class="area-sub">${esc(a.sub)}</p>` : ""}</div>
       <p class="small">${esc(a.que)}</p>
-      <p class="when"><b>Cuándo ir:</b> ${esc(a.cuando)}</p>
-      <dl class="contact-list">
-        ${contactRow("Teléfono", a.tel, a.tel ? "tel:" + a.tel.replace(/[^\d+]/g, "") : "")}
-        ${contactRow("Mail", a.mail, a.mail ? "mailto:" + a.mail : "")}
-        ${contactRow("Horario", a.horario)}
-        ${contactRow("Dónde", a.lugar)}
-      </dl>
+      <div class="area-when"><h4>Cuándo ir</h4>${cuando}</div>
+      ${rows ? `<dl class="contact-list">${rows}</dl>` : ""}
+      ${grupos}
       <div class="row"><a class="btn ghost" href="#contacto" data-scroll="contacto" data-area="${esc(a.id)}">Escribir a esta área</a></div>
-    </article>`).join("");
+    </article>`;
+  }).join("");
 
   /* ---------- Contacto (pie): arma el mensaje, no envía nada ---------- */
   const ct = store.get("contacto", {});
@@ -1169,6 +1188,66 @@
     document.addEventListener("keydown", (e) => { const o = openItem(); if (e.key === "Escape" && o) toggle(o); });
     // Tocar fuera del recuadro abierto también vuelve a los tres (salvo que sea otro botón o enlace)
     document.addEventListener("click", (e) => { const o = openItem(); if (o && !o.contains(e.target) && !e.target.closest("button, a")) toggle(o); });
+  }
+
+  /* ---------- Descargables ----------
+     Para sumar el archivo real de cada uno: poné el PDF en assets/descargables/ y escribí su nombre en "file".
+     Para que la vista previa muestre páginas reales: poné las imágenes en assets/img/descargables/ y listalas en "pages"
+     (la primera también se usa como tapa). Mientras no haya imágenes, se dibuja una tapa con el número y el nombre. */
+  const DESCARGABLES = {
+    book: { id: "cuadernillo", title: "Cuadernillo unpovdiferente", line: "Las 6 herramientas juntas",
+      desc: "Todas las herramientas del kit en un solo cuadernillo, para imprimir y llevar a la cursada.",
+      file: "", pages: [], meta: "PDF · Borrador" },
+    kit: [
+      { id: "traductor", title: "Traductor de consignas", line: "Qué hay que hacer, cuándo y cómo se evalúa", desc: "Una hoja para pasar en limpio cualquier consigna: qué hacer, qué tener en cuenta, qué entregar y qué preguntarle al docente.", file: "", pages: [] },
+      { id: "mapa", title: "Mapa de la cursada", line: "Los pasos de una entrega, de a uno", desc: "Los pasos de un trabajo, desde entender la consigna hasta entregar, para ir tachando.", file: "", pages: [] },
+      { id: "primer-paso", title: "Primer paso", line: "Para cuando no sé por dónde empezar", desc: "Cuatro preguntas cortas para encontrar la primera acción concreta de una tarea.", file: "", pages: [] },
+      { id: "dividir", title: "Dividir la entrega", line: "Para cuando el TP es enorme", desc: "Una planilla para partir un trabajo grande en partes chicas, con fecha para cada una.", file: "", pages: [] },
+      { id: "semana", title: "Mi semana", line: "Entregas y clases a la vista", desc: "Una semana en una hoja: clases, entregas y fechas importantes en un mismo lugar.", file: "", pages: [] },
+      { id: "bloques", title: "Bloques de estudio", line: "Para cuando me disperso", desc: "Bloques cortos de estudio con pausas, para marcar a medida que los vas haciendo.", file: "", pages: [] }
+    ]
+  };
+  const dlBook = $("#dl-book"), dlKit = $("#dl-kit"), dlDialog = $("#dl-dialog");
+  if (dlBook && dlKit && dlDialog) {
+    const all = [DESCARGABLES.book, ...DESCARGABLES.kit];
+    const color = (d) => (d === DESCARGABLES.book || DESCARGABLES.kit.indexOf(d) % 2 ? "t-orange" : "t-blue");
+    const num = (d) => (d === DESCARGABLES.book ? "6 en 1" : String(DESCARGABLES.kit.indexOf(d) + 1).padStart(2, "0"));
+    const cover = (d, page) => {
+      const src = page || d.pages[0];
+      return `<div class="dl-cover ${color(d)}">` + (src ? `<img src="${esc(src)}" alt="">`
+        : `<span class="dl-brand">unpovdiferente</span><span class="dl-num">${num(d)}</span><span class="dl-ttl">${esc(d.title)}</span><span class="dl-rules"><i></i><i></i><i></i></span>`) + "</div>";
+    };
+    const card = (d) => `<button class="dl-card ${color(d)}" type="button" data-dl="${d.id}" aria-haspopup="dialog">${cover(d)}`
+      + (d === DESCARGABLES.book ? "" : `<span class="dl-name">${esc(d.title)}</span><span class="dl-line">${esc(d.line)}</span>`) + "</button>";
+    const B = DESCARGABLES.book;
+    dlBook.innerHTML = `<div class="dl-book">${card(B)}<div class="dl-book-info"><span class="eyebrow">Cuadernillo</span><h3>${esc(B.title)}</h3><p>${esc(B.desc)}</p>`
+      + `<ul class="scribble-list">${DESCARGABLES.kit.map((k) => `<li>${esc(k.title)}</li>`).join("")}</ul>`
+      + `<button class="btn" type="button" data-dl="${B.id}">Ver el cuadernillo</button></div></div>`;
+    dlKit.innerHTML = DESCARGABLES.kit.map(card).join("");
+
+    let opener = null;
+    const show = (id, from) => {
+      const d = all.find((x) => x.id === id);
+      if (!d) return;
+      opener = from;
+      $("#dl-d-kind").textContent = d === B ? "Cuadernillo" : `Kit de herramientas · ${num(d)}`;
+      $("#dl-d-title").textContent = d.title;
+      $("#dl-d-desc").textContent = d.desc;
+      $("#dl-d-meta").textContent = d.meta || (d.file ? "PDF" : "PDF · Borrador");
+      $("#dl-d-view").innerHTML = d.pages.length > 1 ? d.pages.slice(0, 2).map((p) => cover(d, p)).join("") : cover(d);
+      $("#dl-d-actions").innerHTML = d.file
+        ? `<a class="btn" href="assets/descargables/${esc(d.file)}" download>Descargar PDF</a>`
+        : `<button class="btn" type="button" disabled>Descargar PDF</button><span class="example-tag">Falta el archivo</span>`;
+      dlDialog.showModal();
+      $("#dl-d-close").focus();
+    };
+    $$("[data-dl]", $("#descargables")).forEach((b) => b.addEventListener("click", () => show(b.dataset.dl, b)));
+    $("#dl-d-close").addEventListener("click", () => dlDialog.close());
+    // Tocar afuera de la vista previa (en el fondo oscuro) también la cierra; Esc la cierra solo
+    dlDialog.addEventListener("click", (e) => { if (e.target === dlDialog) {
+      const r = dlDialog.getBoundingClientRect();
+      if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) dlDialog.close(); } });
+    dlDialog.addEventListener("close", () => { if (opener) opener.focus({ preventScroll: true }); });
   }
 
   /* ---------- Estado inicial ---------- */

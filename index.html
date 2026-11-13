@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;500;600;700&display=swap">
 <!-- ?v= obliga al navegador a bajar el CSS y el JS nuevos después de cada cambio: subir el número al editarlos. -->
-<link rel="stylesheet" href="css/estilos.css?v=74">
+<link rel="stylesheet" href="css/estilos.css?v=76">
 
 <!-- Filtro "borroneado" para los óvalos naranjas: ondula el trazo y lo deja con huecos, como marcador seco. -->
 <svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -53,6 +53,7 @@
       <a class="tab" href="#entender" id="tab-entender">Entender<small>Informar</small></a>
       <a class="tab" href="#consignas" id="tab-consignas">Consignas<small>Orientar</small></a>
       <a class="tab" href="#herramientas" id="tab-herramientas">Herramientas<small>Acompañar</small></a>
+      <a class="tab" href="#descargables" id="tab-descargables">Descargables<small>Para imprimir</small></a>
       <a class="tab" href="#docentes" id="tab-docentes">Docentes<small>Comunicar claro</small></a>
       <a class="tab" href="#apoyo" id="tab-apoyo">Apoyo<small>Áreas pedagógicas</small></a>
       <a class="tab" href="#contacto" id="tab-contacto">Contacto<small>Psicopedagogía</small></a>
@@ -413,6 +414,25 @@
     </div>
   </section>
 
+  <!-- ================= DESCARGABLES =================
+       Las tarjetas las arma el script desde el arreglo DESCARGABLES (js/app.js). Los PDF van en assets/descargables/
+       y las imágenes de vista previa en assets/img/descargables/. -->
+  <section id="descargables">
+    <div class="lead">
+      <span class="eyebrow">04 · Llevar</span>
+      <h2>Descargables</h2>
+      <p>Las herramientas en papel, para imprimir, completar a mano y tener a la vista. Tocá una para ver cómo es y descargarla.</p>
+    </div>
+    <div id="dl-book"></div>
+    <div class="dl-kit">
+      <div class="lead">
+        <h3>Kit de herramientas</h3>
+        <p>Lo mismo que trae el cuadernillo, pero de a una: descargá solo la que necesitás.</p>
+      </div>
+      <div class="dl-grid" id="dl-kit"></div>
+    </div>
+  </section>
+
   <!-- ================= DOCENTES ================= -->
   <section id="docentes">
     <div class="lead">
@@ -475,7 +495,6 @@ Entrega</textarea></label>
       <h2>A quién podés recurrir en la universidad</h2>
       <p>No tenés que resolver todo sola o solo. Estas áreas acompañan a estudiantes con dificultades para organizarse, cursar o rendir. Pedir ayuda es parte de cursar.</p>
     </div>
-    <p class="small muted"><span class="example-tag">Borrador</span> Los nombres de las áreas, teléfonos, mails y horarios son de ejemplo y hay que completarlos con los datos reales de la facultad.</p>
     <div class="grid-2" id="areas"></div>
     <div class="note">
       <p><b>¿No sabés a cuál ir?</b> Escribí a cualquiera: si no les corresponde, te derivan. Podés armar el mensaje acá abajo y llevarlo escrito.</p>
@@ -613,4 +632,16 @@ Entrega</textarea></label>
   <p class="copyright"><small>© 2026 Alejandro Gabriel Florido. Todos los derechos reservados.</small></p>
 </footer>
 
-<script src="js/app.js?v=74"></script>
+<!-- Vista previa de un descargable (la completa el script) -->
+<dialog class="dl-dialog" id="dl-dialog" aria-labelledby="dl-d-title">
+  <button class="dl-close" type="button" id="dl-d-close" aria-label="Cerrar la vista previa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.4 5.8 C8.8 8.6 12.4 13.1 18.4 18.3"/><path d="M18.2 5.2 C14.3 9.1 10.6 13.4 5.6 18.6"/><path class="echo" d="M6.8 4.6 C10.1 8.2 13.6 11.6 17.4 19.6"/><path class="echo" d="M16.6 6.9 C13.1 10.7 9.4 14.2 6.9 17.2"/></svg></button>
+  <div class="dl-d-view" id="dl-d-view"></div>
+  <div class="dl-d-info">
+    <span class="eyebrow" id="dl-d-kind"></span>
+    <h3 id="dl-d-title"></h3>
+    <p id="dl-d-desc"></p>
+    <p class="small muted" id="dl-d-meta"></p>
+    <div class="row" id="dl-d-actions"></div>
+  </div>
+</dialog>
+<script src="js/app.js?v=76"></script>
