@@ -1135,7 +1135,7 @@
       + (d === DESCARGABLES.book ? "" : `<span class="dl-name">${esc(d.title)}</span><span class="dl-line">${esc(d.line)}</span>`) + "</button>";
     const B = DESCARGABLES.book;
     dlBook.innerHTML = `<div class="dl-book">${card(B)}<div class="dl-book-info"><span class="eyebrow">Cuadernillo</span><h3>${esc(B.title)}</h3><p>${esc(B.desc)}</p>`
-      + `<ul class="scribble-list">${DESCARGABLES.kit.map((k) => `<li>${esc(k.title)}</li>`).join("")}</ul>`
+      + `<ul class="plain-list">${DESCARGABLES.kit.map((k) => `<li>${esc(k.title)}</li>`).join("")}</ul>`
       + `<button class="btn" type="button" data-dl="${B.id}">Ver el cuadernillo</button></div></div>`;
     dlKit.innerHTML = DESCARGABLES.kit.map(card).join("");
 
