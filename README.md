@@ -39,4 +39,4 @@ assets/
 
 Los archivos `.gitkeep` solo sirven para que Git guarde las carpetas vacías; se pueden borrar cuando la carpeta tenga imágenes.
 
-Nota: `index.html` no tiene `<!doctype>`, `<html>`, `<head>` ni `<body>` porque nació como prototipo publicado; los navegadores lo muestran igual. No se agregaron en esta reorganización para que la página se vea exactamente igual que antes.
+Nota: `index.html` arranca con `<!doctype html>`, `<html lang="es">` y la línea `viewport` (sin ella, en los celulares la página se veía en miniatura). No tiene `<head>` ni `<body>` explícitos: el navegador los agrega solo.
