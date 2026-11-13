@@ -838,9 +838,8 @@
     if (!alerts.notify || !document.hidden || !("Notification" in window) || Notification.permission !== "granted") return;
     try { new Notification("unpovdiferente", { body: text, icon: "assets/icons/favicon.png", silent: true }); } catch (e) {}
   }
-  // tm.focus va en segundos. "10 s (prueba)" sirve para ver el ciclo completo (sonido, aviso, pausa de 5 s) sin esperar
-  const brk = () => (tm.focus < 60 ? 5 : BREAK);
-  $("#tm-presets").innerHTML = [[600, "10 min"], [900, "15 min"], [1500, "25 min"], [10, "10 s (prueba)"]].map(([sec, l]) => `<button class="chip-btn" type="button" data-m="${sec}" aria-pressed="false">${l}</button>`).join("");
+  // tm.focus va en segundos
+  $("#tm-presets").innerHTML = [[600, "10 min"], [900, "15 min"], [1500, "25 min"]].map(([sec, l]) => `<button class="chip-btn" type="button" data-m="${sec}" aria-pressed="false">${l}</button>`).join("");
   function setPreset(sec) { stopTm(); tm.focus = sec; tm.phase = "focus"; tm.total = tm.left = sec; renderTm(); }
   $$("#tm-presets button").forEach((b) => b.onclick = () => setPreset(Number(b.dataset.m)));
   function renderTm() {
@@ -861,9 +860,9 @@
       if (tm.phase === "focus") {
         blocksDay.n++; saveBlocks();
         // La pausa empieza justo cuando terminó el bloque (aunque la pestaña haya estado en segundo plano)
-        tm.phase = "break"; tm.total = brk(); tm.endAt += brk() * 1000;
+        tm.phase = "break"; tm.total = BREAK; tm.endAt += BREAK * 1000;
         chime([523.25, 659.25]);
-        notify(`Terminaste el bloque. ${tm.focus < 60 ? "Pausa de prueba" : "Tomate 5 minutos"}: levantate, tomá agua.`);
+        notify("Terminaste el bloque. Tomate 5 minutos: levantate, tomá agua.");
         tm.left = Math.max(0, Math.ceil((tm.endAt - Date.now()) / 1000));
       }
       if (tm.left <= 0 && tm.phase === "break") {
