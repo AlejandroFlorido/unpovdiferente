@@ -633,23 +633,29 @@
     if (input.length < 15) { msg.textContent = "Pegá una consigna primero."; return; }
     btn.disabled = true; btn.setAttribute("aria-busy", "true"); msg.textContent = "Traduciendo con IA…";
     let err = "ia";
-    try {
-      const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 45000);
-      const r = await fetch(IA_URL, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ consigna: input }), signal: ctl.signal });
-      clearTimeout(t);
-      const data = await r.json().catch(() => ({}));
-      if (r.ok && data.ok && data.resultado) {
-        trAi = { input: $("#tr-input").value, res: data.resultado };
-        trSel = -1; renderAi();
-        msg.textContent = typeof data.restantes === "number" ? `Listo. Te ${data.restantes === 1 ? "queda 1 traducción" : "quedan " + data.restantes + " traducciones"} con IA hoy.` : "";
-        err = "";
-      } else err = data.error || "ia";
-    } catch (e) { err = "ia"; }
+    const t0 = Date.now();
+    // Si la IA está saturada, se reintenta sola hasta 3 veces (los intentos fallidos no gastan el límite del día)
+    for (let intento = 0; intento < 3 && err === "ia"; intento++) {
+      if (intento) { msg.textContent = "La IA está ocupada. Probando de nuevo…"; await new Promise((ok) => setTimeout(ok, 1500 * intento)); }
+      if (intento && Date.now() - t0 > 40000) break;
+      try {
+        const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 30000);
+        const r = await fetch(IA_URL, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ consigna: input }), signal: ctl.signal });
+        clearTimeout(t);
+        const data = await r.json().catch(() => ({}));
+        if (r.ok && data.ok && data.resultado) {
+          trAi = { input: $("#tr-input").value, res: data.resultado };
+          trSel = -1; renderAi();
+          msg.textContent = typeof data.restantes === "number" ? `Listo. Te ${data.restantes === 1 ? "queda 1 traducción" : "quedan " + data.restantes + " traducciones"} con IA hoy.` : "";
+          err = "";
+        } else err = data.error || "ia";
+      } catch (e) { err = "ia"; }
+    }
     btn.disabled = false; btn.removeAttribute("aria-busy");
     if (!err) return;
     if (err === "vacio") { msg.textContent = TR_AI_ERR.vacio; return; }
     runPlain();
-    msg.textContent = TR_AI_ERR[err] || "La IA no responde ahora. La desarmamos con el traductor automático: revisá las partes y corregilas tocándolas.";
+    msg.textContent = TR_AI_ERR[err] || "La IA está ocupada ahora. La desarmamos con el traductor automático. En un minuto podés tocar «Desarmar consigna» otra vez para probar con IA.";
   }
   $("#tr-run").onclick = () => (IA_URL ? runAi() : runPlain());
   if (IA_URL) { $("#tr-noai").hidden = false; $("#tr-ia-note").hidden = false; }
