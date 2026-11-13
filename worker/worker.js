@@ -15,7 +15,7 @@
 // Cambiar de IA no toca la página: se cambia PROVIDER (y su clave) acá y listo.
 
 // Si un modelo falla (saturado, dado de baja...), se prueba con el siguiente
-const DEFAULT_MODEL = { gemini: "gemini-flash-latest,gemini-flash-lite-latest,gemini-2.5-flash", claude: "claude-haiku-5-5" };
+const DEFAULT_MODEL = { gemini: "gemini-flash-latest,gemini-flash-lite-latest,gemini-pro-latest", claude: "claude-haiku-5-5" };
 const DEFAULT_ORIGINS = "https://alejandroflorido.github.io,https://tdah-unpovdiferente.pages.dev,http://localhost:8000,http://127.0.0.1:8000";
 const MAX_CHARS = 5000;
 
@@ -144,13 +144,21 @@ export default {
     const models = (env.MODEL || DEFAULT_MODEL[provider]).split(",").map((m) => m.trim()).filter(Boolean);
     const system = PROMPT.replace("{HOY}", hoy.iso).replace("{DIA_HOY}", hoy.dia);
     let resultado;
-    for (const model of models) {
-      try {
-        const crudo = provider === "claude" ? await callClaude(env, model, system, consigna) : await callGemini(env, model, system, consigna);
-        resultado = limpiar(crudo);
-        break;
-      } catch (e) {
-        console.error("Error de la IA (" + model + "): " + String(e && e.message || e));
+    // Google a veces está saturado (503): se prueban todos los modelos hasta 3 vueltas, con pausas cortas.
+    // Un modelo que no existe (404) se deja de probar.
+    let pendientes = models.slice();
+    for (let vuelta = 0; vuelta < 3 && !resultado && pendientes.length; vuelta++) {
+      if (vuelta) await new Promise((ok) => setTimeout(ok, 1500 * vuelta));
+      for (const model of pendientes.slice()) {
+        try {
+          const crudo = provider === "claude" ? await callClaude(env, model, system, consigna) : await callGemini(env, model, system, consigna);
+          resultado = limpiar(crudo);
+          break;
+        } catch (e) {
+          const m = String(e && e.message || e);
+          console.error("Error de la IA (" + model + ", vuelta " + (vuelta + 1) + "): " + m);
+          if (/ 40[0134] /.test(m)) pendientes = pendientes.filter((x) => x !== model);
+        }
       }
     }
     if (!resultado) return json({ ok: false, error: "ia" }, 502);
