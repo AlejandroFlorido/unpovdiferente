@@ -855,3 +855,17 @@ html.calm .dl-dialog[open], html.calm .dl-dialog[open]::backdrop { animation: no
 .dl-dialog { overflow-y: auto; }
 /* La cruz queda fija arriba a la derecha aunque se baje dentro de la vista previa */
 .dl-dialog .dl-close { position: sticky; top: 0; margin: -0.4rem -0.4rem -2.2rem auto; }
+/* Cargador de la IA del traductor (basado en un loader de Uiverse.io de alexruix): un cuadradito naranja
+   que salta y gira junto al texto "Traduciendo con IA…". Sin la sombra de abajo. Medidas en em: sigue al texto. */
+.tr-status { display: inline-flex; align-items: center; gap: 0.6rem; }
+.ia-loader { --s: 1.1rem; position: relative; flex: none; width: var(--s); height: calc(var(--s) * 1.4); }
+.ia-loader[hidden] { display: none; }
+.ia-loader::after { content: ""; position: absolute; top: 0; left: 0; width: var(--s); height: var(--s); background: var(--brand);
+  border-radius: calc(var(--s) * 0.083); animation: ia-jump 0.5s linear infinite; }
+@keyframes ia-jump {
+  15% { border-bottom-right-radius: calc(var(--s) * 0.0625); }
+  25% { transform: translateY(calc(var(--s) * 0.1875)) rotate(22.5deg); }
+  50% { transform: translateY(calc(var(--s) * 0.375)) scale(1, 0.9) rotate(45deg); border-bottom-right-radius: calc(var(--s) * 0.83); }
+  75% { transform: translateY(calc(var(--s) * 0.1875)) rotate(67.5deg); }
+  100% { transform: translateY(0) rotate(90deg); }
+}

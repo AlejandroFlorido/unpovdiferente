@@ -632,6 +632,7 @@
     const input = $("#tr-input").value.trim(), btn = $("#tr-run"), msg = $("#tr-msg");
     if (input.length < 15) { msg.textContent = "Pegá una consigna primero."; return; }
     btn.disabled = true; btn.setAttribute("aria-busy", "true"); msg.textContent = "Traduciendo con IA…";
+    $("#tr-loader").hidden = false; // cuadradito naranja que salta mientras la IA trabaja
     let err = "ia";
     const t0 = Date.now();
     // Si la IA está saturada, se reintenta sola hasta 3 veces (los intentos fallidos no gastan el límite del día)
@@ -651,7 +652,7 @@
         } else err = data.error || "ia";
       } catch (e) { err = "ia"; }
     }
-    btn.disabled = false; btn.removeAttribute("aria-busy");
+    btn.disabled = false; btn.removeAttribute("aria-busy"); $("#tr-loader").hidden = true;
     if (!err) return;
     if (err === "vacio") { msg.textContent = TR_AI_ERR.vacio; return; }
     runPlain();
