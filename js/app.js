@@ -1171,6 +1171,64 @@
     document.addEventListener("click", (e) => { const o = openItem(); if (o && !o.contains(e.target) && !e.target.closest("button, a")) toggle(o); });
   }
 
+  /* ---------- Colaboradores: tarjeta ampliable de Nancy ----------
+     Tocarla la agranda (midiendo antes y después y animando la diferencia, como los tres conceptos).
+     Adentro, el nombre del instituto lleva a la información del INyD con un fundido; "<" vuelve y la cruz cierra. */
+  const nancy = $("#nancy");
+  if (nancy) {
+    const openBtn = $(".collab-open", nancy), body = $(".collab-body", nancy), prev = $(".collab-prev", nancy);
+    const views = Object.fromEntries($$(".collab-view", nancy).map((v) => [v.dataset.view, v]));
+    const EASE = "cubic-bezier(0.4, 0, 0.2, 1)", DUR = 500;
+    let busy = 0;
+    // Anima el recuadro desde su tamaño/lugar anterior (first) hasta el nuevo
+    const grow = (first, ms = DUR) => {
+      if (isCalm()) return;
+      const last = nancy.getBoundingClientRect();
+      nancy.animate([
+        { width: `${first.width}px`, height: `${first.height}px`, transform: `translate(${first.left + first.width / 2 - last.left - last.width / 2}px, ${first.top - last.top}px)` },
+        { width: `${last.width}px`, height: `${last.height}px`, transform: "none" }
+      ], { duration: ms, easing: EASE });
+    };
+    const show = (name) => Object.entries(views).forEach(([k, v]) => { v.hidden = k !== name; v.classList.remove("out"); });
+    const setOpen = (open) => {
+      const first = nancy.getBoundingClientRect();
+      nancy.classList.toggle("open", open);
+      openBtn.setAttribute("aria-expanded", open);
+      body.hidden = !open;
+      show("nancy");
+      prev.hidden = true;
+      grow(first);
+      if (open) setTimeout(() => $(".collab-close", nancy).focus({ preventScroll: true }), isCalm() ? 0 : DUR);
+      else openBtn.focus({ preventScroll: true });
+    };
+    // Cambia de vista: se desvanece la actual, el recuadro se ajusta y aparece la otra
+    const go = (name) => {
+      if (busy) return;
+      const from = Object.values(views).find((v) => !v.hidden), to = views[name];
+      if (from === to) return;
+      const swap = () => {
+        const first = nancy.getBoundingClientRect();
+        nancy.classList.add("switching");
+        show(name);
+        prev.hidden = name === "nancy";
+        grow(first, 300);
+        if (!isCalm()) { to.classList.add("out"); to.getBoundingClientRect(); to.classList.remove("out"); }
+        (name === "nancy" ? $(".inyd-link", nancy) : prev).focus({ preventScroll: true });
+      };
+      if (isCalm()) { swap(); return; }
+      from.classList.add("out");
+      busy = setTimeout(() => { swap(); busy = 0; }, 230);
+    };
+    openBtn.addEventListener("click", () => setOpen(true));
+    $(".collab-close", nancy).addEventListener("click", () => setOpen(false));
+    $(".inyd-link", nancy).addEventListener("click", (e) => { e.preventDefault(); go("inyd"); });
+    prev.addEventListener("click", () => go("nancy"));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && nancy.classList.contains("open")) setOpen(false); });
+    document.addEventListener("click", (e) => {
+      if (nancy.classList.contains("open") && !nancy.contains(e.target) && !e.target.closest("button, a")) setOpen(false);
+    });
+  }
+
   /* ---------- Descargables ----------
      Para sumar el archivo real de cada uno: poné el PDF en assets/descargables/ y escribí su nombre en "file".
      Para que la vista previa muestre páginas reales: poné las imágenes en assets/img/descargables/ y listalas en "pages"
