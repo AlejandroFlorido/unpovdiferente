@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;500;600;700&display=swap">
 <!-- ?v= obliga al navegador a bajar el CSS y el JS nuevos después de cada cambio: subir el número al editarlos. -->
-<link rel="stylesheet" href="css/estilos.css?v=87">
+<link rel="stylesheet" href="css/estilos.css?v=89">
 
 <!-- Filtro "borroneado" para los óvalos naranjas: ondula el trazo y lo deja con huecos, como marcador seco. -->
 <svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -506,11 +506,43 @@ Entrega</textarea></label>
       <li class="person"><img class="avatar" src="assets/img/equipo/agustin.png" alt="Foto de Gonzalo Agustín Villalba Brizuela" width="247" height="247" loading="lazy"><div><b>Gonzalo Agustín Villalba Brizuela</b><span>Director del proyecto</span></div></li>
       <li class="person"><img class="avatar" src="assets/img/equipo/selene.png" alt="Foto de Selene Vaquer" width="247" height="247" loading="lazy"><div><b>Selene Vaquer</b><span>Directora del proyecto</span></div></li>
     </ul>
+    <button class="scroll-cue" type="button" data-cue="colaboradores">Colaboradores <span aria-hidden="true">↓</span></button>
+  </div>
+
+  <div class="screen" id="colaboradores">
+    <button class="scroll-cue up" type="button" data-cue="quienes"><span aria-hidden="true">↑</span> Quiénes hacemos unpovdiferente</button>
+    <div class="lead">
+      <span class="eyebrow">Acompañan</span>
+      <h2>Colaboradores</h2>
+    </div>
+    <!-- Tarjeta ampliable de Nancy: al tocarla crece (como los tres conceptos). Dentro, el nombre del instituto
+         resaltado cambia, con un fundido, a la información del INyD; "<" vuelve a Nancy y la cruz cierra. -->
+    <div class="collab-wrap">
+      <div class="concept t-orange collab-card" id="nancy">
+        <button class="concept-title collab-open" type="button" aria-expanded="false" aria-controls="nancy-body">
+          Nancy Pontón<small class="collab-sub">Directora del Instituto de Neurodivergencias y Derecho</small>
+        </button>
+        <div class="collab-body" id="nancy-body" hidden>
+          <div class="collab-view" data-view="nancy">
+            <span class="collab-role">Abogada · Colaboradora</span>
+            <h3>Nancy Pontón</h3>
+            <p>Abogada y Directora del <a class="inyd-link" href="#inyd" role="button">Instituto de Neurodivergencias y Derecho</a> (INyD). Su participación en el proyecto se centra en el acompañamiento y la orientación continua durante todo el proceso, brindando asesoramiento sobre la información abordada y la revisión de las piezas desarrolladas bajo una perspectiva normativa y de derechos.</p>
+          </div>
+          <div class="collab-view" data-view="inyd" hidden>
+            <span class="collab-role">Institución colaboradora</span>
+            <h3>Instituto de Neurodivergencias y Derecho <span class="inyd-mark">(INyD)</span></h3>
+            <p>Una comisión pionera a nivel nacional dedicada a promover la inclusión plena y el ejercicio efectivo de los derechos de las personas neurodivergentes. El INyD trabaja desde una perspectiva jurídica, transdisciplinaria y de divulgación para transformar prácticas institucionales y garantizar la equidad, la no discriminación y la accesibilidad, reconociendo la diversidad neurológica y la experiencia vivida como fuentes fundamentales de conocimiento e innovación.</p>
+          </div>
+        </div>
+        <button class="collab-prev" type="button" aria-label="Volver a Nancy Pontón" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 4.8 C12.1 7.9 9.6 10.4 7.6 12.2 C9.9 14.3 12.4 16.6 15.4 19.4"/><path class="echo" d="M14 6.4 C11.6 8.8 9.6 10.8 8.6 12.4 C10.6 14.2 12.6 16.2 14.4 18"/></svg></button>
+        <button class="concept-back collab-close" type="button" aria-label="Cerrar la tarjeta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.4 5.8 C8.8 8.6 12.4 13.1 18.4 18.3"/><path d="M18.2 5.2 C14.3 9.1 10.6 13.4 5.6 18.6"/><path class="echo" d="M6.8 4.6 C10.1 8.2 13.6 11.6 17.4 19.6"/><path class="echo" d="M16.6 6.9 C13.1 10.7 9.4 14.2 6.9 17.2"/></svg></button>
+      </div>
+    </div>
     <button class="scroll-cue" type="button" data-cue="desarrolladores">Desarrolladores <span aria-hidden="true">↓</span></button>
   </div>
 
   <div class="screen last" id="desarrolladores">
-    <button class="scroll-cue up" type="button" data-cue="quienes"><span aria-hidden="true">↑</span> Quiénes hacemos unpovdiferente</button>
+    <button class="scroll-cue up" type="button" data-cue="colaboradores"><span aria-hidden="true">↑</span> Colaboradores</button>
     <div class="lead">
       <span class="eyebrow">Equipo web</span>
       <h2>Desarrolladores</h2>
@@ -591,4 +623,4 @@ Entrega</textarea></label>
     <div class="row" id="dl-d-actions"></div>
   </div>
 </dialog>
-<script src="js/app.js?v=87"></script>
+<script src="js/app.js?v=89"></script>
