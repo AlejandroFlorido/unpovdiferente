@@ -601,7 +601,7 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .area-when { border-top: 1px dashed var(--line); padding-top: 0.9rem; }
 .area-group + .area-group { margin-top: 0.6rem; }
 /* Nombres del equipo: sin viñetas, para que la tarjeta no se vea tan cargada */
-.area .plain-list { list-style: none; padding: 0; }
+.plain-list { list-style: none; padding: 0; }
 .area .row { margin-top: auto; }
 /* Apoyo: equipo largo plegado, botón sin contorno */
 .area-more summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--f-title); font-size: calc(var(--step-0) + 4pt); line-height: var(--lh-sub); letter-spacing: -0.02em; color: var(--accent-text); padding: 0.2rem 0; }
@@ -734,7 +734,7 @@ html.calm *, html.calm *::before, html.calm *::after { transition: none !importa
 .dl-book-info { display: flex; flex-direction: column; gap: 0.9rem; align-items: flex-start; }
 .dl-book-info h3 { font-family: var(--f-title); font-size: calc(var(--step-3) + 4pt); line-height: var(--lh-title); letter-spacing: -0.02em; }
 .dl-book-info p { font-size: var(--step-1); line-height: var(--lh-sub); color: var(--muted); }
-.dl-book-info ul { margin: 0; }
+.dl-book-info ul { margin: 0; display: flex; flex-direction: column; gap: 0.3rem; }
 @media (max-width: 640px) { .dl-book { grid-template-columns: 1fr; } .dl-book .dl-card { max-width: 16rem; margin-inline: auto; width: 100%; } }
 
 /* Vista previa ampliada */
