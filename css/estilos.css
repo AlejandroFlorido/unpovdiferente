@@ -599,7 +599,9 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .area h4 { font-family: var(--f-title); font-size: calc(var(--step-0) + 4pt); line-height: var(--lh-sub); letter-spacing: -0.02em; margin-bottom: 0.45rem; }
 .area-when ul, .area-group ul { margin: 0; display: flex; flex-direction: column; gap: 0.35rem; font-size: var(--step--1); }
 .area-when { border-top: 1px dashed var(--line); padding-top: 0.9rem; }
-.area-group + .area-group { margin-top: -0.2rem; }
+.area-group + .area-group { margin-top: 0.6rem; }
+/* Nombres del equipo: sin viñetas, para que la tarjeta no se vea tan cargada */
+.area .plain-list { list-style: none; padding: 0; }
 .area .row { margin-top: auto; }
 /* Apoyo: equipo largo plegado, botón sin contorno */
 .area-more summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--f-title); font-size: calc(var(--step-0) + 4pt); line-height: var(--lh-sub); letter-spacing: -0.02em; color: var(--accent-text); padding: 0.2rem 0; }
@@ -607,7 +609,7 @@ textarea { resize: vertical; min-height: 7rem; line-height: 1.5; }
 .area-more summary::after { content: "+"; font-family: var(--f-display); font-size: 1.3em; line-height: 1; transition: transform 0.25s ease; }
 .area-more[open]:not(.closing) summary::after { transform: rotate(45deg); }
 .area-more summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
-.area-more-body { display: flex; flex-direction: column; gap: 0.8rem; padding-top: 0.8rem; }
+.area-more-body { display: flex; flex-direction: column; gap: 0.8rem; padding-top: 1rem; }
 .note .row { margin-top: 1rem; }
 .note .btn { font-size: var(--step--1); min-height: 36px; padding: 0.4rem 0.85rem; }
 
