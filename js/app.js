@@ -1108,17 +1108,19 @@
      Para sumar el archivo real de cada uno: poné el PDF en assets/descargables/ y escribí su nombre en "file".
      Para que la vista previa muestre páginas reales: poné las imágenes en assets/img/descargables/ y listalas en "pages"
      (la primera también se usa como tapa). Mientras no haya imágenes, se dibuja una tapa con el número y el nombre. */
+  const IMG = "assets/img/descargables/";
   const DESCARGABLES = {
-    book: { id: "cuadernillo", title: "Cuadernillo unpovdiferente", line: "Las 6 herramientas juntas",
-      desc: "Todas las herramientas del kit en un solo cuadernillo, para imprimir y llevar a la cursada.",
-      file: "", pages: [], meta: "PDF · Borrador" },
+    // El cuadernillo todavía se está diseñando: sin "file" muestra "Próximamente"
+    book: { id: "cuadernillo", title: "Cuadernillo unpovdiferente", line: "Las 6 fichas juntas",
+      desc: "Todas las fichas del kit en un solo cuadernillo, para imprimir y llevar a la cursada. Lo estamos terminando de diseñar.",
+      file: "", pages: [], meta: "PDF · Próximamente", soon: true },
     kit: [
-      { id: "traductor", title: "Traductor de consignas", line: "Qué hay que hacer, cuándo y cómo se evalúa", desc: "Una hoja para pasar en limpio cualquier consigna: qué hacer, qué tener en cuenta, qué entregar y qué preguntarle al docente.", file: "", pages: [] },
-      { id: "mapa", title: "Mapa de la cursada", line: "Los pasos de una entrega, de a uno", desc: "Los pasos de un trabajo, desde entender la consigna hasta entregar, para ir tachando.", file: "", pages: [] },
-      { id: "primer-paso", title: "Primer paso", line: "Para cuando no sé por dónde empezar", desc: "Cuatro preguntas cortas para encontrar la primera acción concreta de una tarea.", file: "", pages: [] },
-      { id: "dividir", title: "Dividir la entrega", line: "Para cuando el TP es enorme", desc: "Una planilla para partir un trabajo grande en partes chicas, con fecha para cada una.", file: "", pages: [] },
-      { id: "semana", title: "Mi semana", line: "Entregas y clases a la vista", desc: "Una semana en una hoja: clases, entregas y fechas importantes en un mismo lugar.", file: "", pages: [] },
-      { id: "bloques", title: "Bloques de estudio", line: "Para cuando me disperso", desc: "Bloques cortos de estudio con pausas, para marcar a medida que los vas haciendo.", file: "", pages: [] }
+      { id: "desglosar", title: "Ficha para desglosar tareas", line: "Una consigna, varios pasos", desc: "Qué hay que entregar, qué pide la consigna, qué materiales necesitás, los pasos, la primera acción y un check list final.", file: "ficha-desglosar-tareas.pdf", pages: [IMG + "ficha-desglosar-tareas.webp"] },
+      { id: "organizador", title: "Organizador de entregas", line: "Anticipar también es avanzar", desc: "Cada proyecto con su materia, etapas o entregas parciales, fechas, estado y próximo paso.", file: "organizador-entregas.pdf", pages: [IMG + "organizador-entregas.webp"] },
+      { id: "planificador", title: "Planificador semanal", line: "Tu semana, paso a paso", desc: "De lunes a domingo: materia, tarea y prioridad (urgente, no te cuelgues, tengo tiempo), con lugar para notas.", file: "planificador-semanal.pdf", pages: [IMG + "planificador-semanal.webp"] },
+      { id: "enfoque", title: "Tarjetas de enfoque diario", line: "Una cosa a la vez", desc: "Para cada día: objetivo, primera acción, tiempo de trabajo, qué necesitás a mano y qué distracciones podés reducir.", file: "tarjetas-enfoque-diario.pdf", pages: [IMG + "tarjetas-enfoque-diario.webp"] },
+      { id: "seguimiento", title: "Ficha de seguimiento personal", line: "Reflexiona, ajusta, avanza", desc: "Para mirar la semana: qué completaste, qué te costó, qué te ayudó y qué necesitás para la próxima.", file: "ficha-seguimiento-personal.pdf", pages: [IMG + "ficha-seguimiento-personal.webp"] },
+      { id: "ayuda", title: "Ficha de ayuda", line: "Necesito ayuda con...", desc: "Para llevar a una consulta: qué entendiste, qué intentaste, qué te genera dudas y a quién consultar.", file: "ficha-de-ayuda.pdf", pages: [IMG + "ficha-de-ayuda.webp"] }
     ]
   };
   const dlBook = $("#dl-book"), dlKit = $("#dl-kit"), dlDialog = $("#dl-dialog");
@@ -1151,7 +1153,7 @@
       $("#dl-d-view").innerHTML = d.pages.length > 1 ? d.pages.slice(0, 2).map((p) => cover(d, p)).join("") : cover(d);
       $("#dl-d-actions").innerHTML = d.file
         ? `<a class="btn" href="assets/descargables/${esc(d.file)}" download>Descargar PDF</a>`
-        : `<button class="btn" type="button" disabled>Descargar PDF</button><span class="example-tag">Falta el archivo</span>`;
+        : `<button class="btn" type="button" disabled>Descargar PDF</button><span class="example-tag">${d.soon ? "Próximamente" : "Falta el archivo"}</span>`;
       dlDialog.showModal();
       $("#dl-d-close").focus();
     };
