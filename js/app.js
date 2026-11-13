@@ -1258,7 +1258,7 @@
     const num = (d) => (d === DESCARGABLES.book ? "6 en 1" : String(DESCARGABLES.kit.indexOf(d) + 1).padStart(2, "0"));
     const cover = (d, page) => {
       const src = page || (d.cover !== undefined ? d.cover : d.pages[0]);
-      return `<div class="dl-cover ${color(d)}">` + (src ? `<img src="${esc(src)}" alt="">`
+      return `<div class="dl-cover ${color(d)}${src ? " has-img" : ""}">` + (src ? `<img src="${esc(src)}" alt="" width="800" height="1131">`
         : `<span class="dl-brand">unpovdiferente</span><span class="dl-num">${num(d)}</span><span class="dl-ttl">${esc(d.title)}</span><span class="dl-rules"><i></i><i></i><i></i></span>`) + "</div>";
     };
     const card = (d) => `<button class="dl-card ${color(d)}" type="button" data-dl="${d.id}" aria-haspopup="dialog">${cover(d)}`
