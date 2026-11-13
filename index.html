@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;500;600;700&display=swap">
 <!-- ?v= obliga al navegador a bajar el CSS y el JS nuevos después de cada cambio: subir el número al editarlos. -->
-<link rel="stylesheet" href="css/estilos.css?v=95">
+<link rel="stylesheet" href="css/estilos.css?v=96">
 
 <!-- Filtro "borroneado" para los óvalos naranjas: ondula el trazo y lo deja con huecos, como marcador seco. -->
 <svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -612,17 +612,10 @@ Entrega</textarea></label>
 </footer>
 
 <!-- Vista previa de un descargable (la completa el script) -->
-<dialog class="dl-dialog" id="dl-dialog" aria-labelledby="dl-d-title">
+<dialog class="dl-dialog" id="dl-dialog" aria-label="Vista previa">
   <button class="dl-close" type="button" id="dl-d-close" aria-label="Cerrar la vista previa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.4 5.8 C8.8 8.6 12.4 13.1 18.4 18.3"/><path d="M18.2 5.2 C14.3 9.1 10.6 13.4 5.6 18.6"/><path class="echo" d="M6.8 4.6 C10.1 8.2 13.6 11.6 17.4 19.6"/><path class="echo" d="M16.6 6.9 C13.1 10.7 9.4 14.2 6.9 17.2"/></svg></button>
-  <div class="dl-d-view" id="dl-d-view"></div>
-  <div class="dl-d-info">
-    <span class="eyebrow" id="dl-d-kind"></span>
-    <h3 id="dl-d-title"></h3>
-    <p id="dl-d-desc"></p>
-    <p class="small muted" id="dl-d-meta"></p>
-    <div class="row" id="dl-d-actions"></div>
-    <div class="dl-d-howto" id="dl-d-howto" hidden></div>
-  </div>
+  <!-- El script arma una o varias vistas previas (.dl-panel) acá; el cuadernillo muestra dos, una sobre la otra -->
+  <div class="dl-d-body" id="dl-d-body"></div>
 </dialog>
 <!-- Instrucciones de cada vista previa del cuadernillo: el script las pone debajo del botón de descarga -->
 <template id="howto-cuadernillo">
@@ -648,4 +641,4 @@ Entrega</textarea></label>
     <p class="dl-tip"><b>Recomendación:</b> si querés más durabilidad, podés agregarle a la portada un laminado o una tapa transparente.</p>
   </div>
 </template>
-<script src="js/app.js?v=95"></script>
+<script src="js/app.js?v=96"></script>

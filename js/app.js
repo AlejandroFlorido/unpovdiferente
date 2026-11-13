@@ -1271,85 +1271,94 @@
     const B = DESCARGABLES.book;
     dlBook.innerHTML = `<div class="dl-book">${card(B)}<div class="dl-book-info"><span class="eyebrow">Cuadernillo</span><h3>${esc(B.title)}</h3><p>${esc(B.desc)}</p>`
       + `<ul class="plain-list">${DESCARGABLES.kit.map((k) => `<li>${esc(k.title)}</li>`).join("")}</ul>`
-      + `<div class="row"><button class="btn" type="button" data-dl="${B.id}" aria-haspopup="dialog">Ver el cuadernillo</button>`
-      + `<button class="btn ghost" type="button" data-dl="portada" aria-haspopup="dialog">Ver la portada</button></div></div></div>`;
+      + `<div class="row"><button class="btn" type="button" data-dl="${B.id}" aria-haspopup="dialog">Vistas previas</button></div></div></div>`;
     dlKit.innerHTML = DESCARGABLES.kit.map(card).join("");
 
     let opener = null;
-    // Vista previa del cuadernillo: pasa sola por todas sus páginas, 3 s cada una, y al llegar a la última vuelve a empezar
-    // (con "Sin animaciones" no pasa sola). "<" y ">" navegan a mano y frenan el paso automático.
-    let slideTimer = 0;
-    const stopSlides = () => { clearInterval(slideTimer); slideTimer = 0; };
-    const slides = (d) => {
-      const n = d.pages.length;
-      let i = 0;
+    const ARROWS = (what) => `<button class="dl-arrow" type="button" data-go="-1" aria-label="${what} anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 4.8 C12.1 7.9 9.6 10.4 7.6 12.2 C9.9 14.3 12.4 16.6 15.4 19.4"/><path class="echo" d="M14 6.4 C11.6 8.8 9.6 10.8 8.6 12.4 C10.6 14.2 12.6 16.2 14.4 18"/></svg></button>`
+      + `<span class="dl-count" aria-live="polite"></span><button class="dl-arrow" type="button" data-go="1" aria-label="${what} siguiente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.8 4.8 C11.9 7.9 14.4 10.4 16.4 12.2 C14.1 14.3 11.6 16.6 8.6 19.4"/><path class="echo" d="M10 6.4 C12.4 8.8 14.4 10.8 15.4 12.4 C13.4 14.2 11.4 16.2 9.6 18"/></svg></button>`;
+    // Carrusel de una vista previa: pasa solo por todas sus páginas, 3 s cada una, y al llegar a la última vuelve a empezar
+    // (con "Sin animaciones" no pasa solo). "<" y ">" navegan a mano y frenan el paso automático de ese carrusel.
+    let timers = [];
+    const stopSlides = () => { timers.forEach(clearInterval); timers = []; };
+    const slides = (box, d) => {
+      const n = d.pages.length, what = d === B ? "del cuadernillo" : "de la portada y contraportada";
+      let i = 0, timer = 0;
       d.pages.forEach((p) => { const im = new Image(); im.src = p; });
-      $("#dl-d-view").innerHTML = `<div class="dl-slides">${cover(d, d.pages[0])}<div class="dl-step-nav">`
-        + `<button class="dl-arrow" type="button" data-go="-1" aria-label="Página anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 4.8 C12.1 7.9 9.6 10.4 7.6 12.2 C9.9 14.3 12.4 16.6 15.4 19.4"/><path class="echo" d="M14 6.4 C11.6 8.8 9.6 10.8 8.6 12.4 C10.6 14.2 12.6 16.2 14.4 18"/></svg></button>`
-        + `<span class="dl-count" aria-live="polite">1 / ${n}</span>`
-        + `<button class="dl-arrow" type="button" data-go="1" aria-label="Página siguiente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.8 4.8 C11.9 7.9 14.4 10.4 16.4 12.2 C14.1 14.3 11.6 16.6 8.6 19.4"/><path class="echo" d="M10 6.4 C12.4 8.8 14.4 10.8 15.4 12.4 C13.4 14.2 11.4 16.2 9.6 18"/></svg></button></div></div>`;
-      const img = $("#dl-d-view .dl-cover img"), count = $("#dl-d-view .dl-count");
-      const what = d === B ? "del cuadernillo" : "de la portada y contraportada";
-      img.alt = `Página 1 de ${n} ${what}`;
+      box.innerHTML = `<div class="dl-slides">${cover(d, d.pages[0])}<div class="dl-step-nav">${ARROWS("Página")}</div></div>`;
+      const img = $(".dl-cover img", box), count = $(".dl-count", box);
+      const set = () => { img.src = d.pages[i]; img.alt = `Página ${i + 1} de ${n} ${what}`; count.textContent = `${i + 1} / ${n}`; };
+      set();
       const go = (k) => {
         i = (k + n) % n;
-        const set = () => { img.src = d.pages[i]; img.alt = `Página ${i + 1} de ${n} ${what}`; count.textContent = `${i + 1} / ${n}`; };
         if (isCalm()) { set(); return; }
         img.classList.add("out");
         setTimeout(() => { set(); img.classList.remove("out"); }, 150);
       };
-      $$("#dl-d-view [data-go]").forEach((b) => b.addEventListener("click", () => { stopSlides(); go(i + Number(b.dataset.go)); }));
-      if (!isCalm()) slideTimer = setInterval(() => go(i + 1), 3000);
+      $$("[data-go]", box).forEach((btn) => btn.addEventListener("click", () => { clearInterval(timer); go(i + Number(btn.dataset.go)); }));
+      if (!isCalm()) { timer = setInterval(() => go(i + 1), 3000); timers.push(timer); }
     };
-    // Instrucciones dentro de la vista previa (debajo del botón de descarga): salen del <template> de cada uno.
+    // Instrucciones debajo del botón de descarga: salen del <template> de cada uno (index.html).
     // Si son varios pasos, ">" pasa al siguiente y "<" vuelve, con un fundido.
-    const howtoBox = $("#dl-d-howto");
-    const howtoIn = (d) => {
+    const howtoIn = (box, d) => {
       const tpl = d.howto && document.getElementById(d.howto);
-      howtoBox.hidden = !tpl;
-      if (!tpl) { howtoBox.innerHTML = ""; return; }
-      howtoBox.innerHTML = "";
-      howtoBox.appendChild(tpl.content.cloneNode(true));
-      const steps = $$(".dl-step", howtoBox);
+      if (!tpl) { box.remove(); return; }
+      box.appendChild(tpl.content.cloneNode(true));
+      const steps = $$(".dl-step", box);
       if (steps.length < 2) return;
       let step = 0;
       const nav = document.createElement("div");
       nav.className = "dl-step-nav";
-      nav.innerHTML = `<button class="dl-arrow" type="button" aria-label="Paso anterior" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 4.8 C12.1 7.9 9.6 10.4 7.6 12.2 C9.9 14.3 12.4 16.6 15.4 19.4"/><path class="echo" d="M14 6.4 C11.6 8.8 9.6 10.8 8.6 12.4 C10.6 14.2 12.6 16.2 14.4 18"/></svg></button><span class="dl-count">1 / ${steps.length}</span>`
-        + `<button class="dl-arrow" type="button" aria-label="Paso siguiente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.8 4.8 C11.9 7.9 14.4 10.4 16.4 12.2 C14.1 14.3 11.6 16.6 8.6 19.4"/><path class="echo" d="M10 6.4 C12.4 8.8 14.4 10.8 15.4 12.4 C13.4 14.2 11.4 16.2 9.6 18"/></svg></button>`;
-      howtoBox.appendChild(nav);
+      nav.innerHTML = ARROWS("Paso");
+      box.appendChild(nav);
       const [prevB, nextB] = $$("button", nav), count = $(".dl-count", nav);
+      const apply = (k) => {
+        step = k;
+        steps.forEach((s, x) => { s.hidden = x !== k; s.classList.remove("out"); });
+        prevB.disabled = k === 0; nextB.disabled = k === steps.length - 1;
+        count.textContent = `${k + 1} / ${steps.length}`;
+      };
       const setStep = (k) => {
         if (k < 0 || k >= steps.length) return;
-        const apply = () => {
-          step = k;
-          steps.forEach((s, x) => { s.hidden = x !== k; s.classList.remove("out"); });
-          prevB.disabled = k === 0; nextB.disabled = k === steps.length - 1;
-          count.textContent = `${k + 1} / ${steps.length}`;
-        };
-        if (isCalm()) { apply(); return; }
+        if (isCalm()) { apply(k); return; }
         steps[step].classList.add("out");
-        setTimeout(() => { apply(); steps[k].classList.add("out"); steps[k].getBoundingClientRect(); steps[k].classList.remove("out"); }, 200);
+        setTimeout(() => { apply(k); steps[k].classList.add("out"); steps[k].getBoundingClientRect(); steps[k].classList.remove("out"); }, 200);
       };
+      apply(0);
       prevB.addEventListener("click", () => setStep(step - 1));
       nextB.addEventListener("click", () => setStep(step + 1));
     };
+    // Una vista previa: la hoja (o el carrusel) a la izquierda y, al lado, nombre, descripción, descarga e instrucciones
+    const panel = (d) => {
+      const el = document.createElement("section");
+      el.className = "dl-panel";
+      const label = d.label || "Descargar " + d.title.charAt(0).toLowerCase() + d.title.slice(1);
+      el.innerHTML = `<div class="dl-d-view"></div><div class="dl-d-info">`
+        + `<span class="eyebrow">${d === B || d === DESCARGABLES.portada ? "Cuadernillo" : `Kit de herramientas · ${num(d)}`}</span>`
+        + `<h3>${esc(d.title)}</h3><p>${esc(d.desc)}</p><p class="small muted">${esc(d.meta || (d.file ? "PDF" : "PDF · Borrador"))}</p>`
+        + `<div class="row dl-d-actions">` + (d.file ? `<a class="btn" href="assets/descargables/${esc(d.file)}" download>${esc(label)}</a>`
+          : `<button class="btn" type="button" disabled>${esc(label)}</button><span class="example-tag">${d.soon ? "Próximamente" : "Falta el archivo"}</span>`)
+        + `</div><div class="dl-d-howto"></div></div>`;
+      const view = $(".dl-d-view", el);
+      if ((d === B || d === DESCARGABLES.portada) && d.pages.length > 1) slides(view, d);
+      else view.innerHTML = d.pages.length > 1 ? d.pages.slice(0, 2).map((p) => cover(d, p)).join("") : cover(d);
+      howtoIn($(".dl-d-howto", el), d);
+      return el;
+    };
+    // El cuadernillo abre sus dos vistas previas juntas (interior y portada), una sobre la otra
+    const GROUPS = { [B.id]: [B.id, "portada"] };
     const show = (id, from) => {
-      const d = all.find((x) => x.id === id);
-      if (!d) return;
+      const list = (GROUPS[id] || [id]).map((x) => all.find((d) => d.id === x)).filter(Boolean);
+      if (!list.length) return;
       opener = from;
-      $("#dl-d-kind").textContent = d === B || d === DESCARGABLES.portada ? "Cuadernillo" : `Kit de herramientas · ${num(d)}`;
-      $("#dl-d-title").textContent = d.title;
-      $("#dl-d-desc").textContent = d.desc;
-      $("#dl-d-meta").textContent = d.meta || (d.file ? "PDF" : "PDF · Borrador");
       stopSlides();
-      if ((d === B || d === DESCARGABLES.portada) && d.pages.length > 1) slides(d);
-      else $("#dl-d-view").innerHTML = d.pages.length > 1 ? d.pages.slice(0, 2).map((p) => cover(d, p)).join("") : cover(d);
-      $("#dl-d-actions").innerHTML = d.file
-        ? `<a class="btn" href="assets/descargables/${esc(d.file)}" download>${esc(d.label || "Descargar " + d.title.charAt(0).toLowerCase() + d.title.slice(1))}</a>`
-        : `<button class="btn" type="button" disabled>Descargar PDF</button><span class="example-tag">${d.soon ? "Próximamente" : "Falta el archivo"}</span>`;
-      howtoIn(d);
+      const body = $("#dl-d-body");
+      body.innerHTML = "";
+      list.forEach((d) => body.appendChild(panel(d)));
+      dlDialog.classList.toggle("multi", list.length > 1);
+      dlDialog.setAttribute("aria-label", list.length > 1 ? "Vistas previas del cuadernillo" : `Vista previa: ${list[0].title}`);
       dlDialog.showModal();
+      dlDialog.scrollTop = 0;
       $("#dl-d-close").focus();
     };
     $$("[data-dl]", $("#descargables")).forEach((b) => b.addEventListener("click", () => show(b.dataset.dl, b)));
