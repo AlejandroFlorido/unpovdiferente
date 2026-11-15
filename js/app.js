@@ -1029,6 +1029,19 @@
     $("#ct-area").focus({ preventScroll: true });
   });
 
+  /* ---------- Apoyo: al desplegar el equipo de un área, las otras tarjetas conservan su alto ----------
+     Antes de abrir se fija el alto que tenían (todas iguales); al cerrar el último desplegable se suelta. */
+  const areasEl = $("#areas");
+  if (areasEl) {
+    areasEl.addEventListener("click", (e) => {
+      if (!e.target.closest(".area-more > summary") || $(".area-more[open]", areasEl)) return;
+      $$(".area", areasEl).forEach((c) => { c.style.minHeight = `${c.offsetHeight}px`; });
+    }, true);
+    areasEl.addEventListener("toggle", () => {
+      if (!$(".area-more[open]", areasEl)) $$(".area", areasEl).forEach((c) => { c.style.minHeight = ""; });
+    }, true);
+  }
+
   /* ---------- Desplegables de "Entender el TDAH" ----------
      Se abren y se cierran estirando la tarjeta de a poco; el contenido entra y sale con un fundido. */
   $$(".drop, .area-more").forEach((d) => {
