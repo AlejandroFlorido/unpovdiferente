@@ -94,6 +94,17 @@ body {
   font-weight: 100 900; font-style: normal; font-display: swap;
   size-adjust: 130%; ascent-override: 72%; descent-override: 4%;
 }
+/* General Sans (texto de Entender): archivos propios en assets/fonts, ya no depende de Fontshare. */
+@font-face {
+  font-family: "General Sans";
+  src: url("../assets/fonts/general-sans-regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "General Sans";
+  src: url("../assets/fonts/general-sans-medium.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
 h1, h2, h3, h4 { font-family: var(--f-title); line-height: var(--lh-title); text-wrap: balance; margin: 0; font-weight: 600; letter-spacing: -0.02em; }
 /* Los títulos van 4 puntos más grandes que la escala del texto. */
 h1 { font-size: calc(var(--step-3) + 4pt); }
