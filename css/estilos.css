@@ -908,12 +908,3 @@ select {
 }
 select::-ms-expand { display: none; }
 
-/* Flecha trazada (como las de Neurotípico vs Neurodivergente) que baja hacia el nombre del instituto para invitar a tocarlo.
-   Se ancla justo antes del enlace y se dibuja por encima del renglón; el párrafo deja aire arriba para ella. */
-.collab-nancy { margin-top: 1.6rem; }
-.inyd-arrow { position: relative; display: inline-block; width: 0; height: 0; }
-.inyd-arrow svg { position: absolute; width: 3.8rem; height: 2.8rem; left: -2.8rem; bottom: 0.55em; overflow: visible; color: var(--collab-hl);
-  animation: inyd-nudge 1.6s ease-in-out infinite; }
-.inyd-arrow path { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; filter: url(#borron-amplio); }
-.inyd-arrow path.dup { stroke-width: 1.4; opacity: 0.55; transform: translate(2px, 2px); }
-@keyframes inyd-nudge { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(2px, 3px); } }
