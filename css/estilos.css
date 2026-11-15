@@ -663,12 +663,12 @@ input[type="email"] { font: inherit; font-weight: 400; font-size: var(--step-0);
 .collab-view.out { opacity: 0; filter: blur(3px); }
 .collab-view h3 { font-family: var(--f-title); font-size: calc(var(--step-2) + 4pt); line-height: var(--lh-sub); letter-spacing: -0.02em; color: var(--c); }
 .collab-role { font-size: var(--step--1); color: var(--muted); font-family: var(--f-display); letter-spacing: 0.02em; }
-.collab-view p { font-size: var(--step-1); line-height: var(--lh-sub); max-width: none; }
+.collab-view p { font-size: var(--step-1); line-height: 1.45; max-width: none; }
 .collab-card.open .collab-body > .collab-view:not([hidden]) { animation: fade-in 0.35s 0.45s ease both; }
 .collab-card.switching .collab-body > .collab-view { animation: none; }
 /* El nombre del instituto: resaltado en azul, se toca para ver la información del INyD */
 .inyd-link { all: unset; display: inline; color: var(--collab-hl); font-weight: 600; cursor: pointer;
-  text-decoration: underline wavy color-mix(in srgb, var(--collab-hl) 55%, transparent); text-decoration-thickness: 1.5px; text-underline-offset: 0.22em; }
+  text-decoration: underline wavy color-mix(in srgb, var(--collab-hl) 55%, transparent); text-decoration-thickness: 1.2px; text-underline-offset: 0.16em; }
 .inyd-link:hover, .inyd-link:focus-visible { text-decoration-style: solid; }
 .inyd-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
 .inyd-link::after { display: none; }
@@ -907,3 +907,13 @@ select {
   background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FF6E2B' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.6 8.8 C7.4 11.2 9.6 13.4 12.2 16.4 C14.6 13.1 16.9 10.6 19.6 8.2' stroke-width='2.6'/%3E%3Cpath d='M6 8.2 C8.6 10.6 10.4 12.6 12.4 14.9' stroke-width='1.1' opacity='.55'/%3E%3C/svg%3E") no-repeat right 0.8rem center / 1.15rem 1.15rem;
 }
 select::-ms-expand { display: none; }
+
+/* Flecha trazada (como las de Neurotípico vs Neurodivergente) que baja hacia el nombre del instituto para invitar a tocarlo.
+   Se ancla justo antes del enlace y se dibuja por encima del renglón; el párrafo deja aire arriba para ella. */
+.collab-nancy { margin-top: 1.6rem; }
+.inyd-arrow { position: relative; display: inline-block; width: 0; height: 0; }
+.inyd-arrow svg { position: absolute; width: 3.8rem; height: 2.8rem; left: -2.8rem; bottom: 0.55em; overflow: visible; color: var(--collab-hl);
+  animation: inyd-nudge 1.6s ease-in-out infinite; }
+.inyd-arrow path { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; filter: url(#borron-amplio); }
+.inyd-arrow path.dup { stroke-width: 1.4; opacity: 0.55; transform: translate(2px, 2px); }
+@keyframes inyd-nudge { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(2px, 3px); } }
