@@ -204,6 +204,9 @@
     if (focus) document.getElementById(id).focus({ preventScroll: true });
     if (currentTab && currentTab !== id && location.hash.slice(1) !== id) history.pushState(null, "", "#" + id);
     currentTab = id;
+    const at = sectionIds.indexOf(id);
+    $("#tabs-prev").disabled = at === 0;
+    $("#tabs-next").disabled = at === sectionIds.length - 1;
     document.title = id === "inicio" ? baseTitle : mainTabs[sectionIds.indexOf(id)].firstChild.textContent.trim() + " · " + baseTitle;
   }
   const baseTitle = document.title;
@@ -211,6 +214,9 @@
     e.preventDefault();
     goTab(t.getAttribute("href").slice(1), true);
   }));
+  // Flechas < > de la barra: van a la pestaña anterior o siguiente
+  $("#tabs-prev").addEventListener("click", () => goTab(sectionIds[Math.max(0, sectionIds.indexOf(currentTab) - 1)], true));
+  $("#tabs-next").addEventListener("click", () => goTab(sectionIds[Math.min(sectionIds.length - 1, sectionIds.indexOf(currentTab) + 1)], true));
   // El logo lleva al Inicio, arriba de todo
   $(".brand-home").addEventListener("click", (e) => { e.preventDefault(); goTab("inicio", true); });
   // Atrás / Adelante del navegador y enlaces con #seccion.
