@@ -16,3 +16,10 @@ binding = "LIMITS"
 id = "PEGAR_ACA_EL_ID"
 
 # La clave NO va en este archivo: `npx wrangler secret put GEMINI_API_KEY`
+
+# Base D1 para las estadísticas de uso: `npx wrangler d1 create unpov-estadisticas` y pegar acá el id.
+# La tabla se crea sola. La clave del panel: `npx wrangler secret put STATS_KEY`
+[[d1_databases]]
+binding = "STATS"
+database_name = "unpov-estadisticas"
+database_id = "PEGAR_ACA_EL_ID"

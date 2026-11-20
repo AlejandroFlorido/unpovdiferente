@@ -11,6 +11,8 @@
 //   MODEL              opcional; si no está se usa el de DEFAULT_MODEL
 //   DAILY_LIMIT        opcional; traducciones por persona por día (por defecto 10)
 //   ALLOWED_ORIGINS    opcional; sitios que pueden usarlo, separados por coma
+//   STATS              base D1 para las estadísticas de uso (opcional: sin ella no se guardan)
+//   STATS_KEY          secreto, la clave del panel de estadísticas (dirección del Worker + /panel)
 //
 // Cambiar de IA no toca la página: se cambia PROVIDER (y su clave) acá y listo.
 
@@ -115,14 +117,105 @@ async function hashIp(ip) {
   return Array.from(new Uint8Array(buf).slice(0, 12), (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+// ---------- Estadísticas de uso (anónimas, solo para el equipo) ----------
+// La página manda lotes de eventos a /e. Se guardan en D1 (tabla ev) y el panel (/panel, con clave)
+// los muestra sumados. No se guarda IP ni nada que identifique a la persona: solo un código al azar por visita.
+const EV_KINDS = ["visita", "disp", "origen", "vista", "entrada", "tiempo", "uso", "ajuste", "descarga", "ia", "sitio"];
+let tablaLista = false;
+async function prepararTabla(db) {
+  if (tablaLista) return;
+  await db.batch([
+    db.prepare("CREATE TABLE IF NOT EXISTS ev (dia TEXT NOT NULL, hora INTEGER, sid TEXT, k TEXT NOT NULL, n TEXT, s INTEGER)"),
+    db.prepare("CREATE INDEX IF NOT EXISTS ev_dia ON ev (dia, k)")
+  ]);
+  tablaLista = true;
+}
+
+async function guardarEventos(request, env) {
+  let data;
+  try { data = JSON.parse((await request.text()).slice(0, 20000)); } catch (e) { return false; }
+  const sid = typeof data?.sid === "string" && /^[a-z0-9]{6,16}$/.test(data.sid) ? data.sid : "";
+  if (!sid || !Array.isArray(data.ev)) return false;
+  const ahora = new Date(Date.now() - 3 * 3600 * 1000);
+  const dia = ahora.toISOString().slice(0, 10), hora = ahora.getUTCHours();
+  const filas = data.ev.slice(0, 40).filter((e) => Array.isArray(e) && EV_KINDS.includes(e[0])).map((e) => {
+    const n = typeof e[1] === "string" ? e[1].replace(/[^\p{L}\p{N} :.¿?_-]/gu, "").slice(0, 60) : "";
+    const secs = Number.isFinite(e[2]) ? Math.max(0, Math.min(1800, Math.round(e[2]))) : null;
+    return [e[0], n, secs];
+  }).filter((f) => f[1]);
+  if (!filas.length) return false;
+  await prepararTabla(env.STATS);
+  const st = env.STATS.prepare("INSERT INTO ev (dia, hora, sid, k, n, s) VALUES (?, ?, ?, ?, ?, ?)");
+  await env.STATS.batch(filas.map((f) => st.bind(dia, hora, sid, f[0], f[1], f[2])));
+  return true;
+}
+
+async function resumen(env, dias) {
+  const db = env.STATS;
+  await prepararTabla(db);
+  const desde = dias > 0 ? new Date(Date.now() - 3 * 3600 * 1000 - (dias - 1) * 86400000).toISOString().slice(0, 10) : "0000-00-00";
+  const q = (sql) => db.prepare(sql).bind(desde);
+  const W = "WHERE dia >= ?1";
+  const r = await db.batch([
+    q(`SELECT COUNT(DISTINCT sid) AS visitas, SUM(n = 'nuevo') AS nuevos FROM ev ${W} AND k = 'visita'`),
+    q(`SELECT dia, COUNT(DISTINCT sid) AS visitas FROM ev ${W} AND k = 'visita' GROUP BY dia ORDER BY dia`),
+    q(`SELECT hora, COUNT(DISTINCT sid) AS visitas FROM ev ${W} AND k = 'visita' GROUP BY hora`),
+    q(`SELECT n, COUNT(*) AS vistas, COUNT(DISTINCT sid) AS visitas FROM ev ${W} AND k = 'vista' GROUP BY n`),
+    q(`SELECT n, SUM(s) AS segundos FROM ev ${W} AND k = 'tiempo' GROUP BY n`),
+    q(`SELECT k, n, COUNT(*) AS veces, COUNT(DISTINCT sid) AS visitas FROM ev ${W} AND k IN ('uso', 'ajuste', 'descarga', 'ia', 'disp', 'origen', 'entrada', 'sitio') GROUP BY k, n ORDER BY veces DESC`),
+    q(`SELECT SUM(s) AS t, COUNT(DISTINCT n) AS p FROM ev ${W} AND k IN ('tiempo', 'vista') AND sid IN (SELECT sid FROM ev ${W} AND k = 'visita') GROUP BY sid`)
+  ]);
+  const rows = (i) => r[i].results || [];
+  const porVisita = rows(6);
+  const tiempos = porVisita.map((x) => x.t || 0).sort((a, b) => a - b);
+  const mediana = tiempos.length ? tiempos[Math.floor(tiempos.length / 2)] : 0;
+  const seg = Object.fromEntries(rows(4).map((x) => [x.n, x.segundos || 0]));
+  const grupo = (k) => rows(5).filter((x) => x.k === k).map(({ n, veces, visitas }) => ({ n, veces, visitas }));
+  return {
+    desde, visitas: rows(0)[0]?.visitas || 0, nuevos: rows(0)[0]?.nuevos || 0,
+    duracion_mediana: mediana,
+    duracion_promedio: tiempos.length ? Math.round(tiempos.reduce((a, b) => a + b, 0) / tiempos.length) : 0,
+    pestanas_por_visita: porVisita.length ? Math.round(porVisita.reduce((a, x) => a + x.p, 0) / porVisita.length * 10) / 10 : 0,
+    por_dia: rows(1), por_hora: rows(2),
+    pestanas: rows(3).map((x) => ({ ...x, segundos: seg[x.n] || 0 })).sort((a, b) => b.vistas - a.vistas),
+    herramientas: grupo("uso"), ajustes: grupo("ajuste"), descargas: grupo("descarga"), ia: grupo("ia"),
+    dispositivos: grupo("disp"), sitios: grupo("sitio"), origenes: grupo("origen"), entradas: grupo("entrada")
+  };
+}
+
+// Compara la clave sin cortar en el primer carácter distinto
+function mismaClave(a, b) {
+  if (!a || !b || a.length !== b.length) return false;
+  let d = 0;
+  for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return d === 0;
+}
+
 export default {
   async fetch(request, env) {
+    const path = new URL(request.url).pathname.replace(/\/+$/, "") || "/";
+    // Panel y datos de estadísticas: misma dirección del Worker, protegidos por la clave STATS_KEY
+    if (path === "/panel" && request.method === "GET") return new Response(PANEL_HTML, { headers: { "content-type": "text/html; charset=utf-8", "x-robots-tag": "noindex", "cache-control": "no-store", "referrer-policy": "no-referrer" } });
+    if (path === "/stats" && request.method === "GET") {
+      const h = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" };
+      const clave = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
+      if (!env.STATS_KEY || !mismaClave(clave, env.STATS_KEY)) return new Response(JSON.stringify({ ok: false, error: "clave" }), { status: 401, headers: h });
+      if (!env.STATS) return new Response(JSON.stringify({ ok: false, error: "sin base" }), { status: 500, headers: h });
+      const dias = Math.max(0, Math.min(3650, Number(new URL(request.url).searchParams.get("dias")) || 0));
+      return new Response(JSON.stringify({ ok: true, ...(await resumen(env, dias)) }), { headers: h });
+    }
+
     const origin = request.headers.get("Origin") || "";
     const allowed = (env.ALLOWED_ORIGINS || DEFAULT_ORIGINS).split(",").map((s) => s.trim()).filter(Boolean);
     const okOrigin = allowed.includes(origin);
     const cors = okOrigin ? { "Access-Control-Allow-Origin": origin, "Access-Control-Allow-Methods": "POST, OPTIONS", "Access-Control-Allow-Headers": "content-type", "Access-Control-Max-Age": "86400", Vary: "Origin" } : {};
     const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json; charset=utf-8", ...cors } });
 
+    // Eventos de uso que manda la página (sendBeacon, sin respuesta útil)
+    if (path === "/e") {
+      if (request.method === "POST" && okOrigin && env.STATS) { try { await guardarEventos(request, env); } catch (e) { console.error("Estadísticas: " + (e && e.message || e)); } }
+      return new Response(null, { status: 204, headers: cors });
+    }
     if (request.method === "OPTIONS") return new Response(null, { status: okOrigin ? 204 : 403, headers: cors });
     if (request.method === "GET") return json({ ok: true, servicio: "traductor de consignas unpovdiferente" });
     if (request.method !== "POST") return json({ ok: false, error: "metodo" }, 405);
@@ -167,3 +260,173 @@ export default {
     return json({ ok: true, restantes: Math.max(0, limit - usadas - 1), resultado });
   }
 };
+
+const PANEL_HTML = `<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Estadísticas · unpovdiferente</title>
+<style>
+:root { --bg: #fff; --fg: #111; --muted: #666; --line: #e6e6e6; --card: #fafafa; --brand: #FF6E2B; --blue: #1D58FE; color-scheme: light dark; }
+@media (prefers-color-scheme: dark) { :root { --bg: #111; --fg: #f2f2f2; --muted: #a0a0a0; --line: #2c2c2c; --card: #191919; } }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 64rem; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+h1 { font-size: 1.6rem; margin: 0 0 .25rem; } h1 span { color: var(--brand); }
+h2 { font-size: 1.05rem; margin: 0 0 .75rem; }
+.muted { color: var(--muted); } .small { font-size: .85rem; }
+.row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+button, input { font: inherit; }
+button { border: 2px solid var(--brand); background: transparent; color: var(--fg); border-radius: 999px; padding: .35rem .9rem; cursor: pointer; }
+button[aria-pressed="true"], button.main { background: var(--brand); color: #000; }
+input { border: 2px solid var(--line); background: var(--bg); color: var(--fg); border-radius: .6rem; padding: .45rem .7rem; min-width: 14rem; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: .75rem; margin: 1.25rem 0; }
+.kpi, .box { background: var(--card); border: 1px solid var(--line); border-radius: 1rem; padding: 1rem; }
+.kpi b { display: block; font-size: 1.9rem; line-height: 1.1; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); gap: .75rem; }
+.box.wide { grid-column: 1 / -1; }
+table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+th, td { text-align: left; padding: .4rem .3rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { font-weight: 600; color: var(--muted); font-size: .8rem; } td.num, th.num { text-align: right; white-space: nowrap; }
+.bar { height: .55rem; background: var(--blue); border-radius: 999px; min-width: 2px; }
+.bar.o { background: var(--brand); }
+.list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .1rem .75rem; padding: .3rem 0; }
+.list li .bar { grid-column: 1 / -1; }
+.list { list-style: none; margin: 0; padding: 0; }
+.days { display: flex; align-items: flex-end; gap: 2px; height: 8rem; border-bottom: 1px solid var(--line); }
+.days div { flex: 1; background: var(--blue); border-radius: 3px 3px 0 0; min-height: 1px; position: relative; }
+.days div:hover { background: var(--brand); }
+.err { color: #d33; }
+.scroll { overflow-x: auto; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Estadísticas <span>unpovdiferente</span></h1>
+  <p class="muted small">Solo para el equipo. Datos anónimos: no hay nombres, mails ni direcciones, solo visitas contadas.</p>
+
+  <form id="login" class="row" hidden>
+    <input id="key" type="password" placeholder="Clave del panel" autocomplete="current-password" required>
+    <button class="main" type="submit">Entrar</button>
+    <span id="login-msg" class="err small"></span>
+  </form>
+
+  <div id="app" hidden>
+    <div class="row" role="group" aria-label="Período">
+      <button type="button" data-d="7">7 días</button>
+      <button type="button" data-d="30">30 días</button>
+      <button type="button" data-d="90">90 días</button>
+      <button type="button" data-d="0">Todo</button>
+      <span class="muted small" id="status"></span>
+      <button type="button" id="logout" style="margin-left:auto">Salir</button>
+    </div>
+    <div class="kpis" id="kpis"></div>
+    <div class="grid">
+      <section class="box wide"><h2>Visitas por día</h2><div class="days" id="days"></div><p class="small muted" id="days-cap"></p></section>
+      <section class="box wide"><h2>Pestañas</h2><div class="scroll"><table id="tabs"></table></div>
+        <p class="small muted">«Abierta en» = de cada 100 visitas, cuántas entraron a esa pestaña. El tiempo cuenta solo mientras la página está a la vista (máx. 30 min seguidos).</p></section>
+      <section class="box"><h2>Herramientas y botones</h2><ul class="list" id="tools"></ul></section>
+      <section class="box"><h2>Imprimibles descargados</h2><ul class="list" id="dls"></ul></section>
+      <section class="box"><h2>Traductor con IA</h2><ul class="list" id="ia"></ul></section>
+      <section class="box"><h2>Ajustes de lectura</h2><ul class="list" id="prefs"></ul></section>
+      <section class="box"><h2>Por qué pestaña entran</h2><ul class="list" id="entry"></ul></section>
+      <section class="box"><h2>Dispositivo</h2><ul class="list" id="dev"></ul></section>
+      <section class="box"><h2>Qué link usan</h2><ul class="list" id="site"></ul></section>
+      <section class="box"><h2>De dónde llegan</h2><ul class="list" id="ref"></ul></section>
+      <section class="box"><h2>Hora del día (Argentina)</h2><div class="days" id="hours" style="height:5rem"></div><p class="small muted">De 0 a 23 h.</p></section>
+    </div>
+  </div>
+</main>
+<script>
+(function () {
+  var TABS = { inicio: "Inicio", entender: "Entender", consignas: "Consignas", herramientas: "Herramientas", descargables: "Imprimibles", docentes: "Docentes", apoyo: "Apoyo", contacto: "Contacto", equipo: "Equipo" };
+  var IA = { ok: "Salió bien", ia: "Falló (usó el automático)", limite: "Llegó al límite del día", largo: "Consigna muy larga", vacio: "Sin consigna" };
+  var DEV = { celular: "Celular", tablet: "Tablet", compu: "Computadora" };
+  var $ = function (s) { return document.querySelector(s); };
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var key = ""; try { key = localStorage.getItem("unpov.key") || ""; } catch (e) {}
+  var dias = 30; try { dias = Number(localStorage.getItem("unpov.dias") || 30); } catch (e) {}
+  function dur(s) {
+    s = Math.round(s || 0);
+    if (s < 60) return s + " s";
+    if (s < 3600) return Math.floor(s / 60) + " min " + (s % 60 ? (s % 60) + " s" : "");
+    return Math.floor(s / 3600) + " h " + Math.round((s % 3600) / 60) + " min";
+  }
+  function list(el, items, label, orange) {
+    if (!items.length) { el.innerHTML = '<li class="muted small">Todavía sin datos.</li>'; return; }
+    var max = Math.max.apply(null, items.map(function (x) { return x.veces; }));
+    el.innerHTML = items.map(function (x) {
+      return "<li><span>" + esc(label ? (label[x.n] || x.n) : x.n) + '</span><span class="muted small">' + x.veces + (x.visitas !== x.veces ? " · en " + x.visitas + " visitas" : "") + '</span><div class="bar' + (orange ? " o" : "") + '" style="width:' + (100 * x.veces / max) + '%"></div></li>';
+    }).join("");
+  }
+  function render(d) {
+    var v = d.visitas || 0;
+    $("#kpis").innerHTML = [
+      ["Visitas", v],
+      ["Personas nuevas", d.nuevos + (v ? ' <small class="muted small">(' + Math.round(100 * d.nuevos / v) + " %)</small>" : "")],
+      ["Duración típica", dur(d.duracion_mediana) + '<small class="muted small"> promedio ' + dur(d.duracion_promedio) + "</small>"],
+      ["Pestañas por visita", d.pestanas_por_visita]
+    ].map(function (k) { return '<div class="kpi"><span class="muted small">' + k[0] + "</span><b>" + k[1] + "</b></div>"; }).join("");
+    // Días: completa los que no tuvieron visitas
+    var map = {}; d.por_dia.forEach(function (x) { map[x.dia] = x.visitas; });
+    var keys = Object.keys(map).sort(), out = [];
+    if (keys.length) {
+      var a = new Date((dias ? d.desde : keys[0]) + "T12:00:00Z"), hoy = new Date(Date.now() - 3 * 3600 * 1000).toISOString().slice(0, 10);
+      for (var k = ""; k < hoy; a.setUTCDate(a.getUTCDate() + 1)) { k = a.toISOString().slice(0, 10); out.push([k, map[k] || 0]); }
+    }
+    var mx = Math.max.apply(null, out.map(function (x) { return x[1]; }).concat([1]));
+    $("#days").innerHTML = out.map(function (x) { return '<div title="' + x[0].split("-").reverse().join("/") + ": " + x[1] + ' visitas" style="height:' + (100 * x[1] / mx) + '%"></div>'; }).join("");
+    $("#days-cap").textContent = out.length ? "Del " + out[0][0].split("-").reverse().join("/") + " a hoy. Pasá el mouse por una barra para ver el día." : "Todavía sin visitas.";
+    var hrs = []; for (var h = 0; h < 24; h++) hrs.push(0);
+    d.por_hora.forEach(function (x) { hrs[x.hora] = x.visitas; });
+    var mh = Math.max.apply(null, hrs.concat([1]));
+    $("#hours").innerHTML = hrs.map(function (n, h) { return '<div title="' + h + " h: " + n + ' visitas" style="height:' + (100 * n / mh) + '%"></div>'; }).join("");
+    // Pestañas
+    var mt = Math.max.apply(null, d.pestanas.map(function (x) { return x.segundos; }).concat([1]));
+    $("#tabs").innerHTML = '<tr><th>Pestaña</th><th class="num">Vistas</th><th class="num">Abierta en</th><th class="num">Tiempo promedio</th><th class="num">Tiempo total</th><th style="width:22%"></th></tr>'
+      + (d.pestanas.length ? d.pestanas.map(function (x) {
+        return "<tr><td>" + esc(TABS[x.n] || x.n) + '</td><td class="num">' + x.vistas + '</td><td class="num">' + (v ? Math.round(100 * x.visitas / v) : 0) + ' %</td><td class="num">' + dur(x.segundos / x.vistas) + '</td><td class="num">' + dur(x.segundos) + '</td><td><div class="bar" style="width:' + (100 * x.segundos / mt) + '%"></div></td></tr>';
+      }).join("") : '<tr><td colspan="6" class="muted small">Todavía sin datos.</td></tr>');
+    list($("#tools"), d.herramientas, null, true);
+    list($("#dls"), d.descargas);
+    list($("#ia"), d.ia, IA);
+    list($("#prefs"), d.ajustes.map(function (x) { return { n: x.n.replace(/^ajuste: /, ""), veces: x.veces, visitas: x.visitas }; }));
+    list($("#entry"), d.entradas, TABS);
+    list($("#dev"), d.dispositivos, DEV);
+    list($("#site"), d.sitios || [], { github: "GitHub (alejandroflorido.github.io)", cloudflare: "Cloudflare (tdah-unpovdiferente.pages.dev)", otro: "Otro" });
+    list($("#ref"), d.origenes, { directo: "Directo (link, QR o escrito a mano)" });
+  }
+  function load() {
+    document.querySelectorAll("[data-d]").forEach(function (b) { b.setAttribute("aria-pressed", String(Number(b.dataset.d) === dias)); });
+    $("#status").textContent = "Cargando…";
+    fetch("/stats?dias=" + dias, { headers: { Authorization: "Bearer " + key } }).then(function (r) { return r.json().then(function (j) { return [r.status, j]; }); }).then(function (res) {
+      if (res[0] === 401) { showLogin("Clave incorrecta."); return; }
+      if (res[1].error === "sin base") { showLogin("La clave está bien, pero falta conectar la base D1 (STATS) al Worker."); return; }
+      if (!res[1].ok) { $("#status").textContent = "Error: " + (res[1].error || res[0]); return; }
+      if (!Array.isArray(res[1].pestanas)) { showLogin("El Worker todavía responde con la versión vieja. Esperá un minuto y recargá la página."); return; }
+      $("#login").hidden = true; $("#app").hidden = false;
+      render(res[1]);
+      $("#status").textContent = "Actualizado " + new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
+    }).catch(function () { $("#status").textContent = "No se pudo conectar."; });
+  }
+  function showLogin(msg) {
+    $("#app").hidden = true; $("#login").hidden = false; $("#login-msg").textContent = msg || ""; $("#key").focus();
+  }
+  $("#login").addEventListener("submit", function (e) {
+    e.preventDefault(); key = $("#key").value.trim();
+    try { localStorage.setItem("unpov.key", key); } catch (err) {}
+    load();
+  });
+  document.querySelectorAll("[data-d]").forEach(function (b) { b.addEventListener("click", function () {
+    dias = Number(b.dataset.d); try { localStorage.setItem("unpov.dias", dias); } catch (e) {} load();
+  }); });
+  $("#logout").addEventListener("click", function () { key = ""; try { localStorage.removeItem("unpov.key"); } catch (e) {} showLogin(); });
+  if (key) load(); else showLogin();
+})();
+</script>
+</body>
+</html>
+`;
