@@ -120,7 +120,7 @@ async function hashIp(ip) {
 // ---------- Estadísticas de uso (anónimas, solo para el equipo) ----------
 // La página manda lotes de eventos a /e. Se guardan en D1 (tabla ev) y el panel (/panel, con clave)
 // los muestra sumados. No se guarda IP ni nada que identifique a la persona: solo un código al azar por visita.
-const EV_KINDS = ["visita", "disp", "origen", "vista", "entrada", "tiempo", "uso", "ajuste", "descarga", "ia"];
+const EV_KINDS = ["visita", "disp", "origen", "vista", "entrada", "tiempo", "uso", "ajuste", "descarga", "ia", "sitio"];
 let tablaLista = false;
 async function prepararTabla(db) {
   if (tablaLista) return;
@@ -162,7 +162,7 @@ async function resumen(env, dias) {
     q(`SELECT hora, COUNT(DISTINCT sid) AS visitas FROM ev ${W} AND k = 'visita' GROUP BY hora`),
     q(`SELECT n, COUNT(*) AS vistas, COUNT(DISTINCT sid) AS visitas FROM ev ${W} AND k = 'vista' GROUP BY n`),
     q(`SELECT n, SUM(s) AS segundos FROM ev ${W} AND k = 'tiempo' GROUP BY n`),
-    q(`SELECT k, n, COUNT(*) AS veces, COUNT(DISTINCT sid) AS visitas FROM ev ${W} AND k IN ('uso', 'ajuste', 'descarga', 'ia', 'disp', 'origen', 'entrada') GROUP BY k, n ORDER BY veces DESC`),
+    q(`SELECT k, n, COUNT(*) AS veces, COUNT(DISTINCT sid) AS visitas FROM ev ${W} AND k IN ('uso', 'ajuste', 'descarga', 'ia', 'disp', 'origen', 'entrada', 'sitio') GROUP BY k, n ORDER BY veces DESC`),
     q(`SELECT SUM(s) AS t, COUNT(DISTINCT n) AS p FROM ev ${W} AND k IN ('tiempo', 'vista') AND sid IN (SELECT sid FROM ev ${W} AND k = 'visita') GROUP BY sid`)
   ]);
   const rows = (i) => r[i].results || [];
@@ -179,7 +179,7 @@ async function resumen(env, dias) {
     por_dia: rows(1), por_hora: rows(2),
     pestanas: rows(3).map((x) => ({ ...x, segundos: seg[x.n] || 0 })).sort((a, b) => b.vistas - a.vistas),
     herramientas: grupo("uso"), ajustes: grupo("ajuste"), descargas: grupo("descarga"), ia: grupo("ia"),
-    dispositivos: grupo("disp"), origenes: grupo("origen"), entradas: grupo("entrada")
+    dispositivos: grupo("disp"), sitios: grupo("sitio"), origenes: grupo("origen"), entradas: grupo("entrada")
   };
 }
 
@@ -334,6 +334,7 @@ th { font-weight: 600; color: var(--muted); font-size: .8rem; } td.num, th.num {
       <section class="box"><h2>Ajustes de lectura</h2><ul class="list" id="prefs"></ul></section>
       <section class="box"><h2>Por qué pestaña entran</h2><ul class="list" id="entry"></ul></section>
       <section class="box"><h2>Dispositivo</h2><ul class="list" id="dev"></ul></section>
+      <section class="box"><h2>Qué link usan</h2><ul class="list" id="site"></ul></section>
       <section class="box"><h2>De dónde llegan</h2><ul class="list" id="ref"></ul></section>
       <section class="box"><h2>Hora del día (Argentina)</h2><div class="days" id="hours" style="height:5rem"></div><p class="small muted">De 0 a 23 h.</p></section>
     </div>
@@ -395,6 +396,7 @@ th { font-weight: 600; color: var(--muted); font-size: .8rem; } td.num, th.num {
     list($("#prefs"), d.ajustes.map(function (x) { return { n: x.n.replace(/^ajuste: /, ""), veces: x.veces, visitas: x.visitas }; }));
     list($("#entry"), d.entradas, TABS);
     list($("#dev"), d.dispositivos, DEV);
+    list($("#site"), d.sitios || [], { github: "GitHub (alejandroflorido.github.io)", cloudflare: "Cloudflare (tdah-unpovdiferente.pages.dev)", otro: "Otro" });
     list($("#ref"), d.origenes, { directo: "Directo (link, QR o escrito a mano)" });
   }
   function load() {

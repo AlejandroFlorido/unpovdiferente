@@ -61,6 +61,7 @@
       let ref = "directo";
       try { if (document.referrer) { const h = new URL(document.referrer).hostname.replace(/^www\./, ""); if (h !== location.hostname) ref = h; } } catch (e) {}
       push("origen", ref);
+      push("sitio", /github\.io$/.test(location.hostname) ? "github" : /pages\.dev$/.test(location.hostname) ? "cloudflare" : "otro");
     }
     let entered = !firstLoad;
     return {
