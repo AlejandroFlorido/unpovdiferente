@@ -402,7 +402,9 @@ th { font-weight: 600; color: var(--muted); font-size: .8rem; } td.num, th.num {
     $("#status").textContent = "Cargando…";
     fetch("/stats?dias=" + dias, { headers: { Authorization: "Bearer " + key } }).then(function (r) { return r.json().then(function (j) { return [r.status, j]; }); }).then(function (res) {
       if (res[0] === 401) { showLogin("Clave incorrecta."); return; }
+      if (res[1].error === "sin base") { showLogin("La clave está bien, pero falta conectar la base D1 (STATS) al Worker."); return; }
       if (!res[1].ok) { $("#status").textContent = "Error: " + (res[1].error || res[0]); return; }
+      if (!Array.isArray(res[1].pestanas)) { showLogin("El Worker todavía responde con la versión vieja. Esperá un minuto y recargá la página."); return; }
       $("#login").hidden = true; $("#app").hidden = false;
       render(res[1]);
       $("#status").textContent = "Actualizado " + new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
