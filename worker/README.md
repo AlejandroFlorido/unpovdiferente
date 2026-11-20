@@ -32,3 +32,25 @@ Para probar que está vivo: abrir esa dirección en el navegador tiene que mostr
 ## Cambiar a Claude más adelante
 
 Cargar el secreto `ANTHROPIC_API_KEY` (clave de console.anthropic.com, se paga por uso: la suscripción Pro no incluye API) y poner `PROVIDER` = `claude`. La página no se toca.
+
+## Estadísticas de uso (solo para el equipo)
+
+El mismo Worker guarda conteos **anónimos** de uso y los muestra en un panel con clave:
+
+- La página manda, al cerrarse u ocultarse, qué pestañas se vieron, cuántos segundos estuvo cada una a la vista, qué herramientas y botones se usaron, qué imprimibles se bajaron, si el traductor con IA anduvo, tipo de dispositivo y de qué sitio llegaron.
+- No se guardan IP, cookies, nombres ni nada de lo que la persona escribe. Cada visita lleva un código al azar que se borra al cerrar la pestaña.
+- No se cuenta a quien tenga activado "No rastrear" / Global Privacy Control.
+- **Para no contar tus propias visitas:** abrí una vez la página con `?no-contar` al final (por ejemplo `https://tdah-unpovdiferente.pages.dev/?no-contar`) en cada navegador que uses. Con `?contar` se vuelve a contar.
+
+### Activarlo (una sola vez)
+
+1. **Crear la base:** *Storage & Databases* → *D1 SQL Database* → *Create* → nombre `unpov-estadisticas` → *Create*. La tabla se crea sola con la primera visita.
+2. **Conectarla al Worker:** en el Worker `unpov-traductor` → *Bindings* → *Add binding* → *D1 database* → nombre de variable `STATS`, elegir `unpov-estadisticas` → *Add binding*.
+3. **Clave del panel:** *Settings* → *Variables and Secrets* → *Add* → tipo **Secret**, nombre `STATS_KEY`, valor: una clave larga que elijan → *Deploy*.
+4. **Pegar el `worker.js` nuevo** (*Edit code* → borrar todo → pegar → *Deploy*).
+
+### Ver el panel
+
+Abrir la dirección del Worker con `/panel` al final: `https://unpov-traductor.floridosalejandro.workers.dev/panel` y poner la clave. No está enlazado desde la web. Muestra visitas, personas nuevas, duración típica, pestañas (vistas, % de visitas que la abrieron, tiempo promedio y total), herramientas, descargas, traductor con IA, ajustes de lectura, por qué pestaña entran, dispositivo, de dónde llegan y hora del día, para 7, 30, 90 días o todo.
+
+Plan gratis de D1: 100.000 filas escritas por día; cada visita usa entre 5 y 30, así que alcanza de sobra.

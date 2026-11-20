@@ -21,6 +21,77 @@
     if (msgEl) setTimeout(() => { msgEl.textContent = ""; }, 3000);
   }
 
+  /* ---------- Estadísticas anónimas de uso ----------
+     Solo para el equipo. Se cuentan pestañas vistas, segundos en cada una y herramientas usadas.
+     Sin cookies ni datos personales: cada visita lleva un código al azar que se borra al cerrar la pestaña.
+     Los datos van al Worker (ruta /e) y se ven en su /panel con la clave del equipo.
+     Para no contar las visitas propias: abrir una vez la página con ?no-contar (se vuelve a contar con ?contar). */
+  const STATS_URL = "https://unpov-traductor.floridosalejandro.workers.dev/e";
+  const stats = (() => {
+    const q = /[?&](no-contar|contar)\b/.exec(location.search);
+    if (q) store.set("nostats", q[1] === "no-contar");
+    const off = !STATS_URL || location.protocol === "file:" || store.get("nostats", false) || navigator.globalPrivacyControl === true || navigator.doNotTrack === "1";
+    let sid = "";
+    try { sid = sessionStorage.getItem("cc.sid") || ""; } catch (e) {}
+    const firstLoad = !sid;
+    if (!sid) { sid = Math.random().toString(36).slice(2, 12).padEnd(10, "0"); try { sessionStorage.setItem("cc.sid", sid); } catch (e) {} }
+    let queue = [], cur = "", since = 0, acc = 0;
+    const push = (k, n, s) => { if (off) return; queue.push(s ? [k, n, s] : [k, n]); if (queue.length >= 30) flush(); };
+    // Segundos que la pestaña actual estuvo a la vista (no cuenta si la ventana está oculta)
+    const lap = () => {
+      if (since) { acc += (Date.now() - since) / 1000; since = document.hidden ? 0 : Date.now(); }
+      const secs = Math.round(Math.min(acc, 1800)); acc = 0;
+      if (cur && secs >= 1) push("tiempo", cur, secs);
+    };
+    function flush() {
+      if (off || !queue.length) return;
+      const body = JSON.stringify({ sid, ev: queue }); queue = [];
+      try { if (!navigator.sendBeacon(STATS_URL, body)) throw 0; }
+      catch (e) { fetch(STATS_URL, { method: "POST", body, keepalive: true, mode: "no-cors" }).catch(() => {}); }
+    }
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) { lap(); since = 0; flush(); } else since = Date.now();
+    });
+    window.addEventListener("pagehide", () => { lap(); flush(); });
+    if (firstLoad && !off) {
+      const nuevo = !store.get("visto", false); store.set("visto", true);
+      push("visita", nuevo ? "nuevo" : "vuelve");
+      const w = Math.min(screen.width, screen.height);
+      push("disp", w < 600 ? "celular" : w < 1000 ? "tablet" : "compu");
+      let ref = "directo";
+      try { if (document.referrer) { const h = new URL(document.referrer).hostname.replace(/^www\./, ""); if (h !== location.hostname) ref = h; } } catch (e) {}
+      push("origen", ref);
+    }
+    let entered = !firstLoad;
+    return {
+      tab(id) {
+        lap(); cur = id; since = document.hidden ? 0 : Date.now();
+        push("vista", id);
+        if (!entered) { entered = true; push("entrada", id); }
+      },
+      ev: push
+    };
+  })();
+  // Usos de herramientas y botones, en un solo lugar: [selector, nombre en el panel]
+  const STATS_CLICKS = [
+    ["#tr-run", "traductor"], ["#tr-noai", "traductor sin IA"], ["#tr-copy", "traductor: copiar"], ["#tr-toplan", "traductor: pasar a plan"],
+    ["#map .map-step", "mapa de la cursada"],
+    ["#dv-add", "dividir: agregar etapa"], ["#dv-spread", "dividir: repartir fechas"], ["#dv-list input[type=checkbox]", "dividir: tildar etapa"],
+    ["#tm-start", "bloques: empezar"],
+    ["#dc-copy", "docentes: copiar plantilla"],
+    ["#ct-mail", "contacto: abrir correo"], ["#ct-copy", "contacto: copiar mensaje"],
+    ["[data-dl]", "imprimibles: vista previa"],
+    ["#myths .myth button", "mitos y realidades"], [".concept-title", "tres conceptos"], ["#car-prev, #car-next", "carrusel ¿te pasa?"],
+    ["#pref-size", "ajuste: tamaño de texto"], ["#pref-space", "ajuste: espaciado"], ["#pref-calm", "ajuste: sin animaciones"], ["#pref-theme", "ajuste: modo oscuro"]
+  ];
+  document.addEventListener("click", (e) => {
+    const t = e.target.closest ? e.target : e.target.parentElement;
+    if (!t) return;
+    for (const [sel, name] of STATS_CLICKS) if (t.closest(sel)) { stats.ev(name.startsWith("ajuste") ? "ajuste" : "uso", name); break; }
+    const dl = t.closest("a[download]");
+    if (dl) stats.ev("descarga", (dl.getAttribute("href") || "").split("/").pop().split("?")[0].replace(/\.pdf$/, ""));
+  }, true);
+
   /* ---------- Ajustes de lectura ---------- */
   const root = document.documentElement;
   const sizes = [["", "normal"], ["t-lg", "grande"], ["t-xl", "muy grande"]];
@@ -203,6 +274,7 @@
     window.scrollTo(0, 0);
     if (focus) document.getElementById(id).focus({ preventScroll: true });
     if (currentTab && currentTab !== id && location.hash.slice(1) !== id) history.pushState(null, "", "#" + id);
+    if (currentTab !== id) stats.tab(id);
     currentTab = id;
     const at = sectionIds.indexOf(id);
     $("#tabs-prev").disabled = at === 0;
@@ -659,6 +731,7 @@
       } catch (e) { err = "ia"; }
     }
     btn.disabled = false; btn.removeAttribute("aria-busy"); $("#tr-loader").hidden = true;
+    stats.ev("ia", err || "ok");
     if (!err) return;
     if (err === "vacio") { msg.textContent = TR_AI_ERR.vacio; return; }
     runPlain();
