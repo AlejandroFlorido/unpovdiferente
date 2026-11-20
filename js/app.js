@@ -56,8 +56,10 @@
     if (firstLoad && !off) {
       const nuevo = !store.get("visto", false); store.set("visto", true);
       push("visita", nuevo ? "nuevo" : "vuelve");
+      // Táctil sin mouse = celular o tablet (según el lado corto de la pantalla); con mouse = compu
       const w = Math.min(screen.width, screen.height);
-      push("disp", w < 600 ? "celular" : w < 1000 ? "tablet" : "compu");
+      const touch = window.matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 1 && !window.matchMedia("(pointer: fine)").matches;
+      push("disp", touch ? (w < 600 ? "celular" : "tablet") : (w < 500 ? "celular" : "compu"));
       let ref = "directo";
       try { if (document.referrer) { const h = new URL(document.referrer).hostname.replace(/^www\./, ""); if (h !== location.hostname) ref = h; } } catch (e) {}
       push("origen", ref);
