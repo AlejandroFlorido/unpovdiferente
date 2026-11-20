@@ -269,8 +269,14 @@ const PANEL_HTML = `<!doctype html>
 <meta name="robots" content="noindex, nofollow">
 <title>Estadísticas · unpovdiferente</title>
 <style>
-:root { --bg: #fff; --fg: #111; --muted: #666; --line: #e6e6e6; --card: #fafafa; --brand: #FF6E2B; --blue: #1D58FE; color-scheme: light dark; }
-@media (prefers-color-scheme: dark) { :root { --bg: #111; --fg: #f2f2f2; --muted: #a0a0a0; --line: #2c2c2c; --card: #191919; } }
+:root { --bg: #fff; --fg: #111; --muted: #666; --line: #e6e6e6; --card: #fafafa; --brand: #FF6E2B; --blue: #1D58FE; color-scheme: light; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #111; --fg: #f2f2f2; --muted: #a0a0a0; --line: #2c2c2c; --card: #191919; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg: #111; --fg: #f2f2f2; --muted: #a0a0a0; --line: #2c2c2c; --card: #191919; color-scheme: dark; }
+.top { display: flex; align-items: flex-start; gap: 1rem; justify-content: space-between; }
+.theme { flex: none; width: 3.6rem; height: 2rem; padding: 0; position: relative; border: 2px solid var(--brand); background: var(--blue); }
+.theme::after { content: "☀"; position: absolute; top: 50%; left: .2rem; transform: translateY(-50%); width: 1.45rem; height: 1.45rem; border-radius: 50%; background: #fff; color: #000; font-size: .95rem; line-height: 1.45rem; text-align: center; transition: left .2s; }
+.theme[aria-checked="true"]::after { content: "☾"; left: calc(100% - 1.65rem); background: #000; color: #fff; }
+.tip { position: fixed; z-index: 10; pointer-events: none; background: var(--fg); color: var(--bg); font-size: .82rem; padding: .3rem .55rem; border-radius: .45rem; white-space: nowrap; transform: translate(-50%, calc(-100% - 8px)); }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
@@ -305,7 +311,7 @@ th { font-weight: 600; color: var(--muted); font-size: .8rem; } td.num, th.num {
 </head>
 <body>
 <main>
-  <h1>Estadísticas <span>unpovdiferente</span></h1>
+  <div class="top"><h1>Estadísticas <span>unpovdiferente</span></h1><button class="theme" id="theme" type="button" role="switch" aria-label="Modo oscuro" title="Modo oscuro"></button></div>
   <p class="muted small">Solo para el equipo. Datos anónimos: no hay nombres, mails ni direcciones, solo visitas contadas.</p>
 
   <form id="login" class="row" hidden>
@@ -340,6 +346,7 @@ th { font-weight: 600; color: var(--muted); font-size: .8rem; } td.num, th.num {
     </div>
   </div>
 </main>
+<div class="tip" id="tip" hidden></div>
 <script>
 (function () {
   var TABS = { inicio: "Inicio", entender: "Entender", consignas: "Consignas", herramientas: "Herramientas", descargables: "Imprimibles", docentes: "Docentes", apoyo: "Apoyo", contacto: "Contacto", equipo: "Equipo" };
@@ -378,12 +385,12 @@ th { font-weight: 600; color: var(--muted); font-size: .8rem; } td.num, th.num {
       for (var k = ""; k < hoy; a.setUTCDate(a.getUTCDate() + 1)) { k = a.toISOString().slice(0, 10); out.push([k, map[k] || 0]); }
     }
     var mx = Math.max.apply(null, out.map(function (x) { return x[1]; }).concat([1]));
-    $("#days").innerHTML = out.map(function (x) { return '<div title="' + x[0].split("-").reverse().join("/") + ": " + x[1] + ' visitas" style="height:' + (100 * x[1] / mx) + '%"></div>'; }).join("");
+    $("#days").innerHTML = out.map(function (x) { return '<div data-tip="' + x[0].split("-").reverse().join("/") + ": " + x[1] + (x[1] === 1 ? ' visita' : ' visitas') + '" style="height:' + (100 * x[1] / mx) + '%"></div>'; }).join("");
     $("#days-cap").textContent = out.length ? "Del " + out[0][0].split("-").reverse().join("/") + " a hoy. Pasá el mouse por una barra para ver el día." : "Todavía sin visitas.";
     var hrs = []; for (var h = 0; h < 24; h++) hrs.push(0);
     d.por_hora.forEach(function (x) { hrs[x.hora] = x.visitas; });
     var mh = Math.max.apply(null, hrs.concat([1]));
-    $("#hours").innerHTML = hrs.map(function (n, h) { return '<div title="' + h + " h: " + n + ' visitas" style="height:' + (100 * n / mh) + '%"></div>'; }).join("");
+    $("#hours").innerHTML = hrs.map(function (n, h) { return '<div data-tip="' + h + " h: " + n + (n === 1 ? ' visita' : ' visitas') + '" style="height:' + (100 * n / mh) + '%"></div>'; }).join("");
     // Pestañas
     var mt = Math.max.apply(null, d.pestanas.map(function (x) { return x.segundos; }).concat([1]));
     $("#tabs").innerHTML = '<tr><th>Pestaña</th><th class="num">Vistas</th><th class="num">Abierta en</th><th class="num">Tiempo promedio</th><th class="num">Tiempo total</th><th style="width:22%"></th></tr>'
@@ -424,6 +431,27 @@ th { font-weight: 600; color: var(--muted); font-size: .8rem; } td.num, th.num {
     dias = Number(b.dataset.d); try { localStorage.setItem("unpov.dias", dias); } catch (e) {} load();
   }); });
   $("#logout").addEventListener("click", function () { key = ""; try { localStorage.removeItem("unpov.key"); } catch (e) {} showLogin(); });
+  // Modo diurno / nocturno: sigue al sistema hasta que se toca el botón
+  var root = document.documentElement, mq = window.matchMedia("(prefers-color-scheme: dark)");
+  var theme = ""; try { theme = localStorage.getItem("unpov.theme") || ""; } catch (e) {}
+  function applyTheme() {
+    if (theme) root.setAttribute("data-theme", theme); else root.removeAttribute("data-theme");
+    $("#theme").setAttribute("aria-checked", String(theme ? theme === "dark" : mq.matches));
+  }
+  $("#theme").addEventListener("click", function () {
+    theme = $("#theme").getAttribute("aria-checked") === "true" ? "light" : "dark";
+    try { localStorage.setItem("unpov.theme", theme); } catch (e) {}
+    applyTheme();
+  });
+  mq.addEventListener("change", applyTheme);
+  applyTheme();
+  // Cartelito de las barras: aparece al instante (el title del navegador tarda ~1 s)
+  var tip = $("#tip");
+  function showTip(el) { var r = el.getBoundingClientRect(); tip.textContent = el.getAttribute("data-tip"); tip.style.left = (r.left + r.width / 2) + "px"; tip.style.top = r.top + "px"; tip.hidden = false;
+    var t = tip.getBoundingClientRect(); if (t.left < 4) tip.style.left = (parseFloat(tip.style.left) + 4 - t.left) + "px"; else if (t.right > innerWidth - 4) tip.style.left = (parseFloat(tip.style.left) - (t.right - innerWidth + 4)) + "px"; }
+  document.addEventListener("pointerover", function (e) { var el = e.target.closest && e.target.closest("[data-tip]"); if (el) showTip(el); else tip.hidden = true; });
+  document.addEventListener("pointerdown", function (e) { var el = e.target.closest && e.target.closest("[data-tip]"); if (el) showTip(el); else tip.hidden = true; });
+  window.addEventListener("scroll", function () { tip.hidden = true; }, { passive: true });
   if (key) load(); else showLogin();
 })();
 </script>
