@@ -13,7 +13,7 @@
   const IO = "IntersectionObserver" in window;
 
   /* 1. Títulos: cada palabra en una máscara */
-  const TITLES = "#que-es h1, .split-head h2, .band-pad > .lead > h2, .band-pad > .lead > h3, #tres-conceptos h2, #mitos-band h2, .closing-text";
+  const TITLES = "#que-es h1, .doc-quote, .split-head h2, .band-pad > .lead > h2, .band-pad > .lead > h3, #tres-conceptos h2, #mitos-band h2, .closing-text";
   const split = (el) => {
     let i = 0;
     const walk = (node) => {
