@@ -103,7 +103,7 @@
             if (!p) return;
             if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
             const w = document.createElement("span"); w.className = "rw"; words.push(w);
-            Array.from(p).forEach((ch) => { const l = document.createElement("span"); l.className = "rl"; l.textContent = ch; letters.push(l); w.appendChild(l); });
+            Array.from(p).forEach((ch) => { const l = document.createElement("span"); l.className = "rl on"; l.textContent = ch; letters.push(l); w.appendChild(l); });
             frag.appendChild(w);
           });
           n.parentNode.replaceChild(frag, n);
@@ -124,7 +124,7 @@
       const bold = size();
       words.forEach((w, i) => {
         w.style.width = Math.max(thin[i][0], bold[i][0]).toFixed(2) + "px";
-        w.style.height = Math.max(thin[i][1], bold[i][1]).toFixed(2) + "px";
+
       });
       letters.forEach((l, i) => l.classList.toggle("on", on[i]));
     };
@@ -132,16 +132,22 @@
     const read = () => {
       clearInterval(timer); clearTimeout(wait);
       if (calm()) { letters.forEach((l) => l.classList.add("on")); words.forEach((w) => { w.style.width = ""; w.style.height = ""; }); return; }
-      measure();
-      letters.forEach((l) => l.classList.remove("on"));
+      /* arranca como está (gruesa); una "lupa" de pocas letras finas recorre el título
+         y cada letra vuelve a la gruesa cuando la lectura sigue de largo */
+      const W = 4;
+      letters.forEach((l) => l.classList.add("on"));
+      words.forEach((w) => { w.style.width = ""; w.style.height = ""; });
       let i = 0;
       wait = setTimeout(() => {
+        measure();
         timer = setInterval(() => {
+          if (i < letters.length) letters[i].classList.remove("on");
+          if (i - W >= 0 && i - W < letters.length) letters[i - W].classList.add("on");
+          i++;
           /* al terminar, el título vuelve a su armado normal (sin anchos reservados) */
-          if (i >= letters.length) { clearInterval(timer); words.forEach((w) => (w.style.width = "")); return; }
-          letters[i++].classList.add("on");
-        }, 55);
-      }, 500);
+          if (i > letters.length + W) { clearInterval(timer); words.forEach((w) => { w.style.width = ""; w.style.height = ""; }); }
+        }, 60);
+      }, 600);
     };
     (document.fonts ? document.fonts.ready : Promise.resolve()).then(read);
     let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (words[0].style.width) measure(); }, 150); });
