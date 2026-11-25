@@ -13,7 +13,7 @@
   const IO = "IntersectionObserver" in window;
 
   /* 1. Títulos: cada palabra en una máscara */
-  const TITLES = ".hero-title, #que-es h1, .split-head h2, .band-pad > .lead > h2, .band-pad > .lead > h3, #tres-conceptos h2, #mitos-band h2, .closing-text";
+  const TITLES = "#que-es h1, .split-head h2, .band-pad > .lead > h2, .band-pad > .lead > h3, #tres-conceptos h2, #mitos-band h2, .closing-text";
   const split = (el) => {
     let i = 0;
     const walk = (node) => {
@@ -75,7 +75,7 @@
   document.body.appendChild(up);
 
   /* 4. Paralaje de portadas */
-  const PARA = $$(".hero-title, #que-es h1");
+  const PARA = $$("#que-es h1");
   let ticking = false;
   const onScroll = () => {
     ticking = false;
@@ -88,4 +88,49 @@
   addEventListener("resize", onScroll);
   addEventListener("hashchange", () => requestAnimationFrame(onScroll));
   onScroll();
+
+  /* 6. "Te ayudamos a empezar." se lee: una lupa de pocas letras recorre la frase y
+     las engrosa un poco más (contorno del mismo color, la letra no cambia ni ocupa más
+     lugar); cuando la lectura sigue de largo, cada letra vuelve a como estaba. */
+  const phrase = document.querySelector(".hero-title em");
+  if (phrase) {
+    const letters = [];
+    const walkR = (node) => {
+      Array.from(node.childNodes).forEach((n) => {
+        if (n.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          n.nodeValue.split(/(\s+)/).forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const w = document.createElement("span"); w.className = "rw";
+            Array.from(p).forEach((ch) => { const l = document.createElement("span"); l.className = "rl"; l.textContent = ch; letters.push(l); w.appendChild(l); });
+            frag.appendChild(w);
+          });
+          n.parentNode.replaceChild(frag, n);
+        } else if (n.nodeType === 1) walkR(n);
+      });
+    };
+    phrase.setAttribute("aria-label", phrase.textContent.replace(/\s+/g, " ").trim());
+    walkR(phrase);
+    Array.from(phrase.children).forEach((w) => w.setAttribute("aria-hidden", "true"));
+    phrase.classList.add("m-read");
+    let timer = null, wait = null;
+    const read = () => {
+      clearInterval(timer); clearTimeout(wait);
+      letters.forEach((l) => l.classList.remove("on"));
+      if (calm()) return;
+      const W = 4;
+      let i = 0;
+      wait = setTimeout(() => {
+        timer = setInterval(() => {
+          if (i < letters.length) letters[i].classList.add("on");
+          if (i - W >= 0 && i - W < letters.length) letters[i - W].classList.remove("on");
+          if (++i > letters.length + W) clearInterval(timer);
+        }, 70);
+      }, 700);
+    };
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(read);
+    /* volver a leerla cada vez que se entra al Inicio */
+    addEventListener("hashchange", () => { if (!location.hash || location.hash === "#inicio") read(); });
+  }
 })();
