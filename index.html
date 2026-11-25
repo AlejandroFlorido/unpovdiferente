@@ -12,9 +12,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;500;600;700&display=swap">
 <!-- ?v= obliga al navegador a bajar el CSS y el JS nuevos después de cada cambio: subir el número al editarlos. -->
-<link rel="stylesheet" href="css/estilos.css?v=110">
+<link rel="stylesheet" href="css/estilos.css?v=111">
 <!-- Rediseño inspirado en DoxWorks: grilla, bandas de color y componentes rectos. Va después de estilos.css y lo pisa. -->
-<link rel="stylesheet" href="css/rediseno.css?v=110">
+<link rel="stylesheet" href="css/rediseno.css?v=111">
 
 <!-- Filtro "borroneado" para los óvalos naranjas: ondula el trazo y lo deja con huecos, como marcador seco. -->
 <svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -147,7 +147,7 @@
 
   <!-- ================= ENTENDER ================= -->
   <section id="entender">
-    <div class="hero screen" id="que-es">
+    <div class="hero screen band band-pad" id="que-es">
       <div class="lead">
         <span class="eyebrow">01 · Informar</span>
         <h1>¿Qué es el <span class="brand-word">TDAH</span>?</h1>
@@ -157,7 +157,7 @@
       <button class="scroll-cue" type="button" data-cue="entender-tdah">Entender el TDAH <span aria-hidden="true">↓</span></button>
     </div>
 
-    <div class="screen" id="entender-tdah">
+    <div class="screen band band-pad" id="entender-tdah">
       <button class="scroll-cue up" type="button" data-cue="que-es"><span aria-hidden="true">↑</span> ¿Qué es el TDAH?</button>
       <h2 class="title-circled">Entender el TDAH</h2>
       <div class="drops">
@@ -194,7 +194,7 @@
       <button class="scroll-cue" type="button" data-cue="tres-conceptos">Tres conceptos <span aria-hidden="true">↓</span></button>
     </div>
 
-    <div class="screen" id="tres-conceptos">
+    <div class="screen band band-pad band-gray" id="tres-conceptos">
       <button class="scroll-cue up" type="button" data-cue="entender-tdah"><span aria-hidden="true">↑</span> Entender el TDAH</button>
       <h2>Tres conceptos para entender</h2>
       <div class="concepts" id="concepts">
@@ -214,7 +214,7 @@
       <button class="scroll-cue" type="button" data-cue="nt-vs-nd">Neurotípico vs Neurodivergente <span aria-hidden="true">↓</span></button>
     </div>
 
-    <div class="screen" id="nt-vs-nd">
+    <div class="screen band band-pad" id="nt-vs-nd">
       <button class="scroll-cue up" type="button" data-cue="tres-conceptos"><span aria-hidden="true">↑</span> Tres conceptos</button>
       <h2 class="vs-title"><img src="assets/img/entender/titulo-nt-vs-nd.png" alt="Neurotípico vs Neurodivergente"></h2>
       <div class="vs-cols">
@@ -260,14 +260,16 @@
       <button class="scroll-cue" type="button" data-cue="mitos">Mitos y realidades <span aria-hidden="true">↓</span></button>
     </div>
 
+    <div class="band band-pad band-gray" id="mitos-band">
     <div class="lead" id="mitos">
       <button class="scroll-cue up" type="button" data-cue="nt-vs-nd"><span aria-hidden="true">↑</span> Neurotípico vs Neurodivergente</button>
       <h2>Mitos y realidades</h2>
       <p class="small muted">Tocá cada tarjeta para ver la realidad.</p>
     </div>
     <div class="grid-3" id="myths"></div>
+    </div>
 
-    <div class="note">
+    <div class="note band band-pad band-blue">
       <p>Este sitio no diagnostica. Si te sentís identificado o identificada, podés consultar con profesionales de salud mental o con las áreas pedagógicas y de bienestar de tu universidad.</p>
       <div class="row">
         <a class="btn second" href="#contacto" data-scroll="contacto">Escribirle a un psicopedagogo</a>
@@ -681,4 +683,4 @@ Entrega</textarea></label>
     <p class="dl-tip"><b>Recomendación:</b> si querés más durabilidad, podés agregarle a la portada un laminado o una tapa transparente.</p>
   </div>
 </template>
-<script src="js/app.js?v=110"></script>
+<script src="js/app.js?v=111"></script>

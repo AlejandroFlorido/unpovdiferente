@@ -198,3 +198,57 @@ footer.foot { max-width: none; margin: 0; padding: 0; background: #000; color: #
   .foot-logo { justify-self: start; max-width: 11rem; }
 }
 .foot .copyright { margin-top: 0.4rem; padding-top: 0.6rem; border-top-color: rgba(255, 255, 255, 0.25); }
+
+/* =====================================================================
+   Entender: mismo aire que el Inicio. Cada parte es una banda a todo el ancho,
+   alineada a la izquierda sobre la grilla; se alternan blanco y gris y cierra en azul.
+   ===================================================================== */
+.band-pad { padding: clamp(3.5rem, 8vw, 7rem) max(var(--m), calc((100vw - var(--grid-max)) / 2 + var(--m))); }
+#entender { gap: 0; margin-top: calc(-1 * var(--main-pt)); }
+#entender .scroll-cue { display: none; }
+#entender > .screen { min-height: 0; justify-content: flex-start; align-items: stretch; text-align: left; }
+#entender .lead { align-items: flex-start; text-align: left; }
+
+/* ¿Qué es el TDAH?: portada como la del Inicio. Título a la izquierda, definición a la derecha. */
+#que-es.hero.screen { min-height: calc(100svh - var(--top-h, 5rem)); justify-content: center; }
+#que-es .lead { width: 100%; max-width: none; margin: 0; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: var(--g); row-gap: 1.25rem; align-items: end; }
+#que-es .lead .eyebrow { grid-column: 1 / -1; color: var(--muted); font-weight: 400; }
+#que-es .lead h1 { grid-column: 1 / 5; font-size: calc(clamp(2.8rem, 6.4vw, 6rem) + 4pt); line-height: calc(var(--lh-title) * 1.05); }
+#que-es .lead p { grid-column: 5 / 9; font-family: var(--f-display); font-size: clamp(1.05rem, 1.35vw, 1.3rem); line-height: 1.4; }
+#que-es .lead p.source { grid-row: 3; margin-top: 0; }
+
+/* Encabezados de cada parte: título a la izquierda, grande. */
+#entender-tdah h2.title-circled, #tres-conceptos > h2, #mitos h2 { align-self: flex-start; font-size: calc(clamp(1.9rem, 3.4vw, 3.1rem) + 4pt); }
+#entender-tdah h2.title-circled { margin-left: 0.25em; }
+#entender-tdah, #tres-conceptos, #nt-vs-nd { gap: clamp(1.75rem, 3.5vw, 3rem); }
+
+/* Entender el TDAH: los dos desplegables a todo el ancho, como placas rectas. */
+#entender-tdah .drops { width: 100%; column-gap: var(--g); }
+#entender-tdah .drop { background: var(--surface); border-color: var(--line); }
+
+/* Tres conceptos en banda gris, a todo el ancho */
+#tres-conceptos .concepts { width: 100%; column-gap: var(--g); }
+
+/* Neurotípico vs Neurodivergente: título a la izquierda, mapas a todo el ancho */
+#nt-vs-nd .vs-title { align-self: flex-start; width: min(100%, 34rem); }
+#nt-vs-nd .vs-cols { width: 100%; column-gap: var(--g); margin-top: 0; }
+
+/* Mitos y realidades en banda gris */
+#mitos-band { display: flex; flex-direction: column; gap: clamp(1.5rem, 3vw, 2.5rem); }
+#mitos-band #myths { column-gap: var(--g); }
+#mitos-band .myth { background: var(--surface); }
+
+/* Cierre azul (la nota de "no diagnostica"), como el cierre del Inicio */
+#entender > .note.band-blue { margin-top: 0; font-size: var(--step-0); display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: var(--g); row-gap: 1.5rem; align-items: end; min-height: clamp(14rem, 26vw, 20rem); }
+#entender > .note.band-blue p { grid-column: 1 / 6; font-family: var(--f-display); font-size: clamp(1.15rem, 1.9vw, 1.6rem); line-height: 1.3; max-width: none; }
+#entender > .note.band-blue .row { grid-column: 6 / 9; justify-self: end; flex-direction: column; align-items: stretch; }
+#entender > .note.band-blue .btn { background: transparent; color: #fff; border: 1px solid #fff; font-weight: 400; justify-content: space-between; min-width: 15rem; }
+#entender > .note.band-blue .btn::after { display: none; }
+#entender > .note.band-blue .btn:hover { background: #fff; color: var(--brand-2); }
+#entender > .next-tab { margin-top: 0; }
+
+@media (max-width: 860px) {
+  #que-es .lead h1, #que-es .lead p, #que-es .lead p.source { grid-column: 1 / -1; grid-row: auto; }
+  #que-es.hero.screen { min-height: 0; }
+  #entender > .note.band-blue p, #entender > .note.band-blue .row { grid-column: 1 / -1; justify-self: start; }
+}
