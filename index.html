@@ -12,9 +12,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@300;400;500;600;700&display=swap">
 <!-- ?v= obliga al navegador a bajar el CSS y el JS nuevos después de cada cambio: subir el número al editarlos. -->
-<link rel="stylesheet" href="css/estilos.css?v=132">
+<link rel="stylesheet" href="css/estilos.css?v=133">
 <!-- Rediseño inspirado en DoxWorks: grilla, bandas de color y componentes rectos. Va después de estilos.css y lo pisa. -->
-<link rel="stylesheet" href="css/rediseno.css?v=132">
+<link rel="stylesheet" href="css/rediseno.css?v=133">
 
 <!-- Filtro "borroneado" para los óvalos naranjas: ondula el trazo y lo deja con huecos, como marcador seco. -->
 <svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -52,8 +52,9 @@
         </button>
       </div>
     </div>
-    <!-- Flechas < > a los costados de las pestañas: pasan a la pestaña anterior o siguiente (útil en pantallas chicas, donde la barra se corta) -->
+    <!-- "Volver a ...": aparece al cambiar de pestaña y te lleva a la anterior, al mismo lugar donde estabas leyendo -->
     <div class="tabs-bar">
+      <button class="tab-back" type="button" id="tab-back" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5.5M11 5.5 4.8 12l6.2 6.5"/></svg><span>Volver</span></button>
       <nav class="tabs" aria-label="Secciones">
         <a class="tab" href="#inicio" id="tab-inicio" aria-current="page">Inicio<small>Empezar acá</small></a>
         <a class="tab" href="#entender" id="tab-entender">Entender<small>Informar</small></a>
@@ -706,5 +707,5 @@ Entrega</textarea></label>
     <p class="dl-tip"><b>Recomendación:</b> si querés más durabilidad, podés agregarle a la portada un laminado o una tapa transparente.</p>
   </div>
 </template>
-<script src="js/app.js?v=132"></script>
-<script src="js/movimiento.js?v=132"></script>
+<script src="js/app.js?v=133"></script>
+<script src="js/movimiento.js?v=133"></script>
