@@ -89,12 +89,12 @@
   addEventListener("hashchange", () => requestAnimationFrame(onScroll));
   onScroll();
 
-  /* 6. Título del Inicio que "se lee": arranca en letra fina y cada letra se va
-     resaltando (pasa a la Unpovdiferente gruesa) una por una, como si alguien lo leyera.
-     Cada palabra reserva el ancho de su versión gruesa para que las líneas no salten. */
-  const hero = document.querySelector(".hero-title");
-  if (hero) {
-    const letters = [], words = [];
+  /* 6. "Te ayudamos a empezar." se lee: una lupa de pocas letras recorre la frase y
+     las engrosa un poco más (contorno del mismo color, la letra no cambia ni ocupa más
+     lugar); cuando la lectura sigue de largo, cada letra vuelve a como estaba. */
+  const phrase = document.querySelector(".hero-title em");
+  if (phrase) {
+    const letters = [];
     const walkR = (node) => {
       Array.from(node.childNodes).forEach((n) => {
         if (n.nodeType === 3) {
@@ -102,56 +102,35 @@
           n.nodeValue.split(/(\s+)/).forEach((p) => {
             if (!p) return;
             if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
-            const w = document.createElement("span"); w.className = "rw"; words.push(w);
-            Array.from(p).forEach((ch) => { const l = document.createElement("span"); l.className = "rl on"; l.textContent = ch; letters.push(l); w.appendChild(l); });
+            const w = document.createElement("span"); w.className = "rw";
+            Array.from(p).forEach((ch) => { const l = document.createElement("span"); l.className = "rl"; l.textContent = ch; letters.push(l); w.appendChild(l); });
             frag.appendChild(w);
           });
           n.parentNode.replaceChild(frag, n);
         } else if (n.nodeType === 1) walkR(n);
       });
     };
-    hero.setAttribute("aria-label", hero.textContent.replace(/\s+/g, " ").trim());
-    walkR(hero);
-    words.forEach((w) => w.setAttribute("aria-hidden", "true"));
-    hero.classList.add("m-read");
-    const measure = () => {
-      const on = letters.map((l) => l.classList.contains("on"));
-      words.forEach((w) => { w.style.width = ""; w.style.height = ""; });
-      const size = () => words.map((w) => { const r = w.getBoundingClientRect(); return [r.width, r.height]; });
-      letters.forEach((l) => l.classList.remove("on"));
-      const thin = size();
-      letters.forEach((l) => l.classList.add("on"));
-      const bold = size();
-      words.forEach((w, i) => {
-        w.style.width = Math.max(thin[i][0], bold[i][0]).toFixed(2) + "px";
-
-      });
-      letters.forEach((l, i) => l.classList.toggle("on", on[i]));
-    };
+    phrase.setAttribute("aria-label", phrase.textContent.replace(/\s+/g, " ").trim());
+    walkR(phrase);
+    Array.from(phrase.children).forEach((w) => w.setAttribute("aria-hidden", "true"));
+    phrase.classList.add("m-read");
     let timer = null, wait = null;
     const read = () => {
       clearInterval(timer); clearTimeout(wait);
-      if (calm()) { letters.forEach((l) => l.classList.add("on")); words.forEach((w) => { w.style.width = ""; w.style.height = ""; }); return; }
-      /* arranca como está (gruesa); una "lupa" de pocas letras finas recorre el título
-         y cada letra vuelve a la gruesa cuando la lectura sigue de largo */
+      letters.forEach((l) => l.classList.remove("on"));
+      if (calm()) return;
       const W = 4;
-      letters.forEach((l) => l.classList.add("on"));
-      words.forEach((w) => { w.style.width = ""; w.style.height = ""; });
       let i = 0;
       wait = setTimeout(() => {
-        measure();
         timer = setInterval(() => {
-          if (i < letters.length) letters[i].classList.remove("on");
-          if (i - W >= 0 && i - W < letters.length) letters[i - W].classList.add("on");
-          i++;
-          /* al terminar, el título vuelve a su armado normal (sin anchos reservados) */
-          if (i > letters.length + W) { clearInterval(timer); words.forEach((w) => { w.style.width = ""; w.style.height = ""; }); }
-        }, 60);
-      }, 600);
+          if (i < letters.length) letters[i].classList.add("on");
+          if (i - W >= 0 && i - W < letters.length) letters[i - W].classList.remove("on");
+          if (++i > letters.length + W) clearInterval(timer);
+        }, 70);
+      }, 700);
     };
     (document.fonts ? document.fonts.ready : Promise.resolve()).then(read);
-    let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (words[0].style.width) measure(); }, 150); });
-    /* volver a leerlo cada vez que se entra al Inicio */
+    /* volver a leerla cada vez que se entra al Inicio */
     addEventListener("hashchange", () => { if (!location.hash || location.hash === "#inicio") read(); });
   }
 })();
