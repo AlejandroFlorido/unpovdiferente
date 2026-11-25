@@ -204,18 +204,12 @@ footer.foot { max-width: none; margin: 0; padding: 0; background: #000; color: #
    alineada a la izquierda sobre la grilla; se alternan blanco y gris y cierra en azul.
    ===================================================================== */
 .band-pad { padding: clamp(3.5rem, 8vw, 7rem) max(var(--m), calc((100vw - var(--grid-max)) / 2 + var(--m))); }
-#entender { gap: 0; margin-top: calc(-1 * var(--main-pt)); }
-#entender .scroll-cue { display: none; }
-#entender > .screen { min-height: 0; justify-content: flex-start; align-items: stretch; text-align: left; }
-#entender .lead { align-items: flex-start; text-align: left; }
+#entender { gap: 0; }
+#entender .scroll-cue:not(#que-es .scroll-cue) { display: none; }
+#entender > .screen:not(#que-es) { min-height: 0; justify-content: flex-start; align-items: stretch; text-align: left; }
+#entender .lead:not(#que-es .lead) { align-items: flex-start; text-align: left; }
 
-/* ¿Qué es el TDAH?: portada como la del Inicio. Título a la izquierda, definición a la derecha. */
-#que-es.hero.screen { min-height: calc(100svh - var(--top-h, 5rem)); justify-content: center; }
-#que-es .lead { width: 100%; max-width: none; margin: 0; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: var(--g); row-gap: 1.25rem; align-items: end; }
-#que-es .lead .eyebrow { grid-column: 1 / -1; color: var(--muted); font-weight: 400; }
-#que-es .lead h1 { grid-column: 1 / 5; font-size: calc(clamp(2.8rem, 6.4vw, 6rem) + 4pt); line-height: calc(var(--lh-title) * 1.05); }
-#que-es .lead p { grid-column: 5 / 9; font-family: var(--f-display); font-size: clamp(1.05rem, 1.35vw, 1.3rem); line-height: 1.4; }
-#que-es .lead p.source { grid-row: 3; margin-top: 0; }
+/* ¿Qué es el TDAH? queda como estaba (centrado, a pantalla completa): no lleva reglas acá. */
 
 /* Encabezados de cada parte: título a la izquierda, grande. */
 #entender-tdah h2.title-circled, #tres-conceptos > h2, #mitos h2 { align-self: flex-start; font-size: calc(clamp(1.9rem, 3.4vw, 3.1rem) + 4pt); }
@@ -248,7 +242,5 @@ footer.foot { max-width: none; margin: 0; padding: 0; background: #000; color: #
 #entender > .next-tab { margin-top: 0; }
 
 @media (max-width: 860px) {
-  #que-es .lead h1, #que-es .lead p, #que-es .lead p.source { grid-column: 1 / -1; grid-row: auto; }
-  #que-es.hero.screen { min-height: 0; }
   #entender > .note.band-blue p, #entender > .note.band-blue .row { grid-column: 1 / -1; justify-self: start; }
 }
