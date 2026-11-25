@@ -316,3 +316,48 @@ footer.foot { max-width: none; margin: 0; padding: 0; background: #000; color: #
 #equipo .team-list { margin-inline: auto; justify-content: center; }
 #equipo .team-list.dos { justify-content: center; }
 #equipo .collab-wrap { justify-items: center; }
+
+/* Header en píldoras (referencia de Ale): contorno fino, rellenos planos de la paleta.
+   Inicio es el botón de más peso (naranja lleno); la pestaña activa se tiñe suave. */
+:root { --pill-line: #1A1A1A; --pill-tint: #FFD8C4; --pill-soft: #DCE6FF; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --pill-line: #E6E6E6; --pill-tint: #5A2A12; --pill-soft: #1B2A55; } }
+:root[data-theme="dark"] { --pill-line: #E6E6E6; --pill-tint: #5A2A12; --pill-soft: #1B2A55; }
+.tabs { gap: 0.4rem; align-items: center; padding-block: 0.15rem; }
+.tab { border: 1px solid var(--pill-line); border-radius: 999px; padding: 0.32rem 0.95rem; color: var(--ink);
+  font-size: 0.92rem; line-height: 1.2; background: transparent; overflow: hidden; }
+.tab[aria-current] { background: var(--pill-tint); border-color: var(--pill-tint); font-weight: 500; }
+#tab-inicio { background: var(--brand); border-color: var(--brand); color: #000; font-weight: 500;
+  font-size: 1.02rem; padding: 0.38rem 1.25rem; }
+#tab-inicio[aria-current] { box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--brand); }
+.chip-btn { background: transparent; border: 1px solid var(--pill-line); border-radius: 999px; box-shadow: none;
+  padding: 0.3rem 0.8rem; overflow: hidden; }
+.chip-btn:active { box-shadow: none; }
+.chip-btn[aria-pressed="true"] { background: var(--pill-tint); border-color: var(--pill-tint); color: var(--ink); box-shadow: none; }
+.tabs-arrow { border-radius: 999px; border: 0; box-shadow: none; width: 2.1rem; height: 2.1rem; overflow: hidden; }
+#tabs-prev { background: var(--pill-soft); color: #1D58FE; }
+#tabs-next { background: #1D58FE; color: #fff; }
+.tabs-arrow:active:not(:disabled) { box-shadow: none; transform: scale(0.96); }
+.tabs-arrow:disabled { opacity: 0.3; }
+.tabs { padding: 0.3rem 0.3rem; }
+.tab { flex: none; white-space: nowrap; }
+
+/* Todos los botones del sitio en píldora (pedido de Ale, misma referencia que el header) */
+.btn, .btn-line, .subtab, #herramientas .subtab { border-radius: 999px; overflow: hidden; box-shadow: none; }
+.btn { padding: 0.5rem 1.2rem; }
+.btn:not(.second):not(.ghost) { background: var(--brand); border-color: var(--brand); color: #000; }
+.btn.second { background: var(--brand-2); border-color: var(--brand-2); color: #fff; }
+.btn.ghost { background: transparent; border-color: var(--pill-line); color: var(--ink); }
+.btn.ghost[aria-pressed="true"], .btn.ghost.on { background: var(--pill-tint); border-color: var(--pill-tint); }
+.btn-line { padding: 0.55rem 0.7rem 0.55rem 1.2rem; }
+.btn-line .plus { display: grid; place-items: center; width: 1.7rem; height: 1.7rem; margin: -0.2rem 0; border-radius: 999px;
+  background: var(--brand); color: #000; font-size: 1rem; }
+.band-orange .btn-line .plus { background: #000; color: var(--brand); }
+#herramientas .subtab { background: transparent; border: 1px solid var(--pill-line); }
+#herramientas .subtab[aria-selected="true"] { background: var(--pill-tint); border-color: var(--pill-tint); color: var(--ink); }
+/* Botones redondos: flechas, cerrar */
+.btn-sq, .dl-arrow, .concept-back { border-radius: 999px; border: 0; background: var(--pill-soft); color: #1D58FE; overflow: hidden; }
+#car-next, .dl-arrow[data-go="1"] { background: #1D58FE; color: #fff; }
+.btn-sq:hover { background: var(--brand); color: #000; }
+.dl-arrow::before, .concept-back::before { display: none; }
+.dl-arrow svg .echo, .concept-back svg .echo { display: none; }
+.concept-back { background: var(--brand); color: #000; }
