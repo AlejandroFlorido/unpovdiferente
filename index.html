@@ -12,9 +12,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@300;400;500;600;700&display=swap">
 <!-- ?v= obliga al navegador a bajar el CSS y el JS nuevos después de cada cambio: subir el número al editarlos. -->
-<link rel="stylesheet" href="css/estilos.css?v=128">
+<link rel="stylesheet" href="css/estilos.css?v=129">
 <!-- Rediseño inspirado en DoxWorks: grilla, bandas de color y componentes rectos. Va después de estilos.css y lo pisa. -->
-<link rel="stylesheet" href="css/rediseno.css?v=128">
+<link rel="stylesheet" href="css/rediseno.css?v=129">
 
 <!-- Filtro "borroneado" para los óvalos naranjas: ondula el trazo y lo deja con huecos, como marcador seco. -->
 <svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -75,9 +75,8 @@
     <!-- Rediseño (referencia DoxWorks): el Inicio se arma con bandas de color a todo el ancho
          sobre una grilla de 8 columnas. Portada naranja, tres tarjetas, "¿Te pasa?" en banda gris
          y cierre en banda azul. -->
-    <div class="hero screen band band-page" id="inicio-hero">
+    <div class="hero screen band band-hero" id="inicio-hero">
       <div class="band-grid hero-grid">
-        <p class="hero-caption">TDAH en la universidad · Informar, orientar y acompañar</p>
         <h1 class="hero-title">Sabés lo que tenés que hacer. <em>Te ayudamos a empezar.</em></h1>
         <div class="hero-intro">
           <p class="hero-lead">Herramientas cortas y concretas para organizar entregas, entender consignas y sostener el estudio. Pensadas con estudiantes con TDAH y útiles para toda la cursada.</p>
@@ -91,25 +90,28 @@
 
     <div class="band band-plain" id="tres-formas">
       <div class="band-grid">
-        <div class="split-head">
+        <div class="ways-head">
           <h2>Tres formas de usar este sitio</h2>
-          <p class="split-text">El proyecto se organiza en tres líneas: informar sobre el TDAH, orientar en la información académica y acompañar con herramientas.</p>
+          <p>El proyecto se organiza en tres líneas: <b>informar</b> sobre el TDAH, <b>orientar</b> en la información académica y <b>acompañar</b> con herramientas.</p>
         </div>
-        <div class="lines">
-          <button class="line-card" type="button" data-go="entender">
-            <span class="tile tile-orange" aria-hidden="true"><span class="tile-num">01</span><span class="tile-word">Informar</span></span>
-            <h3>Entender qué me pasa</h3>
-            <ul class="scribble-list"><li>Qué es el TDAH</li><li>Tres conceptos para entender</li><li>Neurotípico vs Neurodivergente</li></ul>
+        <div class="ways">
+          <button class="way-card" type="button" data-go="entender">
+            <span class="way-tag">Informar</span>
+            <h3>Entender el por qué</h3>
+            <ul class="way-list"><li>Qué es el TDAH</li><li>Tres conceptos para entender</li><li>Neurotípico vs Neurodivergente</li></ul>
+            <span class="way-num" aria-hidden="true">01</span>
           </button>
-          <button class="line-card" type="button" data-go="consignas">
-            <span class="tile tile-blue" aria-hidden="true"><span class="tile-num">02</span><span class="tile-word">Orientar</span></span>
+          <button class="way-card" type="button" data-go="consignas">
+            <span class="way-tag">Orientar</span>
             <h3>Ordenar la información</h3>
-            <ul class="scribble-list"><li>Traductor de consignas</li><li>Mapa de la cursada</li></ul>
+            <ul class="way-list"><li>Traductor de consignas</li><li>Mapa de cursada</li><li>Dividir entrega</li><li>Bloques de estudio</li></ul>
+            <span class="way-num" aria-hidden="true">02</span>
           </button>
-          <button class="line-card" type="button" data-go="herramientas">
-            <span class="tile tile-ink" aria-hidden="true"><span class="tile-num">03</span><span class="tile-word">Acompañar</span></span>
+          <button class="way-card" type="button" data-go="apoyo">
+            <span class="way-tag">Acompañar</span>
             <h3>Hacer, paso a paso</h3>
-            <ul class="scribble-list"><li>Dividir una entrega en etapas</li><li>Bloques de estudio para arrancar y sostener</li></ul>
+            <ul class="way-list"><li>A quién podés recurrir</li><li>Contacto</li></ul>
+            <span class="way-num" aria-hidden="true">03</span>
           </button>
         </div>
       </div>
@@ -706,5 +708,5 @@ Entrega</textarea></label>
     <p class="dl-tip"><b>Recomendación:</b> si querés más durabilidad, podés agregarle a la portada un laminado o una tapa transparente.</p>
   </div>
 </template>
-<script src="js/app.js?v=128"></script>
-<script src="js/movimiento.js?v=128"></script>
+<script src="js/app.js?v=129"></script>
+<script src="js/movimiento.js?v=129"></script>

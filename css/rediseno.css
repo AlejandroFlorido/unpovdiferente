@@ -413,3 +413,67 @@ html.calm .m-rv, html.calm .m-split .mw > span { opacity: 1; translate: none; }
 @media (max-width: 860px) {
   #inicio-docentes .doc-quote, #inicio-docentes .doc-behind b, #inicio-docentes .doc-behind-body { grid-column: 1 / -1; }
 }
+
+/* ================= Inicio v2 (diseño SVG de Ale, 2026-11-25) ================= */
+/* Encabezado: todas las pestañas iguales, contorno azul; la activa, azul lleno */
+.tab, #tab-inicio, :is(#tab-herramientas, #tab-descargables) { background: var(--bg); border: 1px solid #1D58FE; color: var(--ink);
+  font-size: 0.92rem; font-weight: 400; padding: 0.32rem 0.95rem; box-shadow: none; }
+.tab[aria-current], #tab-inicio[aria-current], :is(#tab-herramientas, #tab-descargables)[aria-current] {
+  background: #1D58FE; border-color: #1D58FE; color: #fff; font-weight: 500; box-shadow: none; }
+
+/* Portada en banda azul; "Te ayudamos a empezar." blanco sobre naranja */
+#inicio-hero.band-hero { background: #1D58FE; color: #fff; }
+#inicio-hero .hero-title { color: #fff; }
+#inicio-hero .hero-title em { display: inline; color: #fff; background: var(--brand); padding: 0 0.12em 0.04em;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+#inicio-hero .hero-actions .btn-line { white-space: nowrap; width: auto; max-width: none; flex: none; }
+#inicio #inicio-hero .hero-title { max-width: 12ch; margin-inline: auto; }
+#inicio #tres-formas.band { background: var(--surface) !important; }
+#inicio-hero .hero-intro p { color: #fff; opacity: 0.92; }
+#inicio-hero .hero-actions .btn-line { background: var(--brand); border-color: var(--brand); color: #fff; }
+#inicio-hero .hero-actions .btn-line .plus { background: #fff; color: #000; }
+#inicio-hero .hero-actions .btn-line:hover { background: #F25F1C; border-color: #F25F1C; color: #fff; }
+
+/* Tres formas: título azul a todo el ancho, texto con palabras clave en negrita, tarjetas azules */
+#tres-formas .ways-head { grid-column: 1 / -1; display: flex; flex-direction: column; gap: clamp(1.25rem, 3vw, 2.5rem); margin-bottom: clamp(2rem, 4vw, 3.5rem); }
+#tres-formas .ways-head h2 { font-family: "General Sans", var(--f-display); font-weight: 500; color: #1D58FE;
+  font-size: clamp(2.2rem, 4.4vw, 3.9rem); line-height: 1; letter-spacing: -0.045em; }
+#tres-formas .ways-head p { font-family: "General Sans", var(--f-display); font-size: clamp(1.1rem, 1.7vw, 1.6rem); line-height: 1.5; max-width: 58ch; color: var(--ink); }
+#tres-formas .ways-head b { font-weight: 600; }
+#tres-formas .ways { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1rem, 3vw, 2.75rem); }
+.way-card { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: flex-start; gap: 0.7rem;
+  aspect-ratio: 1.47 / 1; padding: clamp(0.8rem, 1.2vw, 1rem); border: 0; border-radius: 0; background: #1D58FE; color: #fff;
+  font: inherit; text-align: left; cursor: pointer; }
+.way-card::after { display: none; }
+.way-tag { font-family: var(--f-display); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1;
+  border: 1px solid #fff; border-radius: 999px; padding: 0.18rem 0.45rem 0.14rem; }
+.way-card h3 { font-family: var(--f-display); font-weight: 600; color: #fff; font-size: clamp(1.15rem, 1.75vw, 1.6rem); line-height: 1.15; letter-spacing: -0.01em; margin: 0; }
+.way-list { list-style: none; margin: 0.35rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.55rem; position: relative; z-index: 1;
+  font-family: var(--f-display); font-size: clamp(0.78rem, 0.95vw, 0.9rem); line-height: 1.2; }
+.way-list li { display: flex; align-items: center; gap: 0.4rem; }
+.way-list li::before { content: ""; flex: none; width: 0.55em; height: 0.6em; border: 1.5px solid currentColor; border-radius: 48% 52% 50% 50% / 55% 50% 50% 45%; }
+.way-num { position: absolute; right: 0.6rem; bottom: -0.2em; font-family: var(--f-display); font-weight: 700; color: #000; line-height: 1;
+  font-size: clamp(5rem, 11vw, 10rem); letter-spacing: -0.07em; transition: transform 0.35s var(--m-ease); transform-origin: 80% 100%; }
+.way-card:hover .way-num, .way-card:focus-visible .way-num { transform: scale(1.06); }
+.way-card:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+
+/* ¿Te pasa? en banda oscura */
+#te-pasa.band-gray { background: #1B1B1B; color: #fff; }
+#te-pasa .quote, #te-pasa .behind, #te-pasa .behind-body p, #te-pasa .band-label { color: #fff; }
+#te-pasa .behind { border-top-color: rgba(255, 255, 255, 0.7); }
+#te-pasa .dot { background: rgba(255, 255, 255, 0.25); }
+#te-pasa .dot[aria-current="true"] { background: #fff; }
+#te-pasa #car-link { color: #fff; border-color: #fff; }
+#te-pasa #car-link:hover { background: #fff; color: #111; }
+#te-pasa #car-prev { background: #1D2D66; color: #1D58FE; }
+#te-pasa #car-next { background: #1D58FE; color: #fff; }
+
+/* "Siguiente" del Inicio en franja oscura de borde a borde */
+#inicio > .next-tab { background: #111; color: #fff; border-top: 0; width: 100vw; margin-left: calc(50% - 50vw);
+  padding-inline: max(var(--m), calc((100vw - var(--grid-max)) / 2 + var(--m))); }
+#inicio > .next-tab a, #inicio > .next-tab small, #inicio > .next-tab span { color: #fff; }
+
+@media (max-width: 860px) {
+  #tres-formas .ways { grid-template-columns: minmax(0, 1fr); }
+  .way-card { aspect-ratio: auto; min-height: 15rem; }
+}
