@@ -205,7 +205,8 @@ footer.foot { max-width: none; margin: 0; padding: 0; background: #000; color: #
    ===================================================================== */
 .band-pad { padding: clamp(3.5rem, 8vw, 7rem) max(var(--m), calc((100vw - var(--grid-max)) / 2 + var(--m))); }
 #entender { gap: 0; }
-#entender .scroll-cue:not(#que-es .scroll-cue) { display: none; }
+/* Los botones "↑ anterior / siguiente ↓" entre partes ya no se usan (pedido de Ale). */
+.scroll-cue { display: none !important; }
 #entender > .screen:not(#que-es) { min-height: 0; justify-content: flex-start; align-items: stretch; text-align: left; }
 #entender .lead:not(#que-es .lead) { align-items: flex-start; text-align: left; }
 
@@ -216,11 +217,6 @@ footer.foot { max-width: none; margin: 0; padding: 0; background: #000; color: #
 #que-es .lead h1 { font-size: calc(clamp(2.8rem, 6.4vw, 6rem) + 4pt); line-height: calc(var(--lh-title) * 1.05); }
 #que-es .lead p { font-family: var(--f-display); font-size: clamp(1.05rem, 1.4vw, 1.3rem); line-height: 1.45; max-width: 46ch; text-wrap: pretty; }
 #que-es .lead p.source { font-size: 0.85rem; margin-top: 0; padding-top: 0.9rem; border-top: 1px solid var(--line); max-width: none; }
-#que-es .scroll-cue { font-family: var(--f-display); font-size: 0.9rem; letter-spacing: 0; text-transform: none; color: var(--ink);
-  border: 1px solid currentColor; border-radius: 0; padding: 0.6rem 0.9rem; min-width: 15rem; display: inline-flex; justify-content: space-between; gap: 1.5rem; bottom: 2rem; }
-#que-es .scroll-cue span { color: inherit; }
-#que-es .scroll-cue:hover { background: var(--ink); color: var(--bg); }
-#que-es .scroll-cue::after { display: none; }
 
 /* Encabezados de cada parte: título a la izquierda, grande. */
 #entender-tdah h2.title-circled, #tres-conceptos > h2, #mitos h2 { align-self: flex-start; font-size: calc(clamp(1.9rem, 3.4vw, 3.1rem) + 4pt); }
