@@ -1511,7 +1511,7 @@
 
   // Al darse vuelta, la firma se dibuja. Con dedo o teclado no hay hover: tocar o Enter da vuelta la tarjeta
   $$(".dev-card").forEach((card) => {
-    const f = firma(card, card.classList.contains("dev-ale") ? 3000 : 2600);
+    const f = firma(card, 2600);
     let over = false;
     const showing = () => over || card.classList.contains("flipped");
     const leave = () => setTimeout(() => { if (!showing()) f.hide(); }, 300);
