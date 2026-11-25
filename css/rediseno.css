@@ -482,3 +482,10 @@ html.calm .m-rv, html.calm .m-split .mw > span { opacity: 1; translate: none; }
 #inicio #inicio-hero .hero-title { position: relative; isolation: isolate; }
 #inicio-hero .hero-title em { position: relative; z-index: -1; }
 #inicio-hero .hero-title em .rl, #inicio-hero .hero-title em .rw { position: relative; z-index: 1; }
+
+/* ¿Te pasa?: resaltado azul que se dibuja sobre la frase clave */
+#te-pasa .quote .hl { color: #fff; background-color: transparent; background-image: linear-gradient(#1D58FE, #1D58FE);
+  background-repeat: no-repeat; background-size: 0% 100%; background-position: 0 0; padding: 0 0.08em 0.02em; margin: 0 -0.04em;
+  transition: background-size 0.9s cubic-bezier(0.65, 0, 0.35, 1); }
+#te-pasa .quote .hl.on { background-size: 100% 100%; }
+html.calm #te-pasa .quote .hl { transition: none; }

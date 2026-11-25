@@ -287,9 +287,6 @@
     if (currentTab && currentTab !== id && location.hash.slice(1) !== id) history.pushState(null, "", "#" + id);
     if (currentTab !== id) stats.tab(id);
     currentTab = id;
-    const at = sectionIds.indexOf(id);
-    $("#tabs-prev").disabled = at === 0;
-    $("#tabs-next").disabled = at === sectionIds.length - 1;
     document.title = id === "inicio" ? baseTitle : mainTabs[sectionIds.indexOf(id)].firstChild.textContent.trim() + " · " + baseTitle;
     if (part) goPart(part);
   }
@@ -298,9 +295,6 @@
     e.preventDefault();
     goTab(t.getAttribute("href").slice(1), true);
   }));
-  // Flechas < > de la barra: van a la pestaña anterior o siguiente
-  $("#tabs-prev").addEventListener("click", () => goTab(sectionIds[Math.max(0, sectionIds.indexOf(currentTab) - 1)], true));
-  $("#tabs-next").addEventListener("click", () => goTab(sectionIds[Math.min(sectionIds.length - 1, sectionIds.indexOf(currentTab) + 1)], true));
   // El logo lleva al Inicio, arriba de todo
   $(".brand-home").addEventListener("click", (e) => { e.preventDefault(); goTab("inicio", true); });
   // Atrás / Adelante del navegador y enlaces con #seccion.
@@ -346,12 +340,23 @@
 
   /* ---------- Carrusel de situaciones ---------- */
   const situations = [
-    { q: "No es que no escuché. Perdí el hilo.", t: "Atención sostenida", x: "En una clase larga la atención va y viene sin que lo decidas. Tener la consigna por escrito y una estructura fija para tomar apuntes ayuda a retomar.", l: ["Ver cómo desarmar una consigna", "consignas"] },
-    { q: "Sé que tengo que hacerlo. No sé por dónde empezar.", t: "Iniciar tareas", x: "No es falta de interés. Empezar una tarea es una función ejecutiva, y cuesta más cuando la tarea es grande y difusa. Achicar el primer paso destraba.", l: ["Empezar con un bloque de 10 minutos", "herramientas", "bloques"] },
-    { q: "La entrega es en dos semanas y todavía no puedo empezar.", t: "Percepción del tiempo", x: "El tiempo lejano se siente abstracto. Ver los días que faltan y tener fechas intermedias lo vuelve concreto.", l: ["Poner fechas intermedias", "herramientas", "dividir"] },
-    { q: "Entendí la consigna, pero no sé cómo organizarla.", t: "Planificación", x: "Entender qué hay que hacer y saber en qué orden hacerlo son dos cosas distintas. Partir el TP en etapas convierte una tarea en una lista.", l: ["Dividir la entrega", "herramientas", "dividir"] },
-    { q: "Me siento a estudiar y a los diez minutos estoy en otra cosa.", t: "Regulación de la atención", x: "Bloques cortos con un objetivo único y pausas planificadas funcionan mejor que sesiones largas a pura fuerza de voluntad.", l: ["Probar bloques de estudio", "herramientas", "bloques"] }
+    { q: "No es que no escuché. Perdí el hilo.", h: "Perdí el hilo.", t: "Atención sostenida", x: "En una clase larga la atención va y viene sin que lo decidas. Tener la consigna por escrito y una estructura fija para tomar apuntes ayuda a retomar.", l: ["Ver cómo desarmar una consigna", "consignas"] },
+    { q: "Sé que tengo que hacerlo. No sé por dónde empezar.", h: "No sé por dónde empezar.", t: "Iniciar tareas", x: "No es falta de interés. Empezar una tarea es una función ejecutiva, y cuesta más cuando la tarea es grande y difusa. Achicar el primer paso destraba.", l: ["Empezar con un bloque de 10 minutos", "herramientas", "bloques"] },
+    { q: "La entrega es en dos semanas y todavía no puedo empezar.", h: "todavía no puedo empezar.", t: "Percepción del tiempo", x: "El tiempo lejano se siente abstracto. Ver los días que faltan y tener fechas intermedias lo vuelve concreto.", l: ["Poner fechas intermedias", "herramientas", "dividir"] },
+    { q: "Entendí la consigna, pero no sé cómo organizarla.", h: "no sé cómo organizarla.", t: "Planificación", x: "Entender qué hay que hacer y saber en qué orden hacerlo son dos cosas distintas. Partir el TP en etapas convierte una tarea en una lista.", l: ["Dividir la entrega", "herramientas", "dividir"] },
+    { q: "Me siento a estudiar y a los diez minutos estoy en otra cosa.", h: "estoy en otra cosa.", t: "Regulación de la atención", x: "Bloques cortos con un objetivo único y pausas planificadas funcionan mejor que sesiones largas a pura fuerza de voluntad.", l: ["Probar bloques de estudio", "herramientas", "bloques"] }
   ];
+  // Dibuja el resaltado: arranca vacío y se llena de izquierda a derecha (con "Sin animaciones" aparece entero).
+  function drawHl(m) {
+    if (isCalm()) { m.classList.add("on"); return; }
+    m.classList.remove("on");
+    void m.offsetWidth;
+    setTimeout(() => m.classList.add("on"), 350);
+  }
+  // Cada vez que la banda vuelve a verse, el resaltado se dibuja de nuevo.
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver((es) => es.forEach((e) => { const m = $("#car-quote .hl"); if (e.isIntersecting && m) drawHl(m); }), { threshold: 0.4 }).observe($("#te-pasa"));
+  }
   let car = 0;
   const dotsEl = $("#car-dots");
   situations.forEach((s, i) => {
@@ -362,7 +367,15 @@
   });
   function renderCar(dir) {
     const s = situations[car];
-    $("#car-quote").textContent = s.q;
+    // La frase clave se resalta en azul y el resaltado se dibuja de izquierda a derecha.
+    const qEl = $("#car-quote");
+    const i0 = s.h ? s.q.indexOf(s.h) : -1;
+    qEl.textContent = i0 < 0 ? s.q : s.q.slice(0, i0);
+    if (i0 >= 0) {
+      const m = document.createElement("mark"); m.className = "hl"; m.textContent = s.h;
+      qEl.append(m, s.q.slice(i0 + s.h.length));
+      drawHl(m);
+    }
     $("#car-title").textContent = "Qué puede haber detrás: " + s.t.toLowerCase();
     $("#car-text").textContent = s.x;
     const a = $("#car-link");
