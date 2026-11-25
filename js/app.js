@@ -264,7 +264,15 @@
   }
   // Muestra la pestaña y vuelve al comienzo de la página (sin desplazamiento animado).
   // Con focus, el lector de pantalla y el teclado arrancan desde la sección nueva.
+  // Consignas vive dentro de Herramientas y Contacto dentro de Apoyo: los enlaces viejos abren la pestaña y bajan a esa parte.
+  const TAB_ALIAS = { consignas: "herramientas", contacto: "apoyo", organizar: "herramientas" };
+  function goPart(id) {
+    const el = document.getElementById(id);
+    if (el) requestAnimationFrame(() => el.scrollIntoView({ behavior: "auto", block: "start" }));
+  }
   function goTab(id, focus) {
+    const part = TAB_ALIAS[id] && id !== "consignas" ? id : null;
+    if (TAB_ALIAS[id]) id = TAB_ALIAS[id];
     if (!sectionIds.includes(id)) return;
     sections.forEach((sec) => { sec.hidden = sec.id !== id; sec.classList.remove("entering"); });
     // La transición solo corre al cambiar de pestaña (no al cargar) y nunca con "Sin animaciones".
@@ -283,6 +291,7 @@
     $("#tabs-prev").disabled = at === 0;
     $("#tabs-next").disabled = at === sectionIds.length - 1;
     document.title = id === "inicio" ? baseTitle : mainTabs[sectionIds.indexOf(id)].firstChild.textContent.trim() + " · " + baseTitle;
+    if (part) goPart(part);
   }
   const baseTitle = document.title;
   mainTabs.forEach((t) => t.addEventListener("click", (e) => {
@@ -297,7 +306,7 @@
   // Atrás / Adelante del navegador y enlaces con #seccion.
   function fromHash() {
     const h = (location.hash || "").slice(1);
-    if (!h || sectionIds.includes(h)) goTab(h || "inicio", false);
+    if (!h || sectionIds.includes(h) || TAB_ALIAS[h]) goTab(h || "inicio", false);
   }
   window.addEventListener("popstate", fromHash);
   window.addEventListener("hashchange", fromHash);
@@ -331,7 +340,7 @@
     if (!b) return;
     e.preventDefault();
     goTab(b.dataset.go, true);
-    if (b.dataset.sub) goSub(b.dataset.sub);
+    if (b.dataset.sub) { goSub(b.dataset.sub); goPart("organizar"); }
     if (b.dataset.sub === "bloques") setPreset(10);
   });
 
@@ -782,7 +791,7 @@
     if (r.steps.length > 1) dv.stages = [...r.steps, "Revisar contra la consigna y entregar"].map((t, i) => ({ text: t, done: false, date: (r.dates.find((d) => d.step === i) || {}).date || "" }));
     else dv.stages[0].text = r.paso;
     saveDv(); renderDv();
-    goTab("herramientas", true); goSub("dividir");
+    goTab("herramientas", true); goSub("dividir"); goPart("organizar");
   };
 
   /* ---------- Mapa de la cursada ---------- */
@@ -1502,7 +1511,7 @@
 
   // Al darse vuelta, la firma se dibuja. Con dedo o teclado no hay hover: tocar o Enter da vuelta la tarjeta
   $$(".dev-card").forEach((card) => {
-    const f = firma(card, card.classList.contains("dev-ale") ? 3000 : 2600);
+    const f = firma(card, 2600);
     let over = false;
     const showing = () => over || card.classList.contains("flipped");
     const leave = () => setTimeout(() => { if (!showing()) f.hide(); }, 300);
@@ -1515,7 +1524,7 @@
 
   goSub(store.get("sub", "dividir"));
   if (!currentSub) goSub("dividir"); // si quedó guardada una herramienta que ya no existe
-  goTab(sectionIds.includes(hash) ? hash : "inicio", false);
+  goTab(sectionIds.includes(hash) || TAB_ALIAS[hash] ? hash : "inicio", false);
   // El navegador salta solo hasta el #ancla al cargar: la pestaña tiene que arrancar desde arriba.
   if (hash) window.addEventListener("load", () => window.scrollTo(0, 0));
 })();

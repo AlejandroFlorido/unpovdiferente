@@ -1,0 +1,369 @@
+/* =====================================================================
+   Rediseño inspirado en DoxWorks (Behance, Estudio Nuar).
+   Se carga después de estilos.css y lo pisa. Misma paleta y mismas tipografías;
+   cambia la disposición: grilla de 8 columnas con márgenes amplios, bandas de color
+   a todo el ancho, esquinas rectas, líneas finas, botones de contorno con "+",
+   y pie negro con el logo grande.
+   ===================================================================== */
+:root {
+  --m: clamp(16px, 3.2vw, 40px);   /* margen de la grilla */
+  --g: clamp(16px, 3vw, 48px);     /* calle entre columnas */
+  --grid-max: 100rem;
+  --radius: 0px;                    /* todo recto */
+  --band-gray: #ECECEC;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --band-gray: #1B1B1B; } }
+:root[data-theme="dark"] { --band-gray: #1B1B1B; }
+
+/* Las bandas usan el ancho completo de la ventana: se evita la barra horizontal. */
+html, body { overflow-x: clip; }
+body { margin: 0; }
+
+/* ---------- Componentes base ---------- */
+/* Botón de contorno, como "About +" de la referencia: texto a la izquierda, + a la derecha. */
+.btn-line {
+  font: inherit; font-family: var(--f-display); font-size: 0.92rem; font-weight: 400; line-height: 1.2;
+  color: inherit; background: transparent; border: 1px solid currentColor; border-radius: 0;
+  padding: 0.6rem 0.85rem; min-height: 42px; min-width: min(100%, 15rem);
+  display: inline-flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+  text-decoration: none; cursor: pointer; text-align: left;
+  transition: background-color 0.2s, color 0.2s, transform 0.25s ease;
+}
+.btn-line .plus { font-size: 1.15em; line-height: 1; }
+.btn-line:hover { background: var(--band-ink, var(--ink)); color: var(--band-bg, var(--bg)); }
+.btn-line::after { display: none; }
+/* Botón cuadrado chico (flechas del carrusel) */
+.btn-sq { font: inherit; font-family: var(--f-display); width: 42px; height: 42px; padding: 0; display: grid; place-items: center;
+  color: inherit; background: transparent; border: 1px solid currentColor; border-radius: 0; cursor: pointer; transition: background-color 0.2s, color 0.2s; }
+.btn-sq:hover { background: var(--band-ink, var(--ink)); color: var(--band-bg, var(--bg)); transform: none !important; }
+.btn-sq::after { display: none; }
+
+/* Todo recto: tarjetas, paneles, campos y botones de las demás pestañas. */
+.btn, .chip-btn, .subtab, .panel, .drop, .myth, .area, .person, .note, .stage, .day, .ev, .tp-card, .first-step,
+input[type="text"], input[type="date"], input[type="time"], input[type="email"], select, textarea, .preview, .tr-pick { border-radius: 0; }
+.btn { font-weight: 400; }
+
+/* ---------- Cabecera ---------- */
+/* Una sola fila sobre la grilla: logo a la izquierda, pestañas en el medio y ajustes de lectura a la derecha. */
+.top { background: var(--surface); border-bottom: 1px solid var(--ink);
+  box-shadow: 0 6px 18px -12px rgba(0, 0, 0, 0.35); }
+.top-inner {
+  max-width: var(--grid-max); padding: 0 var(--m);
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "brand tabs prefs";
+  align-items: center; column-gap: clamp(16px, 2vw, 32px); row-gap: 0; min-height: 4.75rem;
+}
+.brand-row { display: contents; }
+.brand { grid-area: brand; }
+.prefs { grid-area: prefs; gap: 0.35rem; }
+.tabs-bar { grid-area: tabs; min-width: 0; }
+.brand-logo { height: 40px; }
+.tabs { gap: clamp(0rem, 0.5vw, 0.6rem); }
+.tab { font-family: var(--f-display); font-weight: 400; font-size: 0.9rem; color: var(--muted);
+  padding: 0.5rem 0.4rem; border-bottom: 2px solid transparent; }
+.tab small { display: none; }
+.tab:hover { color: var(--ink); }
+.tab[aria-current] { color: var(--ink); font-weight: 500; border-bottom-color: var(--brand); }
+/* Botones del header con textura de botón: degradé suave, brillo arriba, sombra corta abajo; al apretar se hunden. */
+:root { --btn-face: linear-gradient(#FFFFFF, #EFEFEF); --btn-edge: #CFCFCF; --btn-hi: rgba(255, 255, 255, 0.9); --btn-drop: rgba(0, 0, 0, 0.08); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --btn-face: linear-gradient(#262626, #1A1A1A); --btn-edge: #3A3A3A; --btn-hi: rgba(255, 255, 255, 0.07); --btn-drop: rgba(0, 0, 0, 0.5); } }
+:root[data-theme="dark"] { --btn-face: linear-gradient(#262626, #1A1A1A); --btn-edge: #3A3A3A; --btn-hi: rgba(255, 255, 255, 0.07); --btn-drop: rgba(0, 0, 0, 0.5); }
+.chip-btn, .tabs-arrow { background: var(--btn-face); border: 1px solid var(--btn-edge); border-radius: 3px;
+  box-shadow: inset 0 1px 0 var(--btn-hi), 0 1px 2px var(--btn-drop); }
+.chip-btn { font-family: var(--f-display); font-size: 0.78rem; padding: 0.3rem 0.65rem; }
+.chip-btn:active, .tabs-arrow:active:not(:disabled) { box-shadow: inset 0 1px 3px var(--btn-drop); }
+.chip-btn[aria-pressed="true"] { background: linear-gradient(#FF7E40, #F2621F); color: #000; border-color: #D9561A;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 1px 2px var(--btn-drop); }
+/* Flechas de las pestañas: cuadradas, de línea fina, como el resto */
+.tabs-arrow { width: 1.9rem; height: 1.9rem; color: var(--ink); opacity: 1; }
+.tabs-arrow:disabled { opacity: 0.4; }
+.theme-switch { box-shadow: inset 0 1px 2px var(--btn-drop); }
+.tabs-arrow::before { display: none; }
+.tabs-arrow svg .echo { display: none; }
+.tabs-arrow svg { stroke-width: 1.6; width: 1rem; height: 1rem; }
+@media (max-width: 1520px) {
+  .top-inner { grid-template-columns: auto 1fr; grid-template-areas: "brand prefs" "tabs tabs"; padding-top: 0.6rem; min-height: 0; row-gap: 0.4rem; }
+  .prefs { justify-content: flex-end; }
+}
+
+/* ---------- Bandas y grilla ---------- */
+.band { width: 100vw; margin-left: calc(50% - 50vw); position: relative; }
+.band-grid {
+  max-width: var(--grid-max); margin: 0 auto; padding: clamp(3.5rem, 8vw, 7rem) var(--m);
+  display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: var(--g); row-gap: 2rem; align-items: start;
+}
+.band-grid > * { grid-column: 1 / -1; min-width: 0; }
+.band-orange { background: var(--brand); color: #000; --band-ink: #000; --band-bg: var(--brand); }
+.band-blue { background: var(--brand-2); color: #fff; --band-ink: #fff; --band-bg: var(--brand-2); }
+.band-gray { background: var(--band-gray); color: var(--ink); }
+.band-plain { background: var(--bg); color: var(--ink); }
+.band-label { font-family: var(--f-display); font-size: 0.85rem; }
+
+/* ---------- Inicio ---------- */
+#inicio { gap: 0; margin-top: calc(-1 * var(--main-pt)); }
+/* Portada: banda naranja del alto de la pantalla. Título a la izquierda, bajada a la derecha;
+   abajo, una línea chica a la izquierda y los dos botones a la derecha. */
+#inicio .hero.screen { min-height: calc(100svh - var(--top-h, 5rem)); padding: 0; justify-content: stretch; }
+/* Portada en el blanco de la página: el header (blanco puro, con línea y sombra) queda separado. */
+.band-page { background: var(--bg); color: var(--ink); }
+.band-page .hero-grid { padding-top: clamp(3rem, 7vw, 6rem); }
+.hero-grid { flex: 1; width: 100%; grid-template-rows: auto 1fr auto; padding-top: clamp(2.5rem, 6vw, 5rem); padding-bottom: clamp(2rem, 4vw, 3rem); }
+.hero .hero-title { grid-column: 1 / 6; grid-row: 1; max-width: none; color: var(--ink);
+  font-size: calc(clamp(2.6rem, 6vw, 5.6rem) + 4pt); line-height: calc(var(--lh-title) * 1.08); text-wrap: balance; }
+.hero .hero-title em { display: block; color: var(--accent-text); margin-top: 0.12em; }
+.hero-intro { grid-column: 6 / 9; grid-row: 1; display: flex; flex-direction: column; gap: 1rem; padding-top: 0.4rem; }
+.hero-intro p { font-family: var(--f-display); font-size: clamp(1.05rem, 1.45vw, 1.4rem); line-height: 1.3; max-width: 34ch; }
+.hero-sub { color: var(--muted); }
+.hero-caption { grid-column: 1 / 4; grid-row: 3; align-self: end; font-family: var(--f-display); font-size: 0.85rem; line-height: 1.35; }
+.hero-actions { grid-column: 6 / 9; grid-row: 3; align-self: end; display: flex; flex-direction: column; align-items: stretch; gap: 0.5rem; width: min(100%, 18rem); }
+
+/* Tres formas: encabezado partido (título a la izquierda, texto a la derecha) y tres tarjetas con bloque de color. */
+.split-head { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: var(--g); row-gap: 1rem; align-items: start; margin-bottom: clamp(1rem, 3vw, 2.5rem); }
+.split-head h2 { grid-column: 1 / 5; font-size: calc(clamp(1.9rem, 3.4vw, 3.1rem) + 4pt); }
+.split-head .split-text { grid-column: 6 / 9; font-family: var(--f-display); font-size: clamp(1rem, 1.25vw, 1.2rem); line-height: 1.35; color: var(--muted); }
+#tres-formas .lines { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--g); row-gap: 2.5rem; }
+#tres-formas .line-card { align-items: stretch; text-align: left; gap: 0.55rem; }
+#tres-formas .line-card::after { display: none; }
+@media (hover: hover) { #tres-formas .line-card:hover:not(:disabled) { transform: none; } }
+#tres-formas .line-card h3 { font-size: calc(var(--step-1) + 4pt); margin-top: 0.6rem; text-decoration: none; }
+#tres-formas .line-card:hover h3 { text-decoration: underline; text-decoration-color: var(--brand); text-decoration-thickness: 2px; text-underline-offset: 5px; }
+#tres-formas .line-card ul { align-items: flex-start; padding: 0; gap: 0.25rem; font-size: 0.85rem; }
+.tile { position: relative; display: block; aspect-ratio: 1 / 1.05; overflow: hidden; padding: clamp(0.9rem, 1.6vw, 1.3rem); }
+.tile-orange { background: var(--brand); color: #000; }
+.tile-blue { background: var(--brand-2); color: #fff; }
+.tile-ink { background: var(--ink); color: var(--bg); }
+.tile-word { font-family: var(--f-display); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.tile-num { position: absolute; left: clamp(0.6rem, 1.2vw, 1rem); bottom: -0.12em; font-family: var(--f-title); font-weight: 700;
+  font-size: clamp(6rem, 15vw, 15rem); line-height: 0.8; letter-spacing: -0.04em; transform-origin: left bottom; transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.3, 1); }
+.line-card:hover .tile-num, .line-card:focus-visible .tile-num { transform: scale(1.06); }
+
+/* ¿Te pasa?: banda gris con la frase grande, como la de servicios de la referencia. */
+#te-pasa.carousel { display: block; padding: 0; gap: 0; text-align: left; }
+#te-pasa .band-grid { row-gap: 1.75rem; }
+#te-pasa .quote { grid-column: 1 / 7; font-family: var(--f-display); font-weight: 400; max-width: none; text-wrap: balance;
+  font-size: clamp(1.9rem, 4.2vw, 3.8rem); line-height: 1.1; letter-spacing: -0.01em; }
+#te-pasa .behind { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: var(--g); row-gap: 0.75rem; max-width: none;
+  border-top: 1px solid currentColor; padding-top: 1.1rem; margin-top: 0.5rem; }
+#te-pasa .behind b { grid-column: 1 / 4; font-family: var(--f-display); font-weight: 400; font-size: 0.85rem; line-height: 1.35; }
+#te-pasa .behind-body { grid-column: 4 / 8; display: flex; flex-direction: column; gap: 1rem; }
+#te-pasa .behind-body p { font-size: var(--step-1); line-height: 1.35; }
+#te-pasa .car-nav { justify-content: flex-start; gap: 0.75rem; }
+#te-pasa .dots { gap: 0.35rem; }
+#te-pasa .dot { width: 1.6rem; height: 3px; border: 0; border-radius: 0; background: var(--line); }
+#te-pasa .dot[aria-current="true"] { background: var(--ink); }
+#te-pasa .dot::after { display: none; }
+
+/* Cierre: banda azul con una frase y el botón a la derecha. */
+.closing { min-height: clamp(14rem, 30vw, 22rem); align-content: end; align-items: end; }
+.closing-text { grid-column: 1 / 6; font-family: var(--f-display); font-size: clamp(1.4rem, 2.6vw, 2.3rem); line-height: 1.15; max-width: none; }
+.closing .btn-line { grid-column: 6 / 9; justify-self: end; }
+
+/* ---------- Siguiente pestaña (como "Next Project →") ---------- */
+.next-tab { border-top: 1px solid var(--line); padding-block: 1.6rem; }
+.next-tab a { font-family: var(--f-display); font-weight: 400; font-size: clamp(1.1rem, 1.8vw, 1.5rem); }
+.next-tab a span { text-decoration: none; }
+.next-tab a:hover span { text-decoration: underline; text-decoration-color: var(--brand); text-decoration-thickness: 2px; text-underline-offset: 5px; }
+#inicio > .next-tab { margin-top: 0; }
+
+/* ---------- Pie negro con el logo grande ---------- */
+footer.foot { max-width: none; margin: 0; padding: 0; background: #000; color: #fff; font-size: 0.85rem; border-top: 1px solid #000; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) footer.foot { border-top-color: #2a2a2a; } }
+:root[data-theme="dark"] footer.foot { border-top-color: #2a2a2a; }
+.foot-grid { max-width: var(--grid-max); margin: 0 auto; padding: clamp(1.25rem, 2.5vw, 2rem) var(--m) clamp(0.75rem, 1.5vw, 1.25rem);
+  display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); grid-template-rows: auto 1fr; column-gap: var(--g); row-gap: 1.25rem; min-height: clamp(9rem, 16vw, 13rem); }
+.foot-nav { grid-column: 1 / 4; grid-row: 1; display: grid; grid-template-columns: repeat(3, max-content); gap: 0.3rem 2rem; font-family: var(--f-display); }
+.foot-nav a { color: #fff; text-decoration: none; }
+.foot-nav a:hover { text-decoration: underline; text-decoration-color: var(--brand); text-underline-offset: 4px; }
+.foot-nav a::after { display: none; }
+@media (hover: hover) { .foot-nav a:hover { transform: none; } }
+.foot-legal { grid-column: 1 / 5; grid-row: 2; align-self: end; display: flex; flex-direction: column; gap: 0.5rem; color: rgba(255, 255, 255, 0.72); }
+.foot-legal p { max-width: 52ch; }
+.foot-logo { grid-column: 5 / 9; grid-row: 1 / 3; align-self: end; justify-self: end; width: 100%; max-width: 17rem; color: #fff; display: block; }
+.foot-logo-svg { display: block; width: 100%; height: auto; }
+.foot-logo::after { display: none; }
+@media (hover: hover) { .foot-logo:hover { transform: none; } }
+
+/* ---------- Pantallas angostas: una columna ---------- */
+@media (max-width: 860px) {
+  .band-grid > *, .split-head > *, .split-head h2, .split-head .split-text, #te-pasa .behind > *, #te-pasa .behind b, #te-pasa .behind-body, #te-pasa .quote,
+  .hero .hero-title, .hero-intro, .hero-caption, .hero-actions, .closing-text, .closing .btn-line,
+  .foot-nav, .foot-legal, .foot-logo { grid-column: 1 / -1; grid-row: auto; }
+  .hero-grid { grid-template-rows: none; align-content: space-between; }
+  .hero-actions { order: 3; }
+  .hero-caption { order: 4; }
+  .closing .btn-line { justify-self: start; }
+  #tres-formas .lines { grid-template-columns: 1fr; }
+  .tile { aspect-ratio: 16 / 9; }
+  .tile-num { font-size: clamp(6rem, 30vw, 10rem); }
+  .foot-grid { grid-template-rows: none; }
+  .foot-logo { justify-self: start; max-width: 11rem; }
+}
+.foot .copyright { margin-top: 0.4rem; padding-top: 0.6rem; border-top-color: rgba(255, 255, 255, 0.25); }
+
+/* =====================================================================
+   Entender: mismo aire que el Inicio. Cada parte es una banda a todo el ancho,
+   alineada a la izquierda sobre la grilla; se alternan blanco y gris y cierra en azul.
+   ===================================================================== */
+.band-pad { padding: clamp(3.5rem, 8vw, 7rem) max(var(--m), calc((100vw - var(--grid-max)) / 2 + var(--m))); }
+#entender { gap: 0; }
+/* Los botones "↑ anterior / siguiente ↓" entre partes ya no se usan (pedido de Ale). */
+.scroll-cue { display: none !important; }
+#entender > .screen:not(#que-es) { min-height: 0; justify-content: flex-start; align-items: stretch; text-align: left; }
+#entender .lead:not(#que-es .lead) { align-items: flex-start; text-align: left; }
+
+/* ¿Qué es el TDAH?: la esencia de antes (centrado, a pantalla completa), pero simétrico y con la letra,
+   los tonos y el botón de contorno del Inicio. */
+#que-es .lead { width: min(100%, 52rem); margin-inline: auto; align-items: center; text-align: center; gap: clamp(1.1rem, 2.2vw, 1.6rem); }
+#que-es .lead .eyebrow { color: var(--muted); font-weight: 400; font-size: 0.85rem; }
+#que-es .lead h1 { font-size: calc(clamp(2.8rem, 6.4vw, 6rem) + 4pt); line-height: calc(var(--lh-title) * 1.05); }
+#que-es .lead p { font-family: var(--f-display); font-size: clamp(1.05rem, 1.4vw, 1.3rem); line-height: 1.45; max-width: 46ch; text-wrap: pretty; }
+#que-es .lead p.source { font-size: 0.85rem; margin-top: 0; padding-top: 0.9rem; border-top: 1px solid var(--line); max-width: none; }
+
+/* Encabezados de cada parte: título a la izquierda, grande. */
+#entender-tdah h2.title-circled, #tres-conceptos > h2, #mitos h2 { align-self: flex-start; font-size: calc(clamp(1.9rem, 3.4vw, 3.1rem) + 4pt); }
+#entender-tdah h2.title-circled { margin-left: 0.25em; }
+#entender-tdah, #tres-conceptos, #nt-vs-nd { gap: clamp(1.75rem, 3.5vw, 3rem); }
+
+/* Entender el TDAH: los dos desplegables a todo el ancho, como placas rectas. */
+#entender-tdah .drops { width: 100%; column-gap: var(--g); }
+#entender-tdah .drop { background: var(--surface); border-color: var(--line); }
+
+/* Tres conceptos en banda gris, a todo el ancho */
+#tres-conceptos .concepts { width: 100%; column-gap: var(--g); }
+
+/* Neurotípico vs Neurodivergente: título a la izquierda, mapas a todo el ancho */
+#nt-vs-nd .vs-title { align-self: flex-start; width: min(100%, 34rem); }
+#nt-vs-nd .vs-cols { width: 100%; column-gap: var(--g); margin-top: 0; }
+
+/* Mitos y realidades en banda gris */
+#mitos-band { display: flex; flex-direction: column; gap: clamp(1.5rem, 3vw, 2.5rem); }
+#mitos-band #myths { column-gap: var(--g); }
+#mitos-band .myth { background: var(--surface); }
+
+/* Cierre azul (la nota de "no diagnostica"), como el cierre del Inicio */
+#entender > .note.band-blue { margin-top: 0; font-size: var(--step-0); display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: var(--g); row-gap: 1.5rem; align-items: end; min-height: clamp(14rem, 26vw, 20rem); }
+#entender > .note.band-blue p { grid-column: 1 / 6; font-family: var(--f-display); font-size: clamp(1.15rem, 1.9vw, 1.6rem); line-height: 1.3; max-width: none; }
+#entender > .note.band-blue .row { grid-column: 6 / 9; justify-self: end; flex-direction: column; align-items: stretch; }
+#entender > .note.band-blue .btn { background: transparent; color: #fff; border: 1px solid #fff; font-weight: 400; justify-content: space-between; min-width: 15rem; }
+#entender > .note.band-blue .btn::after { display: none; }
+#entender > .note.band-blue .btn:hover { background: #fff; color: var(--brand-2); }
+#entender > .next-tab { margin-top: 0; }
+
+@media (max-width: 860px) {
+  #entender > .note.band-blue p, #entender > .note.band-blue .row { grid-column: 1 / -1; justify-self: start; }
+}
+
+/* Portada del Inicio centrada, con la misma estructura que "¿Qué es el TDAH?":
+   etiqueta gris, título grande, bajada en Lexend con ancho de lectura parejo y los botones debajo. */
+#inicio .hero-grid { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  gap: clamp(1.1rem, 2.2vw, 1.6rem); width: min(100%, 60rem); margin-inline: auto; }
+#inicio .hero-grid > * { grid-column: auto; grid-row: auto; }
+#inicio .hero-caption { order: 0; color: var(--muted); font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; align-self: center; }
+#inicio .hero .hero-title { order: 1; max-width: 16ch; }
+#inicio .hero-intro { order: 2; align-items: center; padding: 0; }
+#inicio .hero-intro p { font-size: clamp(1.05rem, 1.4vw, 1.3rem); line-height: 1.45; max-width: 46ch; color: var(--muted); text-wrap: pretty; }
+#inicio .hero-actions { order: 3; flex-direction: row; flex-wrap: wrap; justify-content: center; width: auto; align-self: center; margin-top: 0.5rem; }
+#inicio .hero-actions .btn-line { width: min(100%, 16.5rem); min-width: 0; }
+
+/* =====================================================================
+   Herramientas (con Consignas adentro), Imprimibles, Docentes, Apoyo (con Contacto) y Equipo:
+   la misma estructura que Entender. Cada parte es una banda a todo el ancho que alterna blanco y gris;
+   el encabezado de cada parte va partido: título a la izquierda, bajada a la derecha.
+   ===================================================================== */
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) { gap: 0; }
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) > .band-pad { display: flex; flex-direction: column; gap: clamp(1.5rem, 3vw, 2.5rem); }
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) > .next-tab { margin-top: 0; }
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) .band-pad > .lead {
+  display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: var(--g); row-gap: 0.75rem; align-items: end; text-align: left; }
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) .band-pad > .lead > * { min-width: 0; }
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) .band-pad > .lead > .eyebrow { grid-column: 1 / -1; color: var(--muted); font-weight: 400; }
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) .band-pad > .lead > :is(h2, h3) { grid-column: 1 / 6; font-size: calc(clamp(1.9rem, 3.4vw, 3.1rem) + 4pt); }
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) .band-pad > .lead > p { grid-column: 6 / 9; font-family: var(--f-display); font-size: clamp(1rem, 1.25vw, 1.2rem); line-height: 1.4; color: var(--muted); max-width: none; }
+/* Sobre gris, las placas van en blanco */
+.band-gray :is(.panel, .myth, .area, .tp-card, .person:not(.dev-card)) { background: var(--surface); }
+.band-pad .panel { border-color: var(--line); }
+
+/* Herramientas: el traductor arranca la pestaña; las herramientas de organizar, al final */
+#herramientas .subtabs { gap: 0.5rem; }
+#herramientas .subtab { background: var(--btn-face); border: 1px solid var(--btn-edge); box-shadow: inset 0 1px 0 var(--btn-hi), 0 1px 2px var(--btn-drop); border-radius: 3px; }
+#herramientas .subtab[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); box-shadow: none; }
+#herramientas .subtab[aria-selected="true"] span { color: inherit; opacity: 0.75; }
+
+/* Apoyo: áreas arriba, el formulario de contacto debajo en banda gris */
+#apoyo-areas > .note { margin-top: 0; }
+#contacto.band-gray > .panel { border-top: 1px solid var(--line); }
+
+/* Equipo: tres partes que alternan blanco y gris, alineadas a la izquierda */
+#equipo > .band-pad { min-height: 0; justify-content: flex-start; padding-bottom: clamp(3.5rem, 8vw, 7rem); }
+#equipo .team-list { margin: 0; max-width: 60rem; }
+#equipo .team-list.dos { grid-template-columns: repeat(2, minmax(0, 18rem)); justify-content: start; }
+#equipo .collab-wrap { justify-items: start; }
+
+@media (max-width: 860px) {
+  :is(#herramientas, #descargables, #docentes, #apoyo, #equipo) .band-pad > .lead > :is(*, h2, h3, p, .eyebrow) { grid-column: 1 / -1 !important; }
+}
+@media (max-width: 600px) {
+  #equipo .team-list, #equipo .team-list.dos { grid-template-columns: minmax(0, 1fr); max-width: 22rem; }
+}
+
+/* Primera banda de cada pestaña: menos aire arriba */
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) > .band-pad:first-child { padding-top: clamp(2rem, 4vw, 3.5rem); }
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) .lead { align-items: start; }
+
+/* Equipo centrado (pedido de Ale) */
+#equipo > .band-pad { align-items: center; text-align: center; }
+#equipo .band-pad > .lead { display: block; text-align: center; max-width: 48rem; margin-inline: auto; }
+#equipo .band-pad > .lead > p { margin-inline: auto; max-width: 42rem; }
+#equipo .team-list { margin-inline: auto; justify-content: center; }
+#equipo .team-list.dos { justify-content: center; }
+#equipo .collab-wrap { justify-items: center; }
+
+/* Header en píldoras (referencia de Ale): contorno fino, rellenos planos de la paleta.
+   Inicio es el botón de más peso (naranja lleno); la pestaña activa se tiñe suave. */
+:root { --pill-line: #1A1A1A; --pill-tint: #FFD8C4; --pill-soft: #DCE6FF; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --pill-line: #E6E6E6; --pill-tint: #5A2A12; --pill-soft: #1B2A55; } }
+:root[data-theme="dark"] { --pill-line: #E6E6E6; --pill-tint: #5A2A12; --pill-soft: #1B2A55; }
+.tabs { gap: 0.4rem; align-items: center; padding-block: 0.15rem; }
+.tab { border: 1px solid var(--pill-line); border-radius: 999px; padding: 0.32rem 0.95rem; color: var(--ink);
+  font-size: 0.92rem; line-height: 1.2; background: transparent; overflow: hidden; }
+.tab[aria-current] { background: var(--pill-tint); border-color: var(--pill-tint); font-weight: 500; }
+#tab-inicio { background: var(--brand); border-color: var(--brand); color: #000; font-weight: 500;
+  font-size: 1.02rem; padding: 0.38rem 1.25rem; }
+#tab-inicio[aria-current] { box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--brand); }
+.chip-btn { background: transparent; border: 1px solid var(--pill-line); border-radius: 999px; box-shadow: none;
+  padding: 0.3rem 0.8rem; overflow: hidden; }
+.chip-btn:active { box-shadow: none; }
+.chip-btn[aria-pressed="true"] { background: var(--pill-tint); border-color: var(--pill-tint); color: var(--ink); box-shadow: none; }
+.tabs-arrow { border-radius: 999px; border: 0; box-shadow: none; width: 2.1rem; height: 2.1rem; overflow: hidden; }
+#tabs-prev { background: var(--pill-soft); color: #1D58FE; }
+#tabs-next { background: #1D58FE; color: #fff; }
+.tabs-arrow:active:not(:disabled) { box-shadow: none; transform: scale(0.96); }
+.tabs-arrow:disabled { opacity: 0.3; }
+.tabs { padding: 0.3rem 0.3rem; }
+.tab { flex: none; white-space: nowrap; }
+
+/* Todos los botones del sitio en píldora (pedido de Ale, misma referencia que el header) */
+.btn, .btn-line, .subtab, #herramientas .subtab { border-radius: 999px; overflow: hidden; box-shadow: none; }
+.btn { padding: 0.5rem 1.2rem; }
+.btn:not(.second):not(.ghost) { background: var(--brand); border-color: var(--brand); color: #000; }
+.btn.second { background: var(--brand-2); border-color: var(--brand-2); color: #fff; }
+.btn.ghost { background: transparent; border-color: var(--pill-line); color: var(--ink); }
+.btn.ghost[aria-pressed="true"], .btn.ghost.on { background: var(--pill-tint); border-color: var(--pill-tint); }
+.btn-line { padding: 0.55rem 0.7rem 0.55rem 1.2rem; }
+.btn-line .plus { display: grid; place-items: center; width: 1.7rem; height: 1.7rem; margin: -0.2rem 0; border-radius: 999px;
+  background: var(--brand); color: #000; font-size: 1rem; }
+.band-orange .btn-line .plus { background: #000; color: var(--brand); }
+#herramientas .subtab { background: transparent; border: 1px solid var(--pill-line); }
+#herramientas .subtab[aria-selected="true"] { background: var(--pill-tint); border-color: var(--pill-tint); color: var(--ink); }
+/* Botones redondos: flechas, cerrar */
+.btn-sq, .dl-arrow, .concept-back { border-radius: 999px; border: 0; background: var(--pill-soft); color: #1D58FE; overflow: hidden; }
+#car-next, .dl-arrow[data-go="1"] { background: #1D58FE; color: #fff; }
+.btn-sq:hover { background: var(--brand); color: #000; }
+.dl-arrow::before, .concept-back::before { display: none; }
+.dl-arrow svg .echo, .concept-back svg .echo { display: none; }
+.concept-back { background: var(--brand); color: #000; }
+/* Herramientas e Imprimibles en azulcito (pedido de Ale) */
+:root { --pill-blue: #CFDDFF; --pill-blue-on: #A9C2FF; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --pill-blue: #1B2A55; --pill-blue-on: #26408A; } }
+:root[data-theme="dark"] { --pill-blue: #1B2A55; --pill-blue-on: #26408A; }
+:is(#tab-herramientas, #tab-descargables) { background: var(--pill-blue); border-color: var(--pill-blue); }
+:is(#tab-herramientas, #tab-descargables)[aria-current] { background: var(--pill-blue-on); border-color: #1D58FE; }
