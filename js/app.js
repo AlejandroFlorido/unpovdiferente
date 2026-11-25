@@ -1173,21 +1173,21 @@
     let anim = null;
     sum.addEventListener("click", (e) => {
       e.preventDefault();
-      const opening = !d.open || d.classList.contains("closing");
+      const opening = !d.open || d.classList.contains("is-closing");
       const from = d.offsetHeight;
       if (anim) anim.cancel();
       body.getAnimations().forEach((a) => a.cancel());
-      d.classList.remove("closing");
+      d.classList.remove("is-closing");
       if (isCalm()) { d.open = opening; return; }
       d.open = true;
       const full = d.offsetHeight, closed = sum.offsetHeight + (d.offsetHeight - d.clientHeight);
       d.style.overflow = "hidden";
       if (opening) body.animate([{ opacity: 0, transform: "translateY(-6px)" }, { opacity: 1, transform: "none" }], { duration: 300, delay: 80, easing: "ease", fill: "backwards" });
-      else { d.classList.add("closing"); body.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, easing: "ease", fill: "forwards" }); }
+      else { d.classList.add("is-closing"); body.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, easing: "ease", fill: "forwards" }); }
       anim = d.animate([{ height: `${from}px` }, { height: `${opening ? full : closed}px` }], { duration: 350, easing: "cubic-bezier(0.4, 0, 0.2, 1)" });
       anim.onfinish = () => {
         anim = null; d.style.overflow = "";
-        if (!opening) { d.open = false; d.classList.remove("closing"); body.getAnimations().forEach((a) => a.cancel()); }
+        if (!opening) { d.open = false; d.classList.remove("is-closing"); body.getAnimations().forEach((a) => a.cancel()); }
       };
     });
   });

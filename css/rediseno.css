@@ -498,3 +498,4 @@ html.calm #te-pasa .quote .hl { transition: none; }
 .tab-back:hover { background: #F25F1C; border-color: #F25F1C; }
 .tab-back:focus-visible { outline: 3px solid #1D58FE; outline-offset: 2px; }
 .tabs-bar { gap: 0.5rem; }
+.drop.is-closing summary::after { transform: none; }
