@@ -1,0 +1,185 @@
+/* =====================================================================
+   Rediseño inspirado en DoxWorks (Behance, Estudio Nuar).
+   Se carga después de estilos.css y lo pisa. Misma paleta y mismas tipografías;
+   cambia la disposición: grilla de 8 columnas con márgenes amplios, bandas de color
+   a todo el ancho, esquinas rectas, líneas finas, botones de contorno con "+",
+   y pie negro con el logo grande.
+   ===================================================================== */
+:root {
+  --m: clamp(16px, 3.2vw, 40px);   /* margen de la grilla */
+  --g: clamp(16px, 3vw, 48px);     /* calle entre columnas */
+  --grid-max: 100rem;
+  --radius: 0px;                    /* todo recto */
+  --band-gray: #ECECEC;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --band-gray: #1B1B1B; } }
+:root[data-theme="dark"] { --band-gray: #1B1B1B; }
+
+/* Las bandas usan el ancho completo de la ventana: se evita la barra horizontal. */
+html, body { overflow-x: clip; }
+body { margin: 0; }
+
+/* ---------- Componentes base ---------- */
+/* Botón de contorno, como "About +" de la referencia: texto a la izquierda, + a la derecha. */
+.btn-line {
+  font: inherit; font-family: var(--f-display); font-size: 0.92rem; font-weight: 400; line-height: 1.2;
+  color: inherit; background: transparent; border: 1px solid currentColor; border-radius: 0;
+  padding: 0.6rem 0.85rem; min-height: 42px; min-width: min(100%, 15rem);
+  display: inline-flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+  text-decoration: none; cursor: pointer; text-align: left;
+  transition: background-color 0.2s, color 0.2s, transform 0.25s ease;
+}
+.btn-line .plus { font-size: 1.15em; line-height: 1; }
+.btn-line:hover { background: var(--band-ink, var(--ink)); color: var(--band-bg, var(--bg)); }
+.btn-line::after { display: none; }
+/* Botón cuadrado chico (flechas del carrusel) */
+.btn-sq { font: inherit; font-family: var(--f-display); width: 42px; height: 42px; padding: 0; display: grid; place-items: center;
+  color: inherit; background: transparent; border: 1px solid currentColor; border-radius: 0; cursor: pointer; transition: background-color 0.2s, color 0.2s; }
+.btn-sq:hover { background: var(--band-ink, var(--ink)); color: var(--band-bg, var(--bg)); transform: none !important; }
+.btn-sq::after { display: none; }
+
+/* Todo recto: tarjetas, paneles, campos y botones de las demás pestañas. */
+.btn, .chip-btn, .subtab, .panel, .drop, .myth, .area, .person, .note, .stage, .day, .ev, .tp-card, .first-step,
+input[type="text"], input[type="date"], input[type="time"], input[type="email"], select, textarea, .preview, .tr-pick { border-radius: 0; }
+.btn { font-weight: 400; }
+
+/* ---------- Cabecera ---------- */
+/* Una sola fila sobre la grilla: logo a la izquierda, pestañas en el medio y ajustes de lectura a la derecha. */
+.top { background: var(--surface); border-bottom: 1px solid var(--line); }
+.top-inner {
+  max-width: var(--grid-max); padding: 0 var(--m);
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "brand tabs prefs";
+  align-items: center; column-gap: clamp(16px, 2vw, 32px); row-gap: 0; min-height: 4.75rem;
+}
+.brand-row { display: contents; }
+.brand { grid-area: brand; }
+.prefs { grid-area: prefs; gap: 0.35rem; }
+.tabs-bar { grid-area: tabs; min-width: 0; }
+.brand-logo { height: 40px; }
+.tabs { gap: clamp(0rem, 0.5vw, 0.6rem); }
+.tab { font-family: var(--f-display); font-weight: 400; font-size: 0.9rem; color: var(--muted);
+  padding: 0.5rem 0.4rem; border-bottom: 2px solid transparent; }
+.tab small { display: none; }
+.tab:hover { color: var(--ink); }
+.tab[aria-current] { color: var(--ink); font-weight: 500; border-bottom-color: var(--brand); }
+.chip-btn { background: transparent; border: 1px solid var(--line); font-family: var(--f-display); font-size: 0.78rem; padding: 0.3rem 0.6rem; }
+.chip-btn[aria-pressed="true"] { background: var(--brand); color: #000; border-color: var(--brand); }
+/* Flechas de las pestañas: cuadradas, de línea fina, como el resto */
+.tabs-arrow { border: 1px solid var(--line); border-radius: 0; width: 1.9rem; height: 1.9rem; color: var(--ink); opacity: 1; }
+.tabs-arrow::before { display: none; }
+.tabs-arrow svg .echo { display: none; }
+.tabs-arrow svg { stroke-width: 1.6; width: 1rem; height: 1rem; }
+@media (max-width: 1520px) {
+  .top-inner { grid-template-columns: auto 1fr; grid-template-areas: "brand prefs" "tabs tabs"; padding-top: 0.6rem; min-height: 0; row-gap: 0.4rem; }
+  .prefs { justify-content: flex-end; }
+}
+
+/* ---------- Bandas y grilla ---------- */
+.band { width: 100vw; margin-left: calc(50% - 50vw); position: relative; }
+.band-grid {
+  max-width: var(--grid-max); margin: 0 auto; padding: clamp(3.5rem, 8vw, 7rem) var(--m);
+  display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: var(--g); row-gap: 2rem; align-items: start;
+}
+.band-grid > * { grid-column: 1 / -1; min-width: 0; }
+.band-orange { background: var(--brand); color: #000; --band-ink: #000; --band-bg: var(--brand); }
+.band-blue { background: var(--brand-2); color: #fff; --band-ink: #fff; --band-bg: var(--brand-2); }
+.band-gray { background: var(--band-gray); color: var(--ink); }
+.band-plain { background: var(--bg); color: var(--ink); }
+.band-label { font-family: var(--f-display); font-size: 0.85rem; }
+
+/* ---------- Inicio ---------- */
+#inicio { gap: 0; margin-top: calc(-1 * var(--main-pt)); }
+/* Portada: banda naranja del alto de la pantalla. Título a la izquierda, bajada a la derecha;
+   abajo, una línea chica a la izquierda y los dos botones a la derecha. */
+#inicio .hero.screen { min-height: calc(100svh - var(--top-h, 5rem)); padding: 0; justify-content: stretch; }
+.hero-grid { flex: 1; width: 100%; grid-template-rows: auto 1fr auto; padding-top: clamp(2.5rem, 6vw, 5rem); padding-bottom: clamp(2rem, 4vw, 3rem); }
+.hero .hero-title { grid-column: 1 / 6; grid-row: 1; max-width: none; color: #000;
+  font-size: calc(clamp(2.6rem, 6vw, 5.6rem) + 4pt); line-height: calc(var(--lh-title) * 1.08); text-wrap: balance; }
+.hero .hero-title em { display: block; color: #000; margin-top: 0.12em; }
+.hero-intro { grid-column: 6 / 9; grid-row: 1; display: flex; flex-direction: column; gap: 1rem; padding-top: 0.4rem; }
+.hero-intro p { font-family: var(--f-display); font-size: clamp(1.05rem, 1.45vw, 1.4rem); line-height: 1.3; max-width: 34ch; }
+.hero-sub { opacity: 0.72; }
+.hero-caption { grid-column: 1 / 4; grid-row: 3; align-self: end; font-family: var(--f-display); font-size: 0.85rem; line-height: 1.35; }
+.hero-actions { grid-column: 6 / 9; grid-row: 3; align-self: end; display: flex; flex-direction: column; align-items: stretch; gap: 0.5rem; width: min(100%, 18rem); }
+
+/* Tres formas: encabezado partido (título a la izquierda, texto a la derecha) y tres tarjetas con bloque de color. */
+.split-head { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: var(--g); row-gap: 1rem; align-items: start; margin-bottom: clamp(1rem, 3vw, 2.5rem); }
+.split-head h2 { grid-column: 1 / 5; font-size: calc(clamp(1.9rem, 3.4vw, 3.1rem) + 4pt); }
+.split-head .split-text { grid-column: 6 / 9; font-family: var(--f-display); font-size: clamp(1rem, 1.25vw, 1.2rem); line-height: 1.35; color: var(--muted); }
+#tres-formas .lines { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--g); row-gap: 2.5rem; }
+#tres-formas .line-card { align-items: stretch; text-align: left; gap: 0.55rem; }
+#tres-formas .line-card::after { display: none; }
+@media (hover: hover) { #tres-formas .line-card:hover:not(:disabled) { transform: none; } }
+#tres-formas .line-card h3 { font-size: calc(var(--step-1) + 4pt); margin-top: 0.6rem; text-decoration: none; }
+#tres-formas .line-card:hover h3 { text-decoration: underline; text-decoration-color: var(--brand); text-decoration-thickness: 2px; text-underline-offset: 5px; }
+#tres-formas .line-card ul { align-items: flex-start; padding: 0; gap: 0.25rem; font-size: 0.85rem; }
+.tile { position: relative; display: block; aspect-ratio: 1 / 1.05; overflow: hidden; padding: clamp(0.9rem, 1.6vw, 1.3rem); }
+.tile-orange { background: var(--brand); color: #000; }
+.tile-blue { background: var(--brand-2); color: #fff; }
+.tile-ink { background: var(--ink); color: var(--bg); }
+.tile-word { font-family: var(--f-display); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.tile-num { position: absolute; left: clamp(0.6rem, 1.2vw, 1rem); bottom: -0.12em; font-family: var(--f-title); font-weight: 700;
+  font-size: clamp(6rem, 15vw, 15rem); line-height: 0.8; letter-spacing: -0.04em; transform-origin: left bottom; transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.3, 1); }
+.line-card:hover .tile-num, .line-card:focus-visible .tile-num { transform: scale(1.06); }
+
+/* ¿Te pasa?: banda gris con la frase grande, como la de servicios de la referencia. */
+#te-pasa.carousel { display: block; padding: 0; gap: 0; text-align: left; }
+#te-pasa .band-grid { row-gap: 1.75rem; }
+#te-pasa .quote { grid-column: 1 / 7; font-family: var(--f-display); font-weight: 400; max-width: none; text-wrap: balance;
+  font-size: clamp(1.9rem, 4.2vw, 3.8rem); line-height: 1.1; letter-spacing: -0.01em; }
+#te-pasa .behind { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: var(--g); row-gap: 0.75rem; max-width: none;
+  border-top: 1px solid currentColor; padding-top: 1.1rem; margin-top: 0.5rem; }
+#te-pasa .behind b { grid-column: 1 / 4; font-family: var(--f-display); font-weight: 400; font-size: 0.85rem; line-height: 1.35; }
+#te-pasa .behind-body { grid-column: 4 / 8; display: flex; flex-direction: column; gap: 1rem; }
+#te-pasa .behind-body p { font-size: var(--step-1); line-height: 1.35; }
+#te-pasa .car-nav { justify-content: flex-start; gap: 0.75rem; }
+#te-pasa .dots { gap: 0.35rem; }
+#te-pasa .dot { width: 1.6rem; height: 3px; border: 0; border-radius: 0; background: var(--line); }
+#te-pasa .dot[aria-current="true"] { background: var(--ink); }
+#te-pasa .dot::after { display: none; }
+
+/* Cierre: banda azul con una frase y el botón a la derecha. */
+.closing { min-height: clamp(14rem, 30vw, 22rem); align-content: end; align-items: end; }
+.closing-text { grid-column: 1 / 6; font-family: var(--f-display); font-size: clamp(1.4rem, 2.6vw, 2.3rem); line-height: 1.15; max-width: none; }
+.closing .btn-line { grid-column: 6 / 9; justify-self: end; }
+
+/* ---------- Siguiente pestaña (como "Next Project →") ---------- */
+.next-tab { border-top: 1px solid var(--line); padding-block: 1.6rem; }
+.next-tab a { font-family: var(--f-display); font-weight: 400; font-size: clamp(1.1rem, 1.8vw, 1.5rem); }
+.next-tab a span { text-decoration: none; }
+.next-tab a:hover span { text-decoration: underline; text-decoration-color: var(--brand); text-decoration-thickness: 2px; text-underline-offset: 5px; }
+#inicio > .next-tab { margin-top: 0; }
+
+/* ---------- Pie negro con el logo grande ---------- */
+footer.foot { max-width: none; margin: 0; padding: 0; background: #000; color: #fff; font-size: 0.85rem; border-top: 1px solid #000; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) footer.foot { border-top-color: #2a2a2a; } }
+:root[data-theme="dark"] footer.foot { border-top-color: #2a2a2a; }
+.foot-grid { max-width: var(--grid-max); margin: 0 auto; padding: clamp(2.5rem, 5vw, 4rem) var(--m) clamp(1.5rem, 3vw, 2.5rem);
+  display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); grid-template-rows: auto 1fr; column-gap: var(--g); row-gap: 2.5rem; min-height: clamp(18rem, 32vw, 26rem); }
+.foot-nav { grid-column: 1 / 4; grid-row: 1; display: grid; grid-template-columns: repeat(2, max-content); gap: 0.45rem 2.5rem; font-family: var(--f-display); }
+.foot-nav a { color: #fff; text-decoration: none; }
+.foot-nav a:hover { text-decoration: underline; text-decoration-color: var(--brand); text-underline-offset: 4px; }
+.foot-nav a::after { display: none; }
+@media (hover: hover) { .foot-nav a:hover { transform: none; } }
+.foot-legal { grid-column: 1 / 5; grid-row: 2; align-self: end; display: flex; flex-direction: column; gap: 0.5rem; color: rgba(255, 255, 255, 0.72); }
+.foot-legal p { max-width: 52ch; }
+.foot-logo { grid-column: 5 / 9; grid-row: 1 / 3; align-self: end; justify-self: end; width: 100%; max-width: 34rem; color: #fff; display: block; }
+.foot-logo-svg { display: block; width: 100%; height: auto; }
+.foot-logo::after { display: none; }
+@media (hover: hover) { .foot-logo:hover { transform: none; } }
+
+/* ---------- Pantallas angostas: una columna ---------- */
+@media (max-width: 860px) {
+  .band-grid > *, .split-head > *, .split-head h2, .split-head .split-text, #te-pasa .behind > *, #te-pasa .behind b, #te-pasa .behind-body, #te-pasa .quote,
+  .hero .hero-title, .hero-intro, .hero-caption, .hero-actions, .closing-text, .closing .btn-line,
+  .foot-nav, .foot-legal, .foot-logo { grid-column: 1 / -1; grid-row: auto; }
+  .hero-grid { grid-template-rows: none; align-content: space-between; }
+  .hero-actions { order: 3; }
+  .hero-caption { order: 4; }
+  .closing .btn-line { justify-self: start; }
+  #tres-formas .lines { grid-template-columns: 1fr; }
+  .tile { aspect-ratio: 16 / 9; }
+  .tile-num { font-size: clamp(6rem, 30vw, 10rem); }
+  .foot-grid { grid-template-rows: none; }
+  .foot-logo { justify-self: start; max-width: 22rem; }
+}
