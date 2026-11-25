@@ -477,3 +477,8 @@ html.calm .m-rv, html.calm .m-split .mw > span { opacity: 1; translate: none; }
   #tres-formas .ways { grid-template-columns: minmax(0, 1fr); }
   .way-card { aspect-ratio: auto; min-height: 15rem; }
 }
+
+/* Letras por delante del resaltado naranja (la q y la y no quedan tapadas) */
+#inicio #inicio-hero .hero-title { position: relative; isolation: isolate; }
+#inicio-hero .hero-title em { position: relative; z-index: -1; }
+#inicio-hero .hero-title em .rl, #inicio-hero .hero-title em .rw { position: relative; z-index: 1; }
