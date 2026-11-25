@@ -13,7 +13,7 @@
   const IO = "IntersectionObserver" in window;
 
   /* 1. Títulos: cada palabra en una máscara */
-  const TITLES = ".hero-title, #que-es h1, .split-head h2, .band-pad > .lead > h2, .band-pad > .lead > h3, #tres-conceptos h2, #mitos-band h2, .closing-text";
+  const TITLES = "#que-es h1, .split-head h2, .band-pad > .lead > h2, .band-pad > .lead > h3, #tres-conceptos h2, #mitos-band h2, .closing-text";
   const split = (el) => {
     let i = 0;
     const walk = (node) => {
@@ -75,7 +75,7 @@
   document.body.appendChild(up);
 
   /* 4. Paralaje de portadas */
-  const PARA = $$(".hero-title, #que-es h1");
+  const PARA = $$("#que-es h1");
   let ticking = false;
   const onScroll = () => {
     ticking = false;
@@ -88,4 +88,64 @@
   addEventListener("resize", onScroll);
   addEventListener("hashchange", () => requestAnimationFrame(onScroll));
   onScroll();
+
+  /* 6. Título del Inicio que "se lee": arranca en letra fina y cada letra se va
+     resaltando (pasa a la Unpovdiferente gruesa) una por una, como si alguien lo leyera.
+     Cada palabra reserva el ancho de su versión gruesa para que las líneas no salten. */
+  const hero = document.querySelector(".hero-title");
+  if (hero) {
+    const letters = [], words = [];
+    const walkR = (node) => {
+      Array.from(node.childNodes).forEach((n) => {
+        if (n.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          n.nodeValue.split(/(\s+)/).forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const w = document.createElement("span"); w.className = "rw"; words.push(w);
+            Array.from(p).forEach((ch) => { const l = document.createElement("span"); l.className = "rl"; l.textContent = ch; letters.push(l); w.appendChild(l); });
+            frag.appendChild(w);
+          });
+          n.parentNode.replaceChild(frag, n);
+        } else if (n.nodeType === 1) walkR(n);
+      });
+    };
+    hero.setAttribute("aria-label", hero.textContent.replace(/\s+/g, " ").trim());
+    walkR(hero);
+    words.forEach((w) => w.setAttribute("aria-hidden", "true"));
+    hero.classList.add("m-read");
+    const measure = () => {
+      const on = letters.map((l) => l.classList.contains("on"));
+      words.forEach((w) => { w.style.width = ""; w.style.height = ""; });
+      const size = () => words.map((w) => { const r = w.getBoundingClientRect(); return [r.width, r.height]; });
+      letters.forEach((l) => l.classList.remove("on"));
+      const thin = size();
+      letters.forEach((l) => l.classList.add("on"));
+      const bold = size();
+      words.forEach((w, i) => {
+        w.style.width = Math.max(thin[i][0], bold[i][0]).toFixed(2) + "px";
+        w.style.height = Math.max(thin[i][1], bold[i][1]).toFixed(2) + "px";
+      });
+      letters.forEach((l, i) => l.classList.toggle("on", on[i]));
+    };
+    let timer = null, wait = null;
+    const read = () => {
+      clearInterval(timer); clearTimeout(wait);
+      if (calm()) { letters.forEach((l) => l.classList.add("on")); words.forEach((w) => { w.style.width = ""; w.style.height = ""; }); return; }
+      measure();
+      letters.forEach((l) => l.classList.remove("on"));
+      let i = 0;
+      wait = setTimeout(() => {
+        timer = setInterval(() => {
+          /* al terminar, el título vuelve a su armado normal (sin anchos reservados) */
+          if (i >= letters.length) { clearInterval(timer); words.forEach((w) => (w.style.width = "")); return; }
+          letters[i++].classList.add("on");
+        }, 55);
+      }, 500);
+    };
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(read);
+    let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (words[0].style.width) measure(); }, 150); });
+    /* volver a leerlo cada vez que se entra al Inicio */
+    addEventListener("hashchange", () => { if (!location.hash || location.hash === "#inicio") read(); });
+  }
 })();

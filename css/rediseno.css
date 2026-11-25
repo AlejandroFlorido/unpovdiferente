@@ -392,3 +392,10 @@ footer.foot { max-width: none; margin: 0; padding: 0; background: #000; color: #
 .m-up::after { display: none; }
 html.calm .m-rv, html.calm .m-split .mw > span { opacity: 1; translate: none; }
 @media print { .m-progress, .m-up { display: none; } }
+
+/* Título del Inicio que "se lee" (js/movimiento.js, pedido de Ale con referencia) */
+.m-read .rw { display: inline-block; white-space: nowrap; text-align: left; vertical-align: top; }
+.m-read .rl { display: inline-block; font-family: var(--f-display); font-weight: 300; font-size: 0.9em; letter-spacing: -0.03em; }
+.m-read .rl.on { font-size: 1em; }
+.m-read .rl.on { font-family: var(--f-title); font-weight: 600; letter-spacing: -0.02em; animation: m-hl 0.32s var(--m-ease); }
+@keyframes m-hl { from { transform: scale(1.18) translateY(-0.04em); } to { transform: none; } }
