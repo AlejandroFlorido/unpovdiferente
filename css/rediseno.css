@@ -263,3 +263,48 @@ footer.foot { max-width: none; margin: 0; padding: 0; background: #000; color: #
 #inicio .hero-intro p { font-size: clamp(1.05rem, 1.4vw, 1.3rem); line-height: 1.45; max-width: 46ch; color: var(--muted); text-wrap: pretty; }
 #inicio .hero-actions { order: 3; flex-direction: row; flex-wrap: wrap; justify-content: center; width: auto; align-self: center; margin-top: 0.5rem; }
 #inicio .hero-actions .btn-line { width: min(100%, 16.5rem); min-width: 0; }
+
+/* =====================================================================
+   Herramientas (con Consignas adentro), Imprimibles, Docentes, Apoyo (con Contacto) y Equipo:
+   la misma estructura que Entender. Cada parte es una banda a todo el ancho que alterna blanco y gris;
+   el encabezado de cada parte va partido: título a la izquierda, bajada a la derecha.
+   ===================================================================== */
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) { gap: 0; }
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) > .band-pad { display: flex; flex-direction: column; gap: clamp(1.5rem, 3vw, 2.5rem); }
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) > .next-tab { margin-top: 0; }
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) .band-pad > .lead {
+  display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: var(--g); row-gap: 0.75rem; align-items: end; text-align: left; }
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) .band-pad > .lead > * { min-width: 0; }
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) .band-pad > .lead > .eyebrow { grid-column: 1 / -1; color: var(--muted); font-weight: 400; }
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) .band-pad > .lead > :is(h2, h3) { grid-column: 1 / 6; font-size: calc(clamp(1.9rem, 3.4vw, 3.1rem) + 4pt); }
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) .band-pad > .lead > p { grid-column: 6 / 9; font-family: var(--f-display); font-size: clamp(1rem, 1.25vw, 1.2rem); line-height: 1.4; color: var(--muted); max-width: none; }
+/* Sobre gris, las placas van en blanco */
+.band-gray :is(.panel, .myth, .area, .tp-card, .person:not(.dev-card)) { background: var(--surface); }
+.band-pad .panel { border-color: var(--line); }
+
+/* Herramientas: el traductor arranca la pestaña; las herramientas de organizar, al final */
+#herramientas .subtabs { gap: 0.5rem; }
+#herramientas .subtab { background: var(--btn-face); border: 1px solid var(--btn-edge); box-shadow: inset 0 1px 0 var(--btn-hi), 0 1px 2px var(--btn-drop); border-radius: 3px; }
+#herramientas .subtab[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); box-shadow: none; }
+#herramientas .subtab[aria-selected="true"] span { color: inherit; opacity: 0.75; }
+
+/* Apoyo: áreas arriba, el formulario de contacto debajo en banda gris */
+#apoyo-areas > .note { margin-top: 0; }
+#contacto.band-gray > .panel { border-top: 1px solid var(--line); }
+
+/* Equipo: tres partes que alternan blanco y gris, alineadas a la izquierda */
+#equipo > .band-pad { min-height: 0; justify-content: flex-start; padding-bottom: clamp(3.5rem, 8vw, 7rem); }
+#equipo .team-list { margin: 0; max-width: 60rem; }
+#equipo .team-list.dos { grid-template-columns: repeat(2, minmax(0, 18rem)); justify-content: start; }
+#equipo .collab-wrap { justify-items: start; }
+
+@media (max-width: 860px) {
+  :is(#herramientas, #descargables, #docentes, #apoyo, #equipo) .band-pad > .lead > :is(*, h2, h3, p, .eyebrow) { grid-column: 1 / -1 !important; }
+}
+@media (max-width: 600px) {
+  #equipo .team-list, #equipo .team-list.dos { grid-template-columns: minmax(0, 1fr); max-width: 22rem; }
+}
+
+/* Primera banda de cada pestaña: menos aire arriba */
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) > .band-pad:first-child { padding-top: clamp(2rem, 4vw, 3.5rem); }
+:is(#herramientas, #descargables, #docentes, #apoyo, #equipo) .lead { align-items: start; }

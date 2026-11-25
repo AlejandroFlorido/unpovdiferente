@@ -12,9 +12,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;500;600;700&display=swap">
 <!-- ?v= obliga al navegador a bajar el CSS y el JS nuevos después de cada cambio: subir el número al editarlos. -->
-<link rel="stylesheet" href="css/estilos.css?v=115">
+<link rel="stylesheet" href="css/estilos.css?v=117">
 <!-- Rediseño inspirado en DoxWorks: grilla, bandas de color y componentes rectos. Va después de estilos.css y lo pisa. -->
-<link rel="stylesheet" href="css/rediseno.css?v=115">
+<link rel="stylesheet" href="css/rediseno.css?v=117">
 
 <!-- Filtro "borroneado" para los óvalos naranjas: ondula el trazo y lo deja con huecos, como marcador seco. -->
 <svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -58,12 +58,10 @@
       <nav class="tabs" aria-label="Secciones">
         <a class="tab" href="#inicio" id="tab-inicio" aria-current="page">Inicio<small>Empezar acá</small></a>
         <a class="tab" href="#entender" id="tab-entender">Entender<small>Informar</small></a>
-        <a class="tab" href="#consignas" id="tab-consignas">Consignas<small>Orientar</small></a>
-        <a class="tab" href="#herramientas" id="tab-herramientas">Herramientas<small>Acompañar</small></a>
+        <a class="tab" href="#herramientas" id="tab-herramientas">Herramientas<small>Orientar y acompañar</small></a>
         <a class="tab" href="#descargables" id="tab-descargables">Imprimibles<small>Para descargar</small></a>
         <a class="tab" href="#docentes" id="tab-docentes">Docentes<small>Comunicar claro</small></a>
-        <a class="tab" href="#apoyo" id="tab-apoyo">Apoyo<small>Áreas pedagógicas</small></a>
-        <a class="tab" href="#contacto" id="tab-contacto">Contacto<small>Psicopedagogía</small></a>
+        <a class="tab" href="#apoyo" id="tab-apoyo">Apoyo<small>Áreas y contacto</small></a>
         <a class="tab" href="#equipo" id="tab-equipo">Equipo<small>Quiénes somos</small></a>
       </nav>
       <button class="tabs-arrow" type="button" id="tabs-next" aria-label="Pestaña siguiente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.8 4.8 C11.9 7.9 14.4 10.4 16.4 12.2 C14.1 14.3 11.6 16.6 8.6 19.4"/><path class="echo" d="M10 6.4 C12.4 8.8 14.4 10.8 15.4 12.4 C13.4 14.2 11.4 16.2 9.6 18"/></svg></button>
@@ -277,56 +275,60 @@
     </div>
   </section>
 
-  <!-- ================= CONSIGNAS ================= -->
-  <section id="consignas">
-    <div class="lead">
-      <span class="eyebrow">02 · Orientar</span>
-      <h2>Traductor de consignas</h2>
-      <p>Pegá la consigna y te la separamos en <b>qué hacer</b> y <b>cómo</b>.</p>
-    </div>
-
-    <div class="grid-2">
-      <div class="panel">
-        <label class="field" for="tr-input">Consigna original <span class="example-tag">Ejemplo</span>
-          <textarea id="tr-input">Realizar una pieza gráfica que comunique el concepto de "identidad barrial", teniendo en cuenta el público adolescente, el uso de tipografía expresiva y una paleta de no más de tres colores. Se entrega en PDF y archivo editable el 20/10. Se evaluará el concepto, la resolución gráfica y la fundamentación.</textarea>
-        </label>
-        <p class="small muted" id="tr-ia-note" hidden>La consigna se manda a una inteligencia artificial para traducirla. No pegues datos personales.</p>
-        <div class="row"><button class="btn" type="button" id="tr-run">Desarmar consigna</button><button class="btn ghost" type="button" id="tr-noai" hidden>Desarmar sin IA</button><span class="tr-status"><span class="ia-loader" id="tr-loader" aria-hidden="true" hidden></span><span class="small muted" id="tr-msg" aria-live="polite"></span></span></div>
-        <div class="tr-guide" id="tr-guide" hidden>
-          <p class="small muted">Si alguna parte quedó mal, tocala y cambiala.</p>
-          <div class="tr-legend" id="tr-legend" aria-hidden="true"></div>
-          <div class="tr-text" id="tr-text" aria-label="Consigna separada en partes"></div>
-          <div class="tr-pick" id="tr-pick" hidden></div>
-        </div>
-      </div>
-      <div class="panel" style="background:transparent;border:0;padding:0">
-        <p class="arrow-down" aria-hidden="true">CONSIGNA DESARMADA</p>
-        <div class="tp-card" id="tr-card" aria-live="polite"></div>
-        <div class="row">
-          <button class="btn ghost" type="button" id="tr-copy">Copiar como texto</button>
-          <button class="btn ghost" type="button" id="tr-toplan">Pasar a "Dividir la entrega"</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="lead map-lead">
-      <h2>Mapa de la cursada</h2>
-      <p class="small muted">Una materia no es solo "clase, TP, entrega". Marcá en qué punto estás para ver qué sigue.</p>
-    </div>
-    <div class="panel">
-      <div class="map" id="map" role="list"></div>
-      <div class="map-detail" id="map-detail" aria-live="polite"></div>
-    </div>
-
-  </section>
-
   <!-- ================= HERRAMIENTAS ================= -->
   <section id="herramientas">
-    <div class="lead">
-      <span class="eyebrow">03 · Acompañar</span>
-      <h2>Herramientas</h2>
-      <p>Elegí una sola. Todo lo que escribas queda guardado en este navegador.</p>
+    <!-- Consignas y Herramientas en una sola pestaña: primero entender la consigna, después organizar el trabajo. -->
+    <div class="band band-pad" id="consignas">
+      <div class="lead">
+        <span class="eyebrow">Paso 1 · Entender la consigna</span>
+        <h2>Traductor de consignas</h2>
+        <p>Pegá la consigna y te la separamos en <b>qué hacer</b> y <b>cómo</b>.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <label class="field" for="tr-input">Consigna original <span class="example-tag">Ejemplo</span>
+            <textarea id="tr-input">Realizar una pieza gráfica que comunique el concepto de "identidad barrial", teniendo en cuenta el público adolescente, el uso de tipografía expresiva y una paleta de no más de tres colores. Se entrega en PDF y archivo editable el 20/10. Se evaluará el concepto, la resolución gráfica y la fundamentación.</textarea>
+          </label>
+          <p class="small muted" id="tr-ia-note" hidden>La consigna se manda a una inteligencia artificial para traducirla. No pegues datos personales.</p>
+          <div class="row"><button class="btn" type="button" id="tr-run">Desarmar consigna</button><button class="btn ghost" type="button" id="tr-noai" hidden>Desarmar sin IA</button><span class="tr-status"><span class="ia-loader" id="tr-loader" aria-hidden="true" hidden></span><span class="small muted" id="tr-msg" aria-live="polite"></span></span></div>
+          <div class="tr-guide" id="tr-guide" hidden>
+            <p class="small muted">Si alguna parte quedó mal, tocala y cambiala.</p>
+            <div class="tr-legend" id="tr-legend" aria-hidden="true"></div>
+            <div class="tr-text" id="tr-text" aria-label="Consigna separada en partes"></div>
+            <div class="tr-pick" id="tr-pick" hidden></div>
+          </div>
+        </div>
+        <div class="panel" style="background:transparent;border:0;padding:0">
+          <p class="arrow-down" aria-hidden="true">CONSIGNA DESARMADA</p>
+          <div class="tp-card" id="tr-card" aria-live="polite"></div>
+          <div class="row">
+            <button class="btn ghost" type="button" id="tr-copy">Copiar como texto</button>
+            <button class="btn ghost" type="button" id="tr-toplan">Pasar a "Dividir la entrega"</button>
+          </div>
+        </div>
+      </div>
+
     </div>
+
+    <div class="band band-pad band-gray" id="mapa-band">
+      <div class="lead map-lead">
+        <h2>Mapa de la cursada</h2>
+        <p class="small muted">Una materia no es solo "clase, TP, entrega". Marcá en qué punto estás para ver qué sigue.</p>
+      </div>
+      <div class="panel">
+        <div class="map" id="map" role="list"></div>
+        <div class="map-detail" id="map-detail" aria-live="polite"></div>
+      </div>
+
+    </div>
+
+    <div class="band band-pad" id="organizar">
+      <div class="lead">
+        <span class="eyebrow">Paso 2 · Organizar el trabajo</span>
+        <h2>Herramientas</h2>
+        <p>Elegí una sola. Todo lo que escribas queda guardado en este navegador.</p>
+      </div>
     <div class="subtabs" role="tablist" aria-label="Herramientas">
       <button class="subtab" role="tab" id="st-dividir" aria-controls="tool-dividir" aria-selected="true">Dividir la entrega<span>El TP es enorme</span></button>
       <button class="subtab" role="tab" id="st-bloques" aria-controls="tool-bloques" aria-selected="false" tabindex="-1">Bloques de estudio<span>Me disperso</span></button>
@@ -384,19 +386,22 @@
         </div>
       </div>
     </div>
+    </div>
   </section>
 
   <!-- ================= DESCARGABLES =================
        Las tarjetas las arma el script desde el arreglo DESCARGABLES (js/app.js). Los PDF van en assets/descargables/
        y las imágenes de vista previa en assets/img/descargables/. -->
   <section id="descargables">
+    <div class="band band-pad" id="dl-top">
     <div class="lead">
       <span class="eyebrow">04 · Llevar</span>
       <h2>Imprimibles</h2>
       <p>Las herramientas en papel, para imprimir, completar a mano y tener a la vista. Tocá una para ver cómo es y descargarla.</p>
     </div>
     <div id="dl-book"></div>
-    <div class="dl-kit">
+    </div>
+    <div class="dl-kit band band-pad band-gray">
       <div class="lead">
         <h3>Kit de herramientas</h3>
         <p>Las fichas de a una: descargá solo la que necesitás.</p>
@@ -407,6 +412,7 @@
 
   <!-- ================= DOCENTES ================= -->
   <section id="docentes">
+    <div class="band band-pad" id="doc-top">
     <div class="lead">
       <span class="eyebrow">Para docentes</span>
       <h2>Consignas que se entienden a la primera</h2>
@@ -449,6 +455,8 @@ Entrega</textarea></label>
       </div>
     </div>
 
+    </div>
+    <div class="band band-pad band-gray" id="doc-tips">
     <div class="lead"><h2>Seis recomendaciones</h2></div>
     <ul class="tips">
       <li><b>Por escrito, además de oral</b><p class="small muted">Lo dicho en clase se pierde fácil. La consigna escrita es el punto de referencia.</p></li>
@@ -458,10 +466,12 @@ Entrega</textarea></label>
       <li><b>Una idea por oración</b><p class="small muted">Evitar consignas con varias tareas encadenadas en un solo párrafo.</p></li>
       <li><b>Un único canal para cambios</b><p class="small muted">Cambios de aula o fecha siempre por el mismo medio y con el mismo código visual.</p></li>
     </ul>
+    </div>
   </section>
 
   <!-- ================= APOYO ================= -->
   <section id="apoyo">
+    <div class="band band-pad" id="apoyo-areas">
     <div class="lead">
       <span class="eyebrow">Áreas pedagógicas</span>
       <h2>A quién podés recurrir en la universidad</h2>
@@ -472,14 +482,15 @@ Entrega</textarea></label>
       <p><b>¿No sabés a cuál ir?</b> Escribí a cualquiera: si no les corresponde, te derivan. Podés armar el mensaje acá abajo y llevarlo escrito.</p>
       <div class="row"><a class="btn second" href="#contacto" data-scroll="contacto">Armar un mensaje</a></div>
     </div>
-  </section>
-<section class="contact" id="contacto" aria-labelledby="ct-title">
-  <div class="panel">
-    <div class="lead">
+    </div>
+
+    <div class="band band-pad band-gray contact" id="contacto" role="region" aria-labelledby="ct-title">
+  <div class="lead">
       <span class="eyebrow">Contacto</span>
       <h2 id="ct-title">Escribirle a un psicopedagogo</h2>
       <p class="small muted">Completá lo que quieras: no hace falta contar todo ni tener un diagnóstico. Este formulario no envía nada por sí solo: te arma el mensaje para que lo mandes desde tu correo o lo copies. El borrador queda guardado solo en tu navegador.</p>
     </div>
+  <div class="panel">
     <div class="grid-2">
       <form id="ct-form" style="display:flex;flex-direction:column;gap:1.25rem;min-width:0" novalidate>
         <label class="field" for="ct-area">¿A qué área?<select id="ct-area"></select></label>
@@ -517,11 +528,12 @@ Entrega</textarea></label>
       </div>
     </div>
   </div>
-</section>
+    </div>
 
+  </section>
 <!-- ================= EQUIPO ================= -->
 <section class="team" id="equipo" aria-labelledby="eq-title">
-  <div class="screen" id="quienes">
+  <div class="screen band band-pad" id="quienes">
     <div class="lead">
       <span class="eyebrow">Equipo</span>
       <h2 id="eq-title">Quiénes hacemos unpovdiferente</h2>
@@ -534,7 +546,7 @@ Entrega</textarea></label>
     <button class="scroll-cue" type="button" data-cue="colaboradores">Colaboradores <span aria-hidden="true">↓</span></button>
   </div>
 
-  <div class="screen" id="colaboradores">
+  <div class="screen band band-pad band-gray" id="colaboradores">
     <button class="scroll-cue up" type="button" data-cue="quienes"><span aria-hidden="true">↑</span> Quiénes hacemos unpovdiferente</button>
     <div class="lead">
       <span class="eyebrow">Acompañan</span>
@@ -566,7 +578,7 @@ Entrega</textarea></label>
     <button class="scroll-cue" type="button" data-cue="desarrolladores">Desarrolladores <span aria-hidden="true">↓</span></button>
   </div>
 
-  <div class="screen last" id="desarrolladores">
+  <div class="screen last band band-pad" id="desarrolladores">
     <button class="scroll-cue up" type="button" data-cue="colaboradores"><span aria-hidden="true">↑</span> Colaboradores</button>
     <div class="lead">
       <span class="eyebrow">Equipo web</span>
@@ -636,12 +648,10 @@ Entrega</textarea></label>
     <nav class="foot-nav" aria-label="Secciones (pie)">
       <a href="#inicio" data-go="inicio">Inicio</a>
       <a href="#entender" data-go="entender">Entender</a>
-      <a href="#consignas" data-go="consignas">Consignas</a>
       <a href="#herramientas" data-go="herramientas">Herramientas</a>
       <a href="#descargables" data-go="descargables">Imprimibles</a>
       <a href="#docentes" data-go="docentes">Docentes</a>
       <a href="#apoyo" data-go="apoyo">Apoyo</a>
-      <a href="#contacto" data-go="contacto">Contacto</a>
       <a href="#equipo" data-go="equipo">Equipo</a>
     </nav>
     <div class="foot-legal">
@@ -682,4 +692,4 @@ Entrega</textarea></label>
     <p class="dl-tip"><b>Recomendación:</b> si querés más durabilidad, podés agregarle a la portada un laminado o una tapa transparente.</p>
   </div>
 </template>
-<script src="js/app.js?v=115"></script>
+<script src="js/app.js?v=117"></script>
