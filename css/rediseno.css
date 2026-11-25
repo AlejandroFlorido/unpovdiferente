@@ -361,3 +361,9 @@ footer.foot { max-width: none; margin: 0; padding: 0; background: #000; color: #
 .dl-arrow::before, .concept-back::before { display: none; }
 .dl-arrow svg .echo, .concept-back svg .echo { display: none; }
 .concept-back { background: var(--brand); color: #000; }
+/* Herramientas e Imprimibles en azulcito (pedido de Ale) */
+:root { --pill-blue: #CFDDFF; --pill-blue-on: #A9C2FF; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --pill-blue: #1B2A55; --pill-blue-on: #26408A; } }
+:root[data-theme="dark"] { --pill-blue: #1B2A55; --pill-blue-on: #26408A; }
+:is(#tab-herramientas, #tab-descargables) { background: var(--pill-blue); border-color: var(--pill-blue); }
+:is(#tab-herramientas, #tab-descargables)[aria-current] { background: var(--pill-blue-on); border-color: #1D58FE; }
