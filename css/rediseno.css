@@ -490,7 +490,7 @@ html.calm .m-rv, html.calm .m-split .mw > span { opacity: 1; translate: none; }
 #te-pasa .quote .hl.on { background-size: 100% 100%; }
 html.calm #te-pasa .quote .hl { transition: none; }
 
-/* Botón "Volver a ..." al costado de las pestañas: naranja, el de más peso cuando aparece */
+/* Botón "Volver atrás" al costado de las pestañas: naranja, el de más peso cuando aparece */
 .tab-back { flex: none; display: inline-flex; align-items: center; gap: 0.35rem; font: inherit; font-family: var(--f-display); font-size: 0.92rem; line-height: 1.2;
   padding: 0.32rem 0.9rem 0.32rem 0.65rem; border-radius: 999px; border: 1px solid var(--brand); background: var(--brand); color: #fff; cursor: pointer; white-space: nowrap; }
 .tab-back[hidden] { display: none; }

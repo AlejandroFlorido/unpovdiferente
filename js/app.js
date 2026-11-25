@@ -308,7 +308,7 @@
   function updateBack() {
     const top = tabTrail[tabTrail.length - 1];
     backBtn.hidden = !top;
-    if (top) backBtn.querySelector("span").textContent = "Volver a " + mainTabs[sectionIds.indexOf(top.tab)].firstChild.textContent.trim();
+    if (top) backBtn.setAttribute("aria-label", "Volver atrás, a " + mainTabs[sectionIds.indexOf(top.tab)].firstChild.textContent.trim());
   }
   backBtn.addEventListener("click", () => { const top = tabTrail[tabTrail.length - 1]; if (top) goTab(top.tab, true); });
   mainTabs.forEach((t) => t.addEventListener("click", (e) => {
