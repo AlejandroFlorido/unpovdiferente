@@ -274,6 +274,7 @@
     const part = TAB_ALIAS[id] && id !== "consignas" ? id : null;
     if (TAB_ALIAS[id]) id = TAB_ALIAS[id];
     if (!sectionIds.includes(id)) return;
+    const leftY = window.scrollY; // antes de ocultar la pestaña actual (al ocultarla, el desplazamiento se achica)
     sections.forEach((sec) => { sec.hidden = sec.id !== id; sec.classList.remove("entering"); });
     // La transición solo corre al cambiar de pestaña (no al cargar) y nunca con "Sin animaciones".
     if (currentTab && currentTab !== id && !isCalm()) {
@@ -282,7 +283,18 @@
       sec.classList.add("entering");
     }
     markTab(id);
+    // Historial propio para el botón "Volver": guarda la pestaña de la que salís y hasta dónde habías leído.
+    // Si volvés a la pestaña anterior (con el botón, con Atrás del navegador o desde las pestañas), retoma ese lugar.
+    let backY = null;
+    if (currentTab && currentTab !== id) {
+      const top = tabTrail[tabTrail.length - 1];
+      if (top && top.tab === id) { tabTrail.pop(); backY = top.y; }
+      else { tabTrail.push({ tab: currentTab, y: leftY }); if (tabTrail.length > 20) tabTrail.shift(); }
+      updateBack();
+    }
     window.scrollTo(0, 0);
+    // La pestaña termina de armarse en los primeros cuadros: se insiste hasta llegar al lugar (máx. ~0,6 s).
+    if (backY !== null) { const t0 = performance.now(); const to = () => { window.scrollTo({ top: backY, behavior: "instant" }); if (Math.abs(window.scrollY - backY) > 2 && performance.now() - t0 < 600) requestAnimationFrame(to); }; requestAnimationFrame(to); }
     if (focus) document.getElementById(id).focus({ preventScroll: true });
     if (currentTab && currentTab !== id && location.hash.slice(1) !== id) history.pushState(null, "", "#" + id);
     if (currentTab !== id) stats.tab(id);
@@ -291,6 +303,14 @@
     if (part) goPart(part);
   }
   const baseTitle = document.title;
+  const tabTrail = [];
+  const backBtn = $("#tab-back");
+  function updateBack() {
+    const top = tabTrail[tabTrail.length - 1];
+    backBtn.hidden = !top;
+    if (top) backBtn.setAttribute("aria-label", "Volver atrás, a " + mainTabs[sectionIds.indexOf(top.tab)].firstChild.textContent.trim());
+  }
+  backBtn.addEventListener("click", () => { const top = tabTrail[tabTrail.length - 1]; if (top) goTab(top.tab, true); });
   mainTabs.forEach((t) => t.addEventListener("click", (e) => {
     e.preventDefault();
     goTab(t.getAttribute("href").slice(1), true);
