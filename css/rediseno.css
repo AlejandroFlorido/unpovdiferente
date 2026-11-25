@@ -251,3 +251,15 @@ footer.foot { max-width: none; margin: 0; padding: 0; background: #000; color: #
 @media (max-width: 860px) {
   #entender > .note.band-blue p, #entender > .note.band-blue .row { grid-column: 1 / -1; justify-self: start; }
 }
+
+/* Portada del Inicio centrada, con la misma estructura que "¿Qué es el TDAH?":
+   etiqueta gris, título grande, bajada en Lexend con ancho de lectura parejo y los botones debajo. */
+#inicio .hero-grid { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  gap: clamp(1.1rem, 2.2vw, 1.6rem); width: min(100%, 60rem); margin-inline: auto; }
+#inicio .hero-grid > * { grid-column: auto; grid-row: auto; }
+#inicio .hero-caption { order: 0; color: var(--muted); font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; align-self: center; }
+#inicio .hero .hero-title { order: 1; max-width: 16ch; }
+#inicio .hero-intro { order: 2; align-items: center; padding: 0; }
+#inicio .hero-intro p { font-size: clamp(1.05rem, 1.4vw, 1.3rem); line-height: 1.45; max-width: 46ch; color: var(--muted); text-wrap: pretty; }
+#inicio .hero-actions { order: 3; flex-direction: row; flex-wrap: wrap; justify-content: center; width: auto; align-self: center; margin-top: 0.5rem; }
+#inicio .hero-actions .btn-line { width: min(100%, 16.5rem); min-width: 0; }
