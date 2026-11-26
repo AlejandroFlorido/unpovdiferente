@@ -416,7 +416,7 @@
     $("#car-title").textContent = "Qué puede haber detrás: " + s.t.toLowerCase();
     $("#car-text").textContent = s.x;
     const a = $("#car-link");
-    a.textContent = s.l[0] + " →";
+    $(".button-text", a).textContent = s.l[0];
     a.dataset.go = s.l[1];
     if (s.l[2]) a.dataset.sub = s.l[2]; else delete a.dataset.sub;
     $$(".dot", dotsEl).forEach((d, i) => d.setAttribute("aria-current", i === car));
