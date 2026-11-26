@@ -530,3 +530,9 @@ html.calm #te-pasa .quote .hl { transition: none; }
   .prefs-menu.open { display: flex; }
   .prefs-menu .chip-btn { width: 100%; text-align: left; font-size: 0.9rem; padding: 0.55rem 0.85rem; }
 }
+
+/* Celular: "Te ayudamos a empezar." en su propio bloque naranja, debajo del texto blanco (pedido de Ale) */
+@media (max-width: 600px) {
+  #inicio #inicio-hero .hero-title { max-width: none; }
+  #inicio-hero .hero-title em { display: block; width: fit-content; margin: 0.15em auto 0; padding: 0.04em 0.22em 0.1em; }
+}
