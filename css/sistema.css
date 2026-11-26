@@ -95,7 +95,7 @@ p, li { text-wrap: pretty; }
 .brand-logo { height: 38px; }
 .tabs-bar { justify-content: center; }
 /* aire arriba y abajo: al pasar el mouse la pestaña crece 4% y no se tiene que recortar */
-.tabs { gap: 0.4rem; padding: 0.35rem 0.35rem; margin: 0; flex-wrap: nowrap; }
+.tabs, .tabs-bar .tabs { gap: 0.4rem; padding: 0.35rem 0.35rem; margin: 0; flex-wrap: nowrap; }
 /* Pestañas: mismo diseño de antes (píldora con contorno azul, la activa azul llena), pedido de Ale */
 .tab { min-height: 36px; display: inline-flex; align-items: center; }
 /* Volver, Aa, modo oscuro y Menú: grupo de la derecha */
@@ -267,3 +267,7 @@ html.calm .way-card, html.calm .way-card:hover { transition: none; transform: no
 
 /* Equipo en celular: la lista ocupa todo el ancho disponible (si no, las tarjetas de desarrolladores, que no tienen foto, quedaban con ancho 0) */
 #equipo .team-list { width: 100%; }
+
+/* Pestañas: el brillo del hover queda adentro de la píldora (antes asomaba 4px arriba y abajo y afinaba el borde) */
+.tab::after { inset: 0 !important; }
+.tab { overflow: hidden; }
