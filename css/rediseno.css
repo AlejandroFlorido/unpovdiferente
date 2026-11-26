@@ -503,3 +503,16 @@ html.calm #te-pasa .quote .hl { transition: none; }
 .tab-back:focus-visible { outline: 3px solid #1D58FE; outline-offset: 2px; }
 .tabs-bar { gap: 0.5rem; }
 .drop.is-closing summary::after { transform: none; }
+
+/* Celular: Entender (pedido de Ale, iPhone 13) */
+@container (max-width: 28rem) {
+  /* los mapas NT/ND en lista: el texto usa todo el ancho que queda (antes heredaba el % del mapa de escritorio y quedaba una palabra por renglón) */
+  .pmap.pmap .pstep { grid-template-columns: 2.2rem 5rem minmax(0, 1fr); }
+  .pmap.pmap .pstep > .pcap { width: auto; text-align: left; }
+}
+@media (max-width: 600px) {
+  /* ¿Qué es el TDAH?: sin el hueco vacío abajo y el texto alineado a la izquierda, más fácil de leer */
+  #entender #que-es.screen { min-height: 0; padding-block: 2rem 3rem; }
+  #que-es .lead p:not(.source) { text-align: left; }
+  #entender-tdah { padding-top: 2rem; }
+}
