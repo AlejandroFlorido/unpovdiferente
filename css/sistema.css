@@ -263,3 +263,6 @@ html.calm .way-card, html.calm .way-card:hover { transition: none; transform: no
   :root:not([data-theme="light"]) :is(#tres-formas .ways-head h2 em, .arrow-down, #inicio-docentes .band-label) { color: #7C9BFF !important; }
 }
 :root[data-theme="dark"] :is(#tres-formas .ways-head h2 em, .arrow-down, #inicio-docentes .band-label) { color: #7C9BFF !important; }
+
+/* Equipo en celular: la lista ocupa todo el ancho disponible (si no, las tarjetas de desarrolladores, que no tienen foto, quedaban con ancho 0) */
+#equipo .team-list { width: 100%; }
