@@ -570,3 +570,11 @@ html.calm #te-pasa .quote .hl { transition: none; }
 .leer-mas:hover .icon.arrow, .leer-mas:focus-visible .icon.arrow { background: #000; transform: translateX(1rem); }
 .leer-mas:hover .button-text, .leer-mas:focus-visible .button-text { color: #000; }
 .leer-mas:focus-visible { outline: 3px solid var(--focus, #1D58FE); outline-offset: 3px; border-radius: 1.625rem; }
+
+/* Entender: más aire entre secciones, como las bandas del Inicio (pedido de Ale, a prueba) */
+#entender > :is(#entender-tdah, #tres-conceptos, #nt-vs-nd) { padding-block: clamp(4.5rem, 9vw, 7.5rem); gap: clamp(2.25rem, 4vw, 3.5rem); }
+#entender > #tres-conceptos { min-height: clamp(26rem, 42vw, 34rem); justify-content: center; }
+@media (max-width: 600px) {
+  #entender > :is(#entender-tdah, #tres-conceptos, #nt-vs-nd) { padding-block: 4rem; }
+  #entender > #tres-conceptos { min-height: 0; }
+}
