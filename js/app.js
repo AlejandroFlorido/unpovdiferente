@@ -1578,3 +1578,13 @@
   // El navegador salta solo hasta el #ancla al cargar: la pestaña tiene que arrancar desde arriba.
   if (hash) window.addEventListener("load", () => window.scrollTo(0, 0));
 })();
+
+// Celular: botón "Aa" que abre y cierra el menú con los ajustes de lectura
+(() => {
+  const btn = document.getElementById("prefs-toggle"), menu = document.getElementById("prefs-menu");
+  if (!btn || !menu) return;
+  const set = (open) => { menu.classList.toggle("open", open); btn.setAttribute("aria-expanded", String(open)); };
+  btn.addEventListener("click", (e) => { e.stopPropagation(); set(!menu.classList.contains("open")); });
+  document.addEventListener("click", (e) => { if (!menu.contains(e.target) && e.target !== btn) set(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && menu.classList.contains("open")) { set(false); btn.focus(); } });
+})();

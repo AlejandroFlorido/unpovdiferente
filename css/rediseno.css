@@ -516,3 +516,17 @@ html.calm #te-pasa .quote .hl { transition: none; }
   #que-es .lead p:not(.source) { text-align: left; }
   #entender-tdah { padding-top: 2rem; }
 }
+
+/* Celular: los ajustes de lectura van dentro del botón "Aa" (el modo oscuro queda a la vista) */
+.prefs-toggle { display: none; }
+.prefs-menu { display: contents; }
+@media (max-width: 600px) {
+  .prefs { position: relative; flex-wrap: nowrap; }
+  .prefs-toggle { display: inline-flex; align-items: center; justify-content: center; min-width: 2.6rem; font-size: 0.95rem; font-weight: 600; }
+  .prefs-toggle[aria-expanded="true"] { background: var(--pill-tint); border-color: var(--pill-tint); }
+  .prefs-menu { display: none; position: absolute; top: calc(100% + 0.5rem); right: 0; z-index: 60;
+    flex-direction: column; align-items: stretch; gap: 0.4rem; padding: 0.6rem; min-width: 12rem;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.35); }
+  .prefs-menu.open { display: flex; }
+  .prefs-menu .chip-btn { width: 100%; text-align: left; font-size: 0.9rem; padding: 0.55rem 0.85rem; }
+}
