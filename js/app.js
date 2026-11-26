@@ -887,7 +887,6 @@
   const mkStages = () => BASE.map((t) => ({ text: t, done: false, date: "" }));
   let dv = store.get("dv", null);
   if (!dv) {
-    ["#dv-title", "#dv-due"].forEach((s) => $(s).classList.add("is-example")); // datos de ejemplo hasta que la persona escriba
     dv = { title: "TP 03 · Pieza editorial", due: iso(addDays(today(), 12)), stages: mkStages() };
     dv.stages[0].done = true; dv.stages[1].done = true;
   }
@@ -1590,5 +1589,28 @@
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && menu.classList.contains("open")) { set(false); btn.focus(); } });
 })();
 
-// Campos con texto de ejemplo: se ven en gris clarito hasta que la persona escribe algo propio
-document.addEventListener("input", (e) => { if (e.target.classList && e.target.classList.contains("is-example")) e.target.classList.remove("is-example"); }, true);
+// Ejemplos: mientras un campo tenga el texto de ejemplo que trae la página, el campo y su resultado
+// se ven en gris clarito; cuando la persona escribe lo suyo, pasan al color normal (también al volver a entrar).
+(() => {
+  const DV_DEMO = "TP 03 · Pieza editorial";
+  const isDemo = (el) => el && el.value === (el.id === "dv-title" || el.id === "dv-due" ? el.dataset.demo : el.defaultValue);
+  const sync = () => {
+    const tr = document.getElementById("tr-input"), dvT = document.getElementById("dv-title"), dvD = document.getElementById("dv-due");
+    if (dvT && dvT.dataset.demo == null && dvT.value === DV_DEMO) { dvT.dataset.demo = DV_DEMO; if (dvD) dvD.dataset.demo = dvD.value; }
+    const dc = [...document.querySelectorAll('[id^="dc-"]')].filter((el) => /^(INPUT|TEXTAREA)$/.test(el.tagName));
+    const groups = [
+      [[tr], ["#tr-card", "#tr-text"]],
+      [[dvT, dvD], ["#dv-list", "#dv-status"]],
+      [dc, ["#dc-card"]],
+    ];
+    groups.forEach(([fields, outs]) => {
+      fields = fields.filter(Boolean);
+      fields.forEach((f) => f.classList.toggle("is-example", isDemo(f)));
+      const demo = fields.length > 0 && fields.every(isDemo);
+      outs.forEach((s) => document.querySelector(s)?.classList.toggle("is-example-out", demo));
+    });
+  };
+  document.addEventListener("input", sync, true);
+  ["#tr-card", "#tr-text", "#dv-list", "#dc-card"].forEach((s) => { const el = document.querySelector(s); if (el) new MutationObserver(sync).observe(el, { childList: true }); });
+  sync();
+})();

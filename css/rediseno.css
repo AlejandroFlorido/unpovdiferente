@@ -593,3 +593,5 @@ html.calm #te-pasa .quote .hl { transition: none; }
 
 /* Texto de ejemplo en los campos (Herramientas, Docentes): gris más transparente para que se note que es un ejemplo */
 :is(input, textarea).is-example { color: color-mix(in srgb, var(--ink) 42%, transparent); }
+/* y el resultado armado con ese ejemplo, igual de clarito */
+.is-example-out { filter: grayscale(1) opacity(0.5); }
