@@ -149,6 +149,18 @@
   // el mouse se vuelve a mover, la punta se levanta y la cola recorre el garabato hasta alcanzarla
   // (como un trazo que se termina de dibujar) y, si el mouse se movió, sigue de largo por el rastro nuevo.
   const IDLE_MS = 120, DOODLE_MS = 500, DOODLE_R = 16, DOODLE_PX = 220;
+  // Sobre un fondo azul de la página (el azul de la marca) el trazo se vuelve blanco, para que se vea;
+  // al salir del azul vuelve a ser azul. Se mira el primer fondo con color debajo del puntero.
+  const isBlueBg = (el) => {
+    for (let n = el; n && n.nodeType === 1; n = n.parentElement) {
+      const m = getComputedStyle(n).backgroundColor.match(/[\d.]+/g);
+      if (!m || (m.length > 3 && +m[3] < 0.5)) continue;
+      const [r, g, b] = m.map(Number);
+      return Math.hypot(r - 29, g - 88, b - 254) < 70;
+    }
+    return false;
+  };
+  let onBlue = false;
   let last = null, idleTimer = 0, doodle = null, capPx = TRAIL_PX, lastFrame = performance.now();
   function startDoodle() {
     if (!last || doodle || isCalm()) return;
@@ -167,7 +179,7 @@
     if (Math.hypot(dx, dy) > DOODLE_R) d.dir = Math.atan2(dy, dx) + (Math.random() - 0.5) * 1.2;
     const step = 4 + Math.random() * 4;
     d.px += Math.cos(d.dir) * step; d.py += Math.sin(d.dir) * step;
-    pts.push({ x: d.px, y: d.py, t: now, doodle: true });
+    pts.push({ x: d.px, y: d.py, t: now, doodle: true, white: onBlue });
   }
   const pathLength = (list, from = 0) => {
     let len = 0;
@@ -196,13 +208,17 @@
     let len = 0, from = pts.length - 1;
     while (from > 0 && len < capPx) { len += Math.hypot(pts[from].x - pts[from - 1].x, pts[from].y - pts[from - 1].y); from--; }
     tctx.clearRect(0, 0, innerWidth, innerHeight);
-    tctx.strokeStyle = getComputedStyle(root).getPropertyValue("--brand-2").trim();
+    const blue = getComputedStyle(root).getPropertyValue("--brand-2").trim();
     tctx.lineCap = "round"; tctx.lineJoin = "round";
     tctx.globalAlpha = 0.8; tctx.lineWidth = 3;
     const shown = pts.slice(Math.max(from, 0));
-    if (shown.length > 1) {
+    // El trazo se dibuja por tramos: azul de siempre, o blanco donde el puntero pasaba sobre azul
+    for (let i = 1; i < shown.length;) {
+      const white = shown[i].white;
       tctx.beginPath();
-      shown.forEach((p, i) => (i ? tctx.lineTo(p.x, p.y) : tctx.moveTo(p.x, p.y)));
+      tctx.moveTo(shown[i - 1].x, shown[i - 1].y);
+      while (i < shown.length && shown[i].white === white) { tctx.lineTo(shown[i].x, shown[i].y); i++; }
+      tctx.strokeStyle = white ? "#FFFFFF" : blue;
       tctx.stroke();
     }
     trailRaf = pts.length || doodle ? requestAnimationFrame(drawTrail) : 0;
@@ -212,7 +228,8 @@
     if (e.pointerType === "touch" || isCalm()) return;
     last = { x: e.clientX, y: e.clientY };
     doodle = null; // la punta se levanta del garabato y el trazo sigue con el mouse
-    pts.push({ ...last, t: performance.now() });
+    onBlue = isBlueBg(e.target);
+    pts.push({ ...last, t: performance.now(), white: onBlue });
     if (!trailRaf) trailRaf = requestAnimationFrame(drawTrail);
     clearTimeout(idleTimer);
     idleTimer = setTimeout(startDoodle, IDLE_MS);
