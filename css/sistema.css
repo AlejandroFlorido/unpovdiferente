@@ -2,7 +2,7 @@
    Sistema de diseño unpovdiferente (rediseño general, 2026-11-26).
    Se carga último y ordena todo lo anterior con UN solo sistema:
    - mismos colores de marca (#FF6E2B naranja, #1D58FE azul, texto negro sobre naranja)
-   - mismas fuentes (Unpovdiferente Bold solo en títulos; Lexend / General Sans / Atkinson en el texto)
+   - mismas fuentes (Unpovdiferente Bold solo en títulos; General Sans en todo el texto, pedido de Ale)
    - fondo papel cálido, bandas que alternan papel y gris cálido, tarjetas blancas redondeadas
    - un solo estilo de campo, de tarjeta, de etiqueta (eyebrow) y de foco
    - cabecera en una fila: logo · pestañas · Volver / Aa / modo oscuro (en celular y tablet: botón Menú)
@@ -11,6 +11,10 @@
 
 /* ---------- 1. Tokens ---------- */
 :root {
+  /* Texto general en General Sans (pedido de Ale, 2026-11-26). Lexend queda solo de respaldo para lo que la fuente de títulos no trae (números, guiones). */
+  --f-display: "General Sans", "Segoe UI", system-ui, sans-serif;
+  --f-body: "General Sans", "Segoe UI", system-ui, sans-serif;
+
   --paper: #FBFAF7;           /* fondo general: blanco cálido, menos duro que el #F6F6F6 gris */
   --band-gray: #F1EEE8;       /* banda alternada: gris cálido */
   --bg: var(--paper);

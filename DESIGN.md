@@ -4,7 +4,7 @@ Reglas para que todas las pestañas se vean como una sola web. Los valores viven
 
 ## Lo que no cambia (criterios fijados)
 - Colores de marca: naranja `#FF6E2B`, azul `#1D58FE`. Sobre naranja, texto negro.
-- Títulos (h1–h4) solo en **Unpovdiferente Bold**, +4 pt, interletrado −0.02em. Texto en Lexend / General Sans / Atkinson.
+- Títulos (h1–h4) solo en **Unpovdiferente Bold**, +4 pt, interletrado −0.02em. Todo el texto general en **General Sans** (regular 400 y medium 500).
 - Viñetas garabato (la oficial, vineta-6, en los lugares impares). La flecha (vineta-1) no se usa.
 - Pestañas, modo oscuro, ajustes de lectura (texto, espaciado, sin animaciones), pie en la última pantalla.
 - Botones en píldora.
