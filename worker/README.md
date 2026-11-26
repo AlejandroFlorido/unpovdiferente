@@ -51,6 +51,6 @@ El mismo Worker guarda conteos **anónimos** de uso y los muestra en un panel co
 
 ### Ver el panel
 
-Abrir la dirección del Worker con `/panel` al final: `https://unpov-traductor.floridosalejandro.workers.dev/panel` y poner la clave. No está enlazado desde la web. Muestra visitas, personas nuevas, duración típica, pestañas (vistas, % de visitas que la abrieron, tiempo promedio y total), herramientas, descargas, traductor con IA, ajustes de lectura, por qué pestaña entran, dispositivo, de dónde llegan y hora del día, para 7, 30, 90 días o todo.
+Abrir la dirección del Worker con `/panel` al final: `https://unpov-traductor.floridosalejandro.workers.dev/panel` y poner la clave. No está enlazado desde la web. Muestra visitas, personas nuevas, duración típica, pestañas (vistas, % de visitas que la abrieron, tiempo promedio y total), herramientas, descargas, traductor con IA, ajustes de lectura, por qué pestaña entran, dispositivo, de dónde llegan y hora del día, para 7, 30, 90 días o todo. El botón **Borrar datos** (arriba, junto al modo diurno/nocturno) borra todas las visitas guardadas: pide escribir BORRAR y no se puede deshacer.
 
 Plan gratis de D1: 100.000 filas escritas por día; cada visita usa entre 5 y 30, así que alcanza de sobra.

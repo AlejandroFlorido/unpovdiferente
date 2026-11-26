@@ -196,6 +196,18 @@ export default {
     const path = new URL(request.url).pathname.replace(/\/+$/, "") || "/";
     // Panel y datos de estadísticas: misma dirección del Worker, protegidos por la clave STATS_KEY
     if (path === "/panel" && request.method === "GET") return new Response(PANEL_HTML, { headers: { "content-type": "text/html; charset=utf-8", "x-robots-tag": "noindex", "cache-control": "no-store", "referrer-policy": "no-referrer" } });
+    // Borrar todas las estadísticas: exige la clave y la palabra BORRAR
+    if (path === "/stats/borrar" && request.method === "POST") {
+      const h = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" };
+      const clave = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
+      if (!env.STATS_KEY || !mismaClave(clave, env.STATS_KEY)) return new Response(JSON.stringify({ ok: false, error: "clave" }), { status: 401, headers: h });
+      let conf = ""; try { conf = (await request.json()).confirmar; } catch (e) {}
+      if (conf !== "BORRAR") return new Response(JSON.stringify({ ok: false, error: "confirmar" }), { status: 400, headers: h });
+      if (!env.STATS) return new Response(JSON.stringify({ ok: false, error: "sin base" }), { status: 500, headers: h });
+      await prepararTabla(env.STATS);
+      const r = await env.STATS.prepare("DELETE FROM ev").run();
+      return new Response(JSON.stringify({ ok: true, borradas: r?.meta?.changes ?? null }), { headers: h });
+    }
     if (path === "/stats" && request.method === "GET") {
       const h = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" };
       const clave = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
@@ -276,6 +288,13 @@ const PANEL_HTML = `<!doctype html>
 .theme { flex: none; width: 3.6rem; height: 2rem; padding: 0; position: relative; border: 2px solid var(--brand); background: var(--blue); }
 .theme::after { content: "☀"; position: absolute; top: 50%; left: .2rem; transform: translateY(-50%); width: 1.45rem; height: 1.45rem; border-radius: 50%; background: #fff; color: #000; font-size: .95rem; line-height: 1.45rem; text-align: center; transition: left .2s; }
 .theme[aria-checked="true"]::after { content: "☾"; left: calc(100% - 1.65rem); background: #000; color: #fff; }
+.top-actions { display: flex; gap: .5rem; align-items: center; flex: none; }
+.danger { border-color: #d33; color: #d33; font-size: .85rem; padding: .3rem .8rem; }
+.danger:hover { background: #d33; color: #fff; }
+dialog { border: 2px solid #d33; border-radius: 1rem; background: var(--bg); color: var(--fg); padding: 1.25rem; max-width: min(26rem, calc(100vw - 2rem)); }
+dialog::backdrop { background: rgba(0, 0, 0, .55); }
+dialog h2 { color: #d33; } dialog input { width: 100%; min-width: 0; margin: .5rem 0 .75rem; }
+.danger.solid { background: #d33; color: #fff; } .danger.solid:disabled { opacity: .4; cursor: not-allowed; }
 .tip { position: fixed; z-index: 10; pointer-events: none; background: var(--fg); color: var(--bg); font-size: .82rem; padding: .3rem .55rem; border-radius: .45rem; white-space: nowrap; transform: translate(-50%, calc(-100% - 8px)); }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -311,7 +330,14 @@ th { font-weight: 600; color: var(--muted); font-size: .8rem; } td.num, th.num {
 </head>
 <body>
 <main>
-  <div class="top"><h1>Estadísticas <span>unpovdiferente</span></h1><button class="theme" id="theme" type="button" role="switch" aria-label="Modo oscuro" title="Modo oscuro"></button></div>
+  <div class="top"><h1>Estadísticas <span>unpovdiferente</span></h1><div class="top-actions"><button class="danger" id="wipe" type="button" hidden>Borrar datos</button><button class="theme" id="theme" type="button" role="switch" aria-label="Modo oscuro" title="Modo oscuro"></button></div></div>
+  <dialog id="wipe-d" aria-labelledby="wipe-t">
+    <h2 id="wipe-t">Borrar todas las estadísticas</h2>
+    <p class="small">Se borran todas las visitas guardadas, de todos los períodos. <b>No se puede deshacer.</b> El conteo vuelve a empezar desde cero con las próximas visitas.</p>
+    <label class="small" for="wipe-in">Para confirmar, escribí <b>BORRAR</b>:</label>
+    <input id="wipe-in" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false">
+    <div class="row"><button class="danger solid" id="wipe-ok" type="button" disabled>Borrar todo</button><button type="button" id="wipe-no">Cancelar</button><span class="small err" id="wipe-msg"></span></div>
+  </dialog>
   <p class="muted small">Solo para el equipo. Datos anónimos: no hay nombres, mails ni direcciones, solo visitas contadas.</p>
 
   <form id="login" class="row" hidden>
@@ -414,13 +440,13 @@ th { font-weight: 600; color: var(--muted); font-size: .8rem; } td.num, th.num {
       if (res[1].error === "sin base") { showLogin("La clave está bien, pero falta conectar la base D1 (STATS) al Worker."); return; }
       if (!res[1].ok) { $("#status").textContent = "Error: " + (res[1].error || res[0]); return; }
       if (!Array.isArray(res[1].pestanas)) { showLogin("El Worker todavía responde con la versión vieja. Esperá un minuto y recargá la página."); return; }
-      $("#login").hidden = true; $("#app").hidden = false;
+      $("#login").hidden = true; $("#app").hidden = false; $("#wipe").hidden = false;
       render(res[1]);
       $("#status").textContent = "Actualizado " + new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
     }).catch(function () { $("#status").textContent = "No se pudo conectar."; });
   }
   function showLogin(msg) {
-    $("#app").hidden = true; $("#login").hidden = false; $("#login-msg").textContent = msg || ""; $("#key").focus();
+    $("#app").hidden = true; $("#wipe").hidden = true; $("#login").hidden = false; $("#login-msg").textContent = msg || ""; $("#key").focus();
   }
   $("#login").addEventListener("submit", function (e) {
     e.preventDefault(); key = $("#key").value.trim();
@@ -452,6 +478,19 @@ th { font-weight: 600; color: var(--muted); font-size: .8rem; } td.num, th.num {
   document.addEventListener("pointerover", function (e) { var el = e.target.closest && e.target.closest("[data-tip]"); if (el) showTip(el); else tip.hidden = true; });
   document.addEventListener("pointerdown", function (e) { var el = e.target.closest && e.target.closest("[data-tip]"); if (el) showTip(el); else tip.hidden = true; });
   window.addEventListener("scroll", function () { tip.hidden = true; }, { passive: true });
+  // Borrar datos: hay que escribir BORRAR; el Worker vuelve a pedir la clave y la palabra
+  var wd = $("#wipe-d"), wi = $("#wipe-in"), wok = $("#wipe-ok");
+  $("#wipe").addEventListener("click", function () { wi.value = ""; wok.disabled = true; $("#wipe-msg").textContent = ""; wd.showModal(); wi.focus(); });
+  $("#wipe-no").addEventListener("click", function () { wd.close(); });
+  wi.addEventListener("input", function () { wok.disabled = wi.value.trim().toUpperCase() !== "BORRAR"; });
+  wok.addEventListener("click", function () {
+    wok.disabled = true; $("#wipe-msg").textContent = "Borrando…";
+    fetch("/stats/borrar", { method: "POST", headers: { Authorization: "Bearer " + key, "content-type": "application/json" }, body: JSON.stringify({ confirmar: "BORRAR" }) })
+      .then(function (r) { return r.json(); }).then(function (j) {
+        if (!j.ok) { $("#wipe-msg").textContent = j.error === "clave" ? "Clave incorrecta." : "No se pudo borrar (" + (j.error || "error") + ")."; wok.disabled = false; return; }
+        wd.close(); load(); $("#status").textContent = "Datos borrados.";
+      }).catch(function () { $("#wipe-msg").textContent = "No se pudo conectar."; wok.disabled = false; });
+  });
   if (key) load(); else showLogin();
 })();
 </script>
