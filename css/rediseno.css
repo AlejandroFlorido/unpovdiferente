@@ -374,7 +374,7 @@ footer.foot { max-width: none; margin: 0; padding: 0; background: #000; color: #
 
 /* ---------- Movimiento general (js/movimiento.js) ---------- */
 :root { --m-ease: cubic-bezier(0.23, 1, 0.32, 1); }
-.m-split .mw { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.12em; margin-bottom: -0.12em; }
+.m-split .mw { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.12em; margin-bottom: -0.12em; padding-top: 0.25em; margin-top: -0.25em; } /* arriba deja lugar a los acentos (Qué, Sabés) */
 .m-split .mw > span { display: inline-block; translate: 0 110%; transition: translate 0.7s var(--m-ease); transition-delay: calc(var(--wi, 0) * 45ms); }
 .m-split.m-in .mw > span { translate: none; }
 .m-rv { opacity: 0; translate: 0 22px; transition: opacity 0.6s var(--m-ease), translate 0.6s var(--m-ease), transform 0.25s var(--m-ease);
