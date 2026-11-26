@@ -590,3 +590,6 @@ html.calm #te-pasa .quote .hl { transition: none; }
 @media (max-width: 600px) {
   #entender { --sec-pad: 3.75rem; --sec-gap: 1.75rem; }
 }
+
+/* Texto de ejemplo en los campos (Herramientas, Docentes): gris más transparente para que se note que es un ejemplo */
+:is(input, textarea).is-example { color: color-mix(in srgb, var(--ink) 42%, transparent); }

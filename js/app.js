@@ -887,6 +887,7 @@
   const mkStages = () => BASE.map((t) => ({ text: t, done: false, date: "" }));
   let dv = store.get("dv", null);
   if (!dv) {
+    ["#dv-title", "#dv-due"].forEach((s) => $(s).classList.add("is-example")); // datos de ejemplo hasta que la persona escriba
     dv = { title: "TP 03 · Pieza editorial", due: iso(addDays(today(), 12)), stages: mkStages() };
     dv.stages[0].done = true; dv.stages[1].done = true;
   }
@@ -1588,3 +1589,6 @@
   document.addEventListener("click", (e) => { if (!menu.contains(e.target) && e.target !== btn) set(false); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && menu.classList.contains("open")) { set(false); btn.focus(); } });
 })();
+
+// Campos con texto de ejemplo: se ven en gris clarito hasta que la persona escribe algo propio
+document.addEventListener("input", (e) => { if (e.target.classList && e.target.classList.contains("is-example")) e.target.classList.remove("is-example"); }, true);

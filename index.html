@@ -14,7 +14,7 @@
 <!-- ?v= obliga al navegador a bajar el CSS y el JS nuevos después de cada cambio: subir el número al editarlos. -->
 <link rel="stylesheet" href="css/estilos.css?v=139">
 <!-- Rediseño inspirado en DoxWorks: grilla, bandas de color y componentes rectos. Va después de estilos.css y lo pisa. -->
-<link rel="stylesheet" href="css/rediseno.css?v=149">
+<link rel="stylesheet" href="css/rediseno.css?v=150">
 
 <!-- Filtro "borroneado" para los óvalos naranjas: ondula el trazo y lo deja con huecos, como marcador seco. -->
 <svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -303,7 +303,7 @@
       <div class="grid-2">
         <div class="panel">
           <label class="field" for="tr-input">Consigna original <span class="example-tag">Ejemplo</span>
-            <textarea id="tr-input">Realizar una pieza gráfica que comunique el concepto de "identidad barrial", teniendo en cuenta el público adolescente, el uso de tipografía expresiva y una paleta de no más de tres colores. Se entrega en PDF y archivo editable el 20/10. Se evaluará el concepto, la resolución gráfica y la fundamentación.</textarea>
+            <textarea id="tr-input" class="is-example">Realizar una pieza gráfica que comunique el concepto de "identidad barrial", teniendo en cuenta el público adolescente, el uso de tipografía expresiva y una paleta de no más de tres colores. Se entrega en PDF y archivo editable el 20/10. Se evaluará el concepto, la resolución gráfica y la fundamentación.</textarea>
           </label>
           <p class="small muted" id="tr-ia-note" hidden>La consigna se manda a una inteligencia artificial para traducirla. No pegues datos personales.</p>
           <div class="row"><button class="btn" type="button" id="tr-run">Desarmar consigna</button><button class="btn ghost" type="button" id="tr-noai" hidden>Desarmar sin IA</button><span class="tr-status"><span class="ia-loader" id="tr-loader" aria-hidden="true" hidden></span><span class="small muted" id="tr-msg" aria-live="polite"></span></span></div>
@@ -448,21 +448,21 @@
     <div class="grid-2">
       <div class="panel">
         <h3>Plantilla de consigna clara</h3>
-        <label class="field" for="dc-name">Nombre del trabajo<input type="text" id="dc-name" value="Trabajo práctico 03"></label>
-        <label class="field" for="dc-que">¿Qué? Qué hay que realizar<input type="text" id="dc-que" value="Desarrollar una pieza editorial"></label>
-        <label class="field" for="dc-para">¿Para qué? Cuál es el objetivo<input type="text" id="dc-para" value="Aplicar jerarquía tipográfica en un sistema de páginas"></label>
-        <label class="field" for="dc-como">¿Cómo? Etapas, una por línea<textarea id="dc-como">Investigación
+        <label class="field" for="dc-name">Nombre del trabajo<input type="text" id="dc-name" class="is-example" value="Trabajo práctico 03"></label>
+        <label class="field" for="dc-que">¿Qué? Qué hay que realizar<input type="text" id="dc-que" class="is-example" value="Desarrollar una pieza editorial"></label>
+        <label class="field" for="dc-para">¿Para qué? Cuál es el objetivo<input type="text" id="dc-para" class="is-example" value="Aplicar jerarquía tipográfica en un sistema de páginas"></label>
+        <label class="field" for="dc-como">¿Cómo? Etapas, una por línea<textarea id="dc-como" class="is-example">Investigación
 Conceptualización
 Bocetos
 Desarrollo
 Corrección
 Entrega</textarea></label>
-        <label class="field" for="dc-con">¿Con qué? Materiales o recursos<input type="text" id="dc-con" value="InDesign, referencias del apunte 2"></label>
+        <label class="field" for="dc-con">¿Con qué? Materiales o recursos<input type="text" id="dc-con" class="is-example" value="InDesign, referencias del apunte 2"></label>
         <div class="row">
-          <label class="field" for="dc-cuando" style="flex:1 1 8rem">¿Cuándo?<input type="text" id="dc-cuando" value="15/10"></label>
-          <label class="field" for="dc-formato" style="flex:1 1 8rem">Formato<input type="text" id="dc-formato" value="PDF"></label>
+          <label class="field" for="dc-cuando" style="flex:1 1 8rem">¿Cuándo?<input type="text" id="dc-cuando" class="is-example" value="15/10"></label>
+          <label class="field" for="dc-formato" style="flex:1 1 8rem">Formato<input type="text" id="dc-formato" class="is-example" value="PDF"></label>
         </div>
-        <label class="field" for="dc-eval">¿Qué se evalúa? Separado por comas<input type="text" id="dc-eval" value="Concepto, Resolución gráfica, Fundamentación"></label>
+        <label class="field" for="dc-eval">¿Qué se evalúa? Separado por comas<input type="text" id="dc-eval" class="is-example" value="Concepto, Resolución gráfica, Fundamentación"></label>
       </div>
       <div style="display:flex;flex-direction:column;gap:0.75rem;min-width:0">
         <div class="tp-card" id="dc-card" aria-live="polite"></div>
@@ -707,5 +707,5 @@ Entrega</textarea></label>
     <p class="dl-tip"><b>Recomendación:</b> si querés más durabilidad, podés agregarle a la portada un laminado o una tapa transparente.</p>
   </div>
 </template>
-<script src="js/app.js?v=139"></script>
+<script src="js/app.js?v=140"></script>
 <script src="js/movimiento.js?v=137"></script>
