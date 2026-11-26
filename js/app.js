@@ -1589,6 +1589,18 @@
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && menu.classList.contains("open")) { set(false); btn.focus(); } });
 })();
 
+// Tablet y celular: botón "Menú" que abre el panel con las pestañas (se cierra al elegir una, con Esc o tocando afuera)
+(() => {
+  const btn = document.getElementById("nav-toggle"), top = document.querySelector(".top"), bar = document.getElementById("tabs-bar");
+  if (!btn || !top || !bar) return;
+  const set = (open) => { top.classList.toggle("nav-open", open); btn.setAttribute("aria-expanded", String(open)); };
+  btn.addEventListener("click", (e) => { e.stopPropagation(); set(!top.classList.contains("nav-open")); });
+  bar.addEventListener("click", (e) => { if (e.target.closest(".tab")) set(false); });
+  document.addEventListener("click", (e) => { if (!top.contains(e.target)) set(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && top.classList.contains("nav-open")) { set(false); btn.focus(); } });
+  window.addEventListener("hashchange", () => set(false));
+})();
+
 // Ejemplos: mientras un campo tenga el texto de ejemplo que trae la página, el campo y su resultado
 // se ven en gris clarito; cuando la persona escribe lo suyo, pasan al color normal (también al volver a entrar).
 (() => {
