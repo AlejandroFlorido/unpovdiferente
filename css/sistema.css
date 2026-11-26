@@ -275,3 +275,8 @@ html.calm .way-card, html.calm .way-card:hover { transition: none; transform: no
 /* Pestañas: el brillo del hover queda adentro de la píldora (antes asomaba 4px arriba y abajo y afinaba el borde) */
 .tab::after { inset: 0 !important; }
 .tab { overflow: hidden; }
+
+/* Imprimibles: planchas de stickers, dos tarjetas (una vertical y una apaisada) alineadas abajo */
+.dl-grid.dl-grid-stickers { grid-template-columns: 0.72fr 1fr; align-items: end; max-width: 52rem; margin-inline: auto; }
+@media (max-width: 600px) { .dl-grid.dl-grid-stickers { grid-template-columns: 1fr; max-width: 24rem; } }
+.dl-cover.has-img.wide img { width: 100%; height: auto; }

@@ -1409,16 +1409,23 @@
       { id: "enfoque", title: "Tarjetas de enfoque diario", line: "Una cosa a la vez", desc: "Para cada día: objetivo, primera acción, tiempo de trabajo, qué necesitás a mano y qué distracciones podés reducir.", file: "tarjetas-enfoque-diario.pdf", pages: [IMG + "tarjetas-enfoque-diario.webp"] },
       { id: "seguimiento", title: "Ficha de seguimiento personal", line: "Reflexiona, ajusta, avanza", desc: "Para mirar la semana: qué completaste, qué te costó, qué te ayudó y qué necesitás para la próxima.", file: "ficha-seguimiento-personal.pdf", pages: [IMG + "ficha-seguimiento-personal.webp"] },
       { id: "ayuda", title: "Ficha de ayuda", line: "Necesito ayuda con...", desc: "Para llevar a una consulta: qué entendiste, qué intentaste, qué te genera dudas y a quién consultar.", file: "ficha-de-ayuda.pdf", pages: [IMG + "ficha-de-ayuda.webp"] }
+    ],
+    // Planchas de stickers sobre el TDAH y el proyecto (mandadas por Ale, 2026-11-26). "wide": la hoja va apaisada.
+    stickers: [
+      { id: "stickers", title: "Plancha de stickers", line: "Para la compu, la carpeta o el termo", desc: "Una hoja A4 llena de stickers: el logo, “Está bien pedir ayuda”, hiperfoco, “Club del diagnóstico tardío”, “Mi cerebro tiene demasiadas pestañas abiertas” y el QR para tener las herramientas a mano.", file: "stickers-unpovdiferente.pdf", meta: "PDF · 1 página A4 vertical", label: "Descargar plancha de stickers", pages: [IMG + "stickers-unpovdiferente.webp"] },
+      { id: "stickers-doble", title: "Stickers para compartir", line: "Dos juegos iguales en una hoja", desc: "Una hoja A4 apaisada con dos juegos iguales de stickers, entre ellos “TDAH y las to-do lists”: uno para vos y otro para regalar.", file: "stickers-plancha-doble.pdf", meta: "PDF · 1 página A4 apaisada", label: "Descargar stickers para compartir", wide: true, pages: [IMG + "stickers-plancha-doble.webp"] }
     ]
   };
-  const dlBook = $("#dl-book"), dlKit = $("#dl-kit"), dlDialog = $("#dl-dialog");
+  const dlBook = $("#dl-book"), dlKit = $("#dl-kit"), dlStk = $("#dl-stickers"), dlDialog = $("#dl-dialog");
   if (dlBook && dlKit && dlDialog) {
-    const all = [DESCARGABLES.book, DESCARGABLES.portada, ...DESCARGABLES.kit];
-    const color = (d) => (d === DESCARGABLES.book || d === DESCARGABLES.portada || DESCARGABLES.kit.indexOf(d) % 2 ? "t-orange" : "t-blue");
+    const all = [DESCARGABLES.book, DESCARGABLES.portada, ...DESCARGABLES.kit, ...DESCARGABLES.stickers];
+    const isStk = (d) => DESCARGABLES.stickers.includes(d);
+    const color = (d) => (isStk(d) ? (DESCARGABLES.stickers.indexOf(d) % 2 ? "t-blue" : "t-orange")
+      : d === DESCARGABLES.book || d === DESCARGABLES.portada || DESCARGABLES.kit.indexOf(d) % 2 ? "t-orange" : "t-blue");
     const num = (d) => (d === DESCARGABLES.book ? "6 en 1" : String(DESCARGABLES.kit.indexOf(d) + 1).padStart(2, "0"));
     const cover = (d, page) => {
       const src = page || (d.cover !== undefined ? d.cover : d.pages[0]);
-      return `<div class="dl-cover ${color(d)}${src ? " has-img" : ""}">` + (src ? `<img src="${esc(src)}" alt="" width="800" height="1131">`
+      return `<div class="dl-cover ${color(d)}${src ? " has-img" : ""}${d.wide ? " wide" : ""}">` + (src ? `<img src="${esc(src)}" alt="" ${d.wide ? 'width="1131" height="800"' : 'width="800" height="1131"'}>`
         : `<span class="dl-brand">unpovdiferente</span><span class="dl-num">${num(d)}</span><span class="dl-ttl">${esc(d.title)}</span><span class="dl-rules"><i></i><i></i><i></i></span>`) + "</div>";
     };
     const card = (d) => `<button class="dl-card ${color(d)}" type="button" data-dl="${d.id}" aria-haspopup="dialog">${cover(d)}`
@@ -1428,6 +1435,7 @@
       + `<ul class="plain-list">${DESCARGABLES.kit.map((k) => `<li>${esc(k.title)}</li>`).join("")}</ul>`
       + `<div class="row"><button class="btn" type="button" data-dl="${B.id}" aria-haspopup="dialog">Vistas previas</button></div></div></div>`;
     dlKit.innerHTML = DESCARGABLES.kit.map(card).join("");
+    if (dlStk) dlStk.innerHTML = DESCARGABLES.stickers.map(card).join("");
 
     let opener = null;
     const ARROWS = (what) => `<button class="dl-arrow" type="button" data-go="-1" aria-label="${what} anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 4.8 C12.1 7.9 9.6 10.4 7.6 12.2 C9.9 14.3 12.4 16.6 15.4 19.4"/><path class="echo" d="M14 6.4 C11.6 8.8 9.6 10.8 8.6 12.4 C10.6 14.2 12.6 16.2 14.4 18"/></svg></button>`
@@ -1489,7 +1497,7 @@
       el.className = "dl-panel";
       const label = d.label || "Descargar " + d.title.charAt(0).toLowerCase() + d.title.slice(1);
       el.innerHTML = `<div class="dl-d-view"></div><div class="dl-d-info">`
-        + `<span class="eyebrow">${d === B || d === DESCARGABLES.portada ? "Cuadernillo" : `Kit de herramientas · ${num(d)}`}</span>`
+        + `<span class="eyebrow">${d === B || d === DESCARGABLES.portada ? "Cuadernillo" : isStk(d) ? "Stickers" : `Kit de herramientas · ${num(d)}`}</span>`
         + `<h3>${esc(d.title)}</h3><p>${esc(d.desc)}</p><p class="small muted">${esc(d.meta || (d.file ? "PDF" : "PDF · Borrador"))}</p>`
         + `<div class="row dl-d-actions">` + (d.file ? `<a class="btn" href="assets/descargables/${esc(d.file)}" download>${esc(label)}</a>`
           : `<button class="btn" type="button" disabled>${esc(label)}</button><span class="example-tag">${d.soon ? "Próximamente" : "Falta el archivo"}</span>`)
