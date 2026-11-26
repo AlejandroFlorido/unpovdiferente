@@ -118,7 +118,8 @@ a { color: var(--accent-text); }
 .small { font-size: var(--step--1); }
 
 /* Viñetas del proyecto: 8 garabatos azules (assets/icons/vinetas) que se turnan en orden,
-/* La vineta-1 (flecha) no se usa: parecía un botón e invitaba a hacer clic. */
+/* La vineta-1 (flecha) no se usa: parecía un botón e invitaba a hacer clic.
+   La vineta-6 es la más oficial: va en todos los lugares impares. */
    del 1 al 8 y vuelta a empezar. Son la viñeta estándar de todas las listas. */
 .scribble-list, .line-card ul.scribble-list { list-style: none; padding-left: 0; }
 .scribble-list li, .tips li b { position: relative; padding-left: 1.6em; }
@@ -127,13 +128,13 @@ a { color: var(--accent-text); }
   content: ""; position: absolute; left: 0; top: 0.15em; width: 1.1em; height: 1.1em;
   background: center / contain no-repeat;
 }
-.scribble-list li:nth-child(8n+1)::before, .tips li:nth-child(8n+1) b::before { background-image: url("../assets/icons/vinetas/vineta-7.png"); }
+.scribble-list li:nth-child(8n+1)::before, .tips li:nth-child(8n+1) b::before { background-image: url("../assets/icons/vinetas/vineta-6.png"); }
 .scribble-list li:nth-child(8n+2)::before, .tips li:nth-child(8n+2) b::before { background-image: url("../assets/icons/vinetas/vineta-2.png"); }
-.scribble-list li:nth-child(8n+3)::before, .tips li:nth-child(8n+3) b::before { background-image: url("../assets/icons/vinetas/vineta-3.png"); }
-.scribble-list li:nth-child(8n+4)::before, .tips li:nth-child(8n+4) b::before { background-image: url("../assets/icons/vinetas/vineta-4.png"); }
-.scribble-list li:nth-child(8n+5)::before, .tips li:nth-child(8n+5) b::before { background-image: url("../assets/icons/vinetas/vineta-5.png"); }
-.scribble-list li:nth-child(8n+6)::before, .tips li:nth-child(8n+6) b::before { background-image: url("../assets/icons/vinetas/vineta-6.png"); }
-.scribble-list li:nth-child(8n+7)::before, .tips li:nth-child(8n+7) b::before { background-image: url("../assets/icons/vinetas/vineta-7.png"); }
+.scribble-list li:nth-child(8n+3)::before, .tips li:nth-child(8n+3) b::before { background-image: url("../assets/icons/vinetas/vineta-6.png"); }
+.scribble-list li:nth-child(8n+4)::before, .tips li:nth-child(8n+4) b::before { background-image: url("../assets/icons/vinetas/vineta-7.png"); }
+.scribble-list li:nth-child(8n+5)::before, .tips li:nth-child(8n+5) b::before { background-image: url("../assets/icons/vinetas/vineta-6.png"); }
+.scribble-list li:nth-child(8n+6)::before, .tips li:nth-child(8n+6) b::before { background-image: url("../assets/icons/vinetas/vineta-5.png"); }
+.scribble-list li:nth-child(8n+7)::before, .tips li:nth-child(8n+7) b::before { background-image: url("../assets/icons/vinetas/vineta-6.png"); }
 .scribble-list li:nth-child(8n+0)::before, .tips li:nth-child(8n+0) b::before { background-image: url("../assets/icons/vinetas/vineta-8.png"); }
 .tips li p { padding-left: 1.5em; }
 
