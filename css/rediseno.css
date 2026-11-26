@@ -538,3 +538,19 @@ html.calm #te-pasa .quote .hl { transition: none; }
   /* el naranja sigue pegado a cada renglón (más corto si el renglón es más corto), pero empieza abajo del blanco */
   #inicio-hero .hero-title .br-m { display: inline; }
 }
+
+/* Botón de los desplegables: círculo de línea fina con cruz (referencia de Ale), en los colores de la página.
+   Al pasar el mouse gira 90° y se rellena; abierto queda como ✕. */
+:is(.drop, .area-more) summary::after {
+  content: ""; flex: none; width: 1.9rem; height: 1.9rem; box-sizing: border-box; border-radius: 50%;
+  --x: var(--accent-text); border: 1.5px solid var(--accent-text);
+  background: linear-gradient(var(--x), var(--x)) center / 0.85rem 1.5px no-repeat,
+              linear-gradient(var(--x), var(--x)) center / 1.5px 0.85rem no-repeat;
+  background-color: transparent;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+.area-more summary::after { width: 1.6rem; height: 1.6rem; }
+:is(.drop, .area-more) summary:hover::after { transform: rotate(90deg); background-color: var(--accent-text); --x: var(--surface); }
+:is(.drop, .area-more) summary:active::after { transition-duration: 0s; opacity: 0.8; }
+.drop[open]:not(.is-closing) summary::after, .area-more[open]:not(.is-closing) summary::after { transform: rotate(45deg); }
+.drop[open]:not(.is-closing) summary:hover::after, .area-more[open]:not(.is-closing) summary:hover::after { transform: rotate(135deg); }
