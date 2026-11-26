@@ -237,6 +237,10 @@ footer.foot { max-width: none; margin: 0; padding: 0; background: #000; color: #
 /* Mitos y realidades en banda gris */
 #mitos-band { display: flex; flex-direction: column; gap: clamp(1.5rem, 3vw, 2.5rem); }
 #mitos-band #myths { column-gap: var(--g); }
+/* 6 mitos: 3 + 3 en pantallas anchas, 2 + 2 + 2 en medianas, uno abajo del otro en celular (sin filas incompletas) */
+#mitos-band #myths { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 900px) { #mitos-band #myths { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { #mitos-band #myths { grid-template-columns: 1fr; } }
 #mitos-band .myth { background: var(--surface); }
 
 /* Cierre azul (la nota de "no diagnostica"), como el cierre del Inicio */
