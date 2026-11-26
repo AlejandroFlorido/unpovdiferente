@@ -571,10 +571,22 @@ html.calm #te-pasa .quote .hl { transition: none; }
 .leer-mas:hover .button-text, .leer-mas:focus-visible .button-text { color: #000; }
 .leer-mas:focus-visible { outline: 3px solid var(--focus, #1D58FE); outline-offset: 3px; border-radius: 1.625rem; }
 
-/* Entender: más aire entre secciones, como las bandas del Inicio (pedido de Ale, a prueba) */
-#entender > :is(#entender-tdah, #tres-conceptos, #nt-vs-nd) { padding-block: clamp(4.5rem, 9vw, 7.5rem); gap: clamp(2.25rem, 4vw, 3.5rem); }
-#entender > #tres-conceptos { min-height: clamp(26rem, 42vw, 34rem); justify-content: center; }
+/* Entender, debajo de "¿Qué es el TDAH?" (rediseño con los plugins de diseño, a prueba; revertir = tag antes-rediseno-entender).
+   Criterio: cada sección es una banda que alterna blanco y gris como en el Inicio, con el mismo ritmo vertical,
+   el título siempre alineado a la izquierda en el mismo tamaño y la misma distancia título → contenido.
+   Lo único llamativo sigue siendo el óvalo naranja de "Entender el TDAH"; el resto queda sobrio. */
+#entender { --sec-pad: clamp(4.5rem, 9vw, 7.5rem); --sec-gap: clamp(2rem, 3.5vw, 3rem); }
+#entender > :is(#entender-tdah, #tres-conceptos, #nt-vs-nd, #mitos-band) {
+  padding-block: var(--sec-pad); gap: var(--sec-gap); min-height: 0; justify-content: flex-start; }
+#entender > :is(#entender-tdah, #nt-vs-nd) { background: var(--surface); }
+#entender > #entender-tdah { border-top: 1px solid var(--line); }
+/* títulos de sección: mismo tamaño y alineación en todas */
+#entender-tdah h2.title-circled, #tres-conceptos > h2, #mitos h2 { margin: 0; line-height: var(--lh-title, 0.9); }
+#entender-tdah h2.title-circled { margin-left: 0.3em; }
+/* sobre banda blanca, los desplegables toman el gris de fondo para no perderse */
+#entender-tdah .drop { background: var(--bg); border-color: transparent; }
+#entender-tdah .drop[open] { background: var(--bg); }
+#mitos-band > .lead { gap: 0.6rem; }
 @media (max-width: 600px) {
-  #entender > :is(#entender-tdah, #tres-conceptos, #nt-vs-nd) { padding-block: 4rem; }
-  #entender > #tres-conceptos { min-height: 0; }
+  #entender { --sec-pad: 3.75rem; --sec-gap: 1.75rem; }
 }
