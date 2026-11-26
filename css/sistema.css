@@ -94,7 +94,8 @@ p, li { text-wrap: pretty; }
 }
 .brand-logo { height: 38px; }
 .tabs-bar { justify-content: center; }
-.tabs { gap: 0.4rem; padding: 0; flex-wrap: nowrap; }
+/* aire arriba y abajo: al pasar el mouse la pestaña crece 4% y no se tiene que recortar */
+.tabs { gap: 0.4rem; padding: 0.35rem 0.35rem; margin: 0; flex-wrap: nowrap; }
 /* Pestañas: mismo diseño de antes (píldora con contorno azul, la activa azul llena), pedido de Ale */
 .tab { min-height: 36px; display: inline-flex; align-items: center; }
 /* Volver, Aa, modo oscuro y Menú: grupo de la derecha */
