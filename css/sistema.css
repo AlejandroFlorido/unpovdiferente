@@ -94,16 +94,9 @@ p, li { text-wrap: pretty; }
 }
 .brand-logo { height: 38px; }
 .tabs-bar { justify-content: center; }
-.tabs { gap: 0.15rem; padding: 0; flex-wrap: nowrap; }
-.tab, #tab-inicio, :is(#tab-herramientas, #tab-descargables) {
-  background: transparent; border: 1px solid transparent; color: var(--ink);
-  font-family: var(--f-display); font-size: 0.92rem; font-weight: 400;
-  padding: 0.42rem 0.85rem; min-height: 40px; display: inline-flex; align-items: center; border-radius: 999px;
-}
-.tab:hover:not([aria-current]) { background: var(--sunken); border-color: var(--line); }
-.tab[aria-current], #tab-inicio[aria-current], :is(#tab-herramientas, #tab-descargables)[aria-current] {
-  background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 500;
-}
+.tabs { gap: 0.4rem; padding: 0; flex-wrap: nowrap; }
+/* Pestañas: mismo diseño de antes (píldora con contorno azul, la activa azul llena), pedido de Ale */
+.tab { min-height: 36px; display: inline-flex; align-items: center; }
 /* Volver, Aa, modo oscuro y Menú: grupo de la derecha */
 .prefs { gap: 0.45rem; align-items: center; flex-wrap: nowrap; position: relative; }
 .tab-back { min-height: 40px; padding: 0.4rem 0.9rem 0.4rem 0.75rem; font-size: 0.88rem; }
@@ -144,8 +137,7 @@ p, li { text-wrap: pretty; }
   .top.nav-open .tabs-bar { display: block; }
   .tabs { flex-direction: column; align-items: stretch; gap: 0.25rem; overflow: visible; mask-image: none; -webkit-mask-image: none; }
   .tab, #tab-inicio, :is(#tab-herramientas, #tab-descargables) {
-    font-size: 1.15rem; min-height: 52px; padding: 0.6rem 1.1rem; justify-content: space-between;
-    border-radius: 16px; border-color: var(--line); background: var(--surface);
+    font-size: 1.1rem; min-height: 50px; padding: 0.55rem 1.2rem; justify-content: space-between;
   }
   .tab small { display: inline !important; font-size: 0.8rem; color: var(--muted); font-weight: 400; margin-left: 1rem; }
   .tab[aria-current] small { color: rgba(255, 255, 255, 0.85); }
@@ -230,12 +222,13 @@ textarea { line-height: 1.55; }
 #tres-formas .ways-head p { font-size: var(--t-lead); color: var(--muted); max-width: 46ch; }
 #tres-formas .ways-head p b { color: var(--ink); }
 .closing-text { font-family: var(--f-title); font-weight: 700; letter-spacing: -0.02em; font-size: calc(clamp(1.6rem, 3vw, 2.6rem) + 4pt); line-height: var(--lh-sub); }
+/* "Te ayudamos a empezar.": resaltado con esquinas suaves, como los demás resaltados */
+#inicio-hero .hero-title em { border-radius: 0.14em; }
 #inicio-docentes .doc-quote { font-weight: 700; letter-spacing: -0.02em; }
 #inicio-docentes { background: var(--blue-soft); }
 #inicio > .next-tab { background: var(--ink); }
 
 /* ---------- 7. Entender ---------- */
-#que-es.screen { background: var(--band-gray); }
 #entender-tdah .drop summary { padding: 1.15rem 1.4rem; }
 #tres-conceptos .concept { background: var(--surface); }
 #mitos-band .myth button { padding: 1.4rem 1.6rem; }
