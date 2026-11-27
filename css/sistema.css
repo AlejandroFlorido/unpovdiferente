@@ -369,3 +369,16 @@ html.calm .drop.dc summary::before, html.calm .go-arrow { transition: none; }
 .drop.cb .drop-body { margin: 0; padding: clamp(1.1rem, 2.2vw, 1.6rem); border-top: 0; }
 html.calm .cb-fill, html.calm .cb-fill svg { transition: none; }
 .cb-fill { place-items: center start; padding-left: 1.15rem; }
+/* Tres conceptos abierto = una sola pieza naranja: el bloque cubre toda la tarjeta y el texto va centrado */
+.drop.cb summary { position: static; padding: 0.4rem 5rem; }
+.cb-fill { transition: width 0.65s cubic-bezier(0.25, 1, 0.5, 1); will-change: width; }
+.cb-fill svg { transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
+.cb-label { transition: color 0.4s ease; }
+.drop.cb .drop-body { position: relative; z-index: 1; color: #000; text-align: center; align-items: center;
+  padding: 0.2rem clamp(1.6rem, 3vw, 2.4rem) clamp(1.6rem, 3vw, 2.2rem); }
+.drop.cb .drop-body p { max-width: 40ch; margin-inline: auto; }
+.drop.cb .drop-body .circled { color: #000; }
+.cb-fill { transition: width 0.65s cubic-bezier(0.25, 1, 0.5, 1), top 0.65s cubic-bezier(0.25, 1, 0.5, 1), left 0.65s cubic-bezier(0.25, 1, 0.5, 1), bottom 0.65s cubic-bezier(0.25, 1, 0.5, 1), border-radius 0.65s ease; }
+.cb-fill svg { transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease; }
+.drop.cb[open]:not(.is-closing) .cb-fill { top: 0; left: 0; bottom: 0; width: 100%; border-radius: var(--r-card); }
+.drop.cb[open]:not(.is-closing) .cb-fill svg { opacity: 0; }

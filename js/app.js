@@ -1205,9 +1205,12 @@
       d.open = true;
       const full = d.offsetHeight, closed = sum.offsetHeight + (d.offsetHeight - d.clientHeight);
       d.style.overflow = "hidden";
-      if (opening) body.animate([{ opacity: 0, transform: "translateY(-6px)" }, { opacity: 1, transform: "none" }], { duration: 300, delay: 80, easing: "ease", fill: "backwards" });
-      else { d.classList.add("is-closing"); body.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, easing: "ease", fill: "forwards" }); }
-      anim = d.animate([{ height: `${from}px` }, { height: `${opening ? full : closed}px` }], { duration: 350, easing: "cubic-bezier(0.4, 0, 0.2, 1)" });
+      // Tres conceptos (.cb): más lento y suave, sin saltos (pedido de Ale)
+      const soft = d.classList.contains("cb");
+      const DUR = soft ? 650 : 350, EASE = soft ? "cubic-bezier(0.25, 1, 0.5, 1)" : "cubic-bezier(0.4, 0, 0.2, 1)";
+      if (opening) body.animate([{ opacity: 0, transform: `translateY(${soft ? -3 : -6}px)` }, { opacity: 1, transform: "none" }], { duration: soft ? 500 : 300, delay: soft ? 180 : 80, easing: "ease-out", fill: "backwards" });
+      else { d.classList.add("is-closing"); body.animate([{ opacity: 1 }, { opacity: 0 }], { duration: soft ? 260 : 180, easing: "ease", fill: "forwards" }); }
+      anim = d.animate([{ height: `${from}px` }, { height: `${opening ? full : closed}px` }], { duration: DUR, easing: EASE });
       anim.onfinish = () => {
         anim = null; d.style.overflow = "";
         if (!opening) { d.open = false; d.classList.remove("is-closing"); body.getAnimations().forEach((a) => a.cancel()); }
