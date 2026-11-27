@@ -443,3 +443,9 @@ html.calm .ap-hl { transition: none; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .dl-stickers { --aphl-bg: #FF6E2B; --aphl-fg: #000; } }
 .dl-stickers .ap-hl { white-space: nowrap; }
 @media (max-width: 480px) { .dl-stickers .ap-hl { white-space: normal; } }
+/* Imprimibles y Kit con el mismo orden que Stickers: título y el texto debajo (pedido de Ale) */
+#descargables :is(#dl-top, .dl-kit) .lead > p { grid-column: 1 / -1; align-self: start; max-width: 44rem; }
+#dl-top, :root[data-theme="dark"] #dl-top { --aphl-bg: #FF6E2B; --aphl-fg: #000; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #dl-top { --aphl-bg: #FF6E2B; --aphl-fg: #000; } }
+#dl-top .ap-hl { white-space: nowrap; }
+@media (max-width: 480px) { #dl-top .ap-hl { white-space: normal; } }
