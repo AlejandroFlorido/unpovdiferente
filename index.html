@@ -16,7 +16,7 @@
 <!-- Rediseño inspirado en DoxWorks: grilla, bandas de color y componentes rectos. Va después de estilos.css y lo pisa. -->
 <link rel="stylesheet" href="css/rediseno.css?v=151">
 <!-- Sistema de diseño general (ver DESIGN.md): va último y unifica tarjetas, campos, títulos y cabecera. -->
-<link rel="stylesheet" href="css/sistema.css?v=29">
+<link rel="stylesheet" href="css/sistema.css?v=30">
 
 <!-- Filtro "borroneado" para los óvalos naranjas: ondula el trazo y lo deja con huecos, como marcador seco. -->
 <svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -419,6 +419,7 @@
       <p class="dl-intro">Las herramientas en papel, para imprimir, completar a mano y tener a la vista.<br><mark class="hl ap-hl"><span class="ap-ink">Tocá una para ver cómo es y descargarla.</span></mark></p>
     </div>
     <div id="dl-book"></div>
+    <div id="dl-book-doc"></div>
     </div>
     <div class="dl-kit band band-pad band-gray">
       <div class="lead">
@@ -724,5 +725,26 @@ Entrega</textarea></label>
     <p class="dl-tip"><b>Recomendación:</b> si querés más durabilidad, podés agregarle a la portada un laminado o una tapa transparente.</p>
   </div>
 </template>
-<script src="js/app.js?v=151"></script>
+<template id="howto-docentes">
+  <div class="dl-step">
+    <h4>Descargá el interior del cuadernillo para docentes</h4>
+    <p>Este archivo PDF contiene las páginas interiores de la guía “Entender para enseñar y acompañar”, en hojas tamaño A4. Está pensado para docentes de la FAU: explica qué son las neurodivergencias y propone prácticas concretas para que la cursada sea accesible para todo el curso.</p>
+  </div>
+  <div class="dl-step" hidden>
+    <h4>Para imprimirlo</h4>
+    <ul class="scribble-list">
+      <li>Abrí el PDF y elegí Imprimir.</li>
+      <li>Seleccioná el tamaño de hoja A4 y la escala 100 % o “Tamaño real”.</li>
+      <li>Activá la opción Doble faz y elegí girar por el borde largo.</li>
+    </ul>
+    <p>Una vez impreso, podés anillarlo o abrocharlo para tenerlo a mano en la cursada.</p>
+  </div>
+</template>
+<template id="howto-portada-docentes">
+  <div class="dl-step">
+    <h4>Descargá la portada y contraportada del cuadernillo para docentes</h4>
+    <p>Este archivo PDF contiene la portada y la contraportada de la guía para docentes, en hojas tamaño A4. Están en un archivo aparte para que puedas imprimirlas en un papel más grueso y resistente.</p>
+  </div>
+</template>
+<script src="js/app.js?v=152"></script>
 <script src="js/movimiento.js?v=137"></script>

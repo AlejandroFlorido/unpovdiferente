@@ -449,3 +449,5 @@ html.calm .ap-hl { transition: none; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #dl-top { --aphl-bg: #FF6E2B; --aphl-fg: #000; } }
 #dl-top .ap-hl { white-space: nowrap; }
 @media (max-width: 480px) { #dl-top .ap-hl { white-space: normal; } }
+/* Cuadernillo para docentes: mismo bloque que el de estudiantes, debajo y con un poco de aire */
+#dl-book-doc { margin-top: clamp(1.5rem, 3vw, 2.5rem); }
