@@ -408,3 +408,6 @@ html.calm .ap-hl { transition: none; }
 #apoyo-areas .lead > h2 { grid-column: 1 / -1; }
 .ap-arrow { width: 1.9rem; left: 0.4rem; right: auto; bottom: 0.1rem; opacity: 0.75; }
 @media (max-width: 860px) { .ap-arrow { left: 0.4rem; right: auto; } }
+/* Flechita del otro lado del texto, espejada (pedido de Ale) */
+#apoyo-areas .lead > .ap-intro { justify-self: start; max-width: 46rem; }
+#apoyo-areas .ap-arrow { left: auto; right: 0.4rem; transform: scaleX(-1); }
