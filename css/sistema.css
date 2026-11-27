@@ -284,10 +284,10 @@ html.calm .way-card, html.calm .way-card:hover { transition: none; transform: no
 /* ---------- 13. Cada sección ocupa la pantalla completa (pedido de Ale, 2026-11-27) ----------
    Como "¿Qué es el TDAH?": cada parte de cada pestaña llena el alto de la ventana (menos la cabecera)
    y su contenido queda centrado en vertical. La última parte de cada pestaña queda con su alto natural
-   para que el "Siguiente" y el pie se vean con ella. En celular se mantienen compactas (sin huecos vacíos). */
+   para que el "Siguiente" y el pie se vean con ella. En celular se mantienen compactas (sin huecos vacíos).
+   Equipo queda afuera: vuelve a sus partes con alto natural, como al principio (pedido de Ale). */
 @media (min-width: 601px) {
-  main > section:not(#entender) > :is(.band, .screen):has(~ :is(.band, .screen)):not(#inicio-docentes, #te-pasa),
-  #equipo > .band-pad:has(~ .band-pad) {
+  main > section:not(#entender, #equipo) > :is(.band, .screen):has(~ :is(.band, .screen)):not(#inicio-docentes, #te-pasa) {
     min-height: calc(100svh - var(--top-h, 4.25rem)) !important;
     display: flex; flex-direction: column; justify-content: center;
   }
