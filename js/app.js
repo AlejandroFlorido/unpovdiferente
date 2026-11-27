@@ -497,45 +497,51 @@
       const c = card.getBoundingClientRect(), e = el.getBoundingClientRect();
       return { left: `${e.left - c.left}px`, top: `${e.top - c.top}px`, width: `${e.width}px`, height: `${e.height}px` };
     };
-    // Recorrido como un trazo (pedido de Ale): la pastilla entera, sin estirarse ni achicarse, viaja por una curva que
-    // rodea por la izquierda desde "Mito" hasta "Realidad" y en el camino pasa de naranja a azul. Al cerrar, al revés.
+    // Recorrido líquido (pedido de Ale): la pastilla de "Mito" se vacía hacia su punta izquierda en un chorro de gotas
+    // que baja por una curva que rodea por la izquierda; el filtro "goo" (SVG #goo en index.html) las funde en una sola
+    // cola fluida, y abajo se vuelve a formar la pastilla en "Realidad". El color cambia de golpe a mitad del camino.
+    // Al cerrar, el mismo recorrido de abajo hacia arriba.
     const a = rel(tm), z = rel(tr), px = (v) => parseFloat(v);
     const s = open ? a : z, e = open ? z : a, h = px(s.height);
     const sx = px(s.left), sy = px(s.top) + h / 2, ex = px(e.left), ey = px(e.top) + h / 2;
     const cx = Math.min(Math.abs(ey - sy) * 0.5, Math.max(0, (Math.min(sx, ex) - 4) / 0.75)); // sin salirse de la tarjeta
     const bez = (t, p0, p1, p2, p3) => { const u = 1 - t; return u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t * p3; };
-    const O = [255, 110, 43], B = [29, 88, 254], c0 = open ? O : B, c1 = open ? B : O, D = 820, N = 30;
-    // Efecto líquido: la pastilla viaja entera y detrás van gotas que la siguen con un poco de retraso; un filtro
-    // "goo" (SVG #goo en index.html) las funde con la pastilla, así se ve una cola fluida que al llegar se absorbe.
-    const frames = (wFrom, wTo) => {
-      const kf = [];
-      for (let i = 0; i <= N; i++) {
-        const t = i / N, x = bez(t, sx, sx - cx, ex - cx, ex), y = bez(t, sy, sy, ey, ey);
-        const w = wFrom + (wTo - wFrom) * t, k = Math.min(1, Math.max(0, (t - 0.25) / 0.5));
-        const col = c0.map((v, n) => Math.round(v + (c1[n] - v) * k));
-        kf.push({ left: `${x}px`, top: `${y - h / 2}px`, width: `${w}px`, height: `${h}px`, backgroundColor: `rgb(${col})` });
-      }
-      return kf;
-    };
+    const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    const clamp = (v) => Math.min(1, Math.max(0, v));
+    const C0 = open ? "#FF6E2B" : "#1D58FE", C1 = open ? "#1D58FE" : "#FF6E2B", D = 900, N = 60;
+    const make = (style) => { const el = document.createElement("span"); el.className = "myth-pill"; Object.assign(el.style, style); return el; };
+    const track = (el, fn) => el.animate(Array.from({ length: N + 1 }, (_, i) => ({ ...fn(i / N), offset: i / N })), { duration: D, fill: "forwards" });
     if (card.pill) card.pill.remove();
     const goo = card.pill = document.createElement("span");
     goo.className = "myth-goo";
-    const pill = document.createElement("span");
-    pill.className = "myth-pill";
-    goo.appendChild(pill);
-    const drops = [0.95, 0.88, 0.8, 0.72, 0.64, 0.56].map((sc, i) => {
-      const d = document.createElement("span");
-      d.className = "myth-pill";
-      goo.appendChild(d);
-      return d.animate(frames(h, h).map((f) => ({ ...f, width: `${h * sc}px`, height: `${h * sc}px`, marginTop: `${(h - h * sc) / 2}px`, marginLeft: `${(h - h * sc) / 2}px` })),
-        { duration: D, delay: 28 * (i + 1), easing: "cubic-bezier(.55,0,.35,1)", fill: "both" });
-    });
     card.append(goo);
+    const anims = [];
+    // 1) La pastilla de origen se vacía hacia su punta izquierda
+    const from = make({}); goo.appendChild(from);
+    anims.push(track(from, (T) => { const k = ease(clamp(T / 0.3));
+      return { left: s.left, top: s.top, height: s.height, width: `${px(s.width) - (px(s.width) - h) * k}px`, opacity: T < 0.32 ? 1 : 0, backgroundColor: C0 }; }));
+    // 2) El chorro: gotas que salen una detrás de otra por la curva y se funden entre sí
+    [1, 0.94, 0.88, 0.82, 0.76, 0.7, 0.64].forEach((sc, n) => {
+      const d = make({}); goo.appendChild(d);
+      const t0 = 0.08 + n * 0.035, t1 = t0 + 0.6, sz = h * sc;
+      anims.push(track(d, (T) => { const k = ease(clamp((T - t0) / (t1 - t0)));
+        const x = bez(k, sx, sx - cx, ex - cx, ex), y = bez(k, sy, sy, ey, ey);
+        return { left: `${x + (h - sz) / 2}px`, top: `${y - sz / 2}px`, width: `${sz}px`, height: `${sz}px`, backgroundColor: T < 0.5 ? C0 : C1 }; }));
+    });
+    // 3) Abajo se arma la pastilla de destino a partir de la punta izquierda
+    const to = make({}); goo.appendChild(to);
+    anims.push(track(to, (T) => { const k = ease(clamp((T - 0.66) / 0.34));
+      return { left: e.left, top: e.top, height: e.height, width: `${h + (px(e.width) - h) * k}px`, opacity: T < 0.64 ? 0 : 1, backgroundColor: C1 }; }));
     card.classList.add("flying");
-    card.classList.toggle("is-open", open);
-    const fly = pill.animate(frames(px(s.width), px(e.width)), { duration: D, easing: "cubic-bezier(.55,0,.35,1)", fill: "forwards" });
-    Promise.all([fly.finished, ...drops.map((d) => d.finished)]).then(() => {
-      if (card.pill === goo) { card.classList.remove("flying"); card.pill = null; } goo.remove();
+    // Al abrir, "Mito" pasa a letra naranja enseguida; al cerrar, recién cuando la pastilla ya se armó (sin saltos)
+    if (open) card.classList.add("is-open");
+    else { clearTimeout(card.txtT); card.txtT = setTimeout(() => { if (card.pill === goo) card.classList.remove("is-open"); }, D * 0.8); }
+    Promise.all(anims.map((x) => x.finished)).then(() => {
+      if (card.pill !== goo) return;
+      card.classList.toggle("is-open", open);
+      card.classList.remove("flying");
+      card.pill = null;
+      goo.remove();
     }).catch(() => {});
     // Despliega o pliega la realidad de a poco: alto, relleno y opacidad juntos.
     const cs = getComputedStyle(r);

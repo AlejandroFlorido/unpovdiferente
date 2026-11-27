@@ -484,3 +484,5 @@ html.calm .ap-hl { transition: none; }
 .myth-goo { position: absolute; inset: 0; z-index: 0; pointer-events: none; filter: url(#goo); }
 .myth-goo .myth-pill { position: absolute; }
 #myths .myth:not(.is-open) .tag.m { transition-delay: 0.85s, 0s; }
+/* Mitos: los colores de las letras cambian sin transición, sincronizados por JS con el final del recorrido */
+#myths .myth .tag.m { transition: none !important; }
