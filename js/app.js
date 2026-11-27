@@ -84,7 +84,7 @@
     ["#dc-copy", "docentes: copiar plantilla"],
     ["#ct-mail", "contacto: abrir correo"], ["#ct-copy", "contacto: copiar mensaje"],
     ["[data-dl]", "imprimibles: vista previa"],
-    ["#myths .myth button", "mitos y realidades"], [".concept-title", "tres conceptos"], ["#car-prev, #car-next", "carrusel ¿te pasa?"],
+    ["#myths .myth button", "mitos y realidades"], [".cb summary", "tres conceptos"], ["#car-prev, #car-next", "carrusel ¿te pasa?"],
     ["#pref-size", "ajuste: tamaño de texto"], ["#pref-space", "ajuste: espaciado"], ["#pref-calm", "ajuste: sin animaciones"], ["#pref-theme", "ajuste: modo oscuro"]
   ];
   document.addEventListener("click", (e) => {
@@ -398,6 +398,11 @@
   if ("IntersectionObserver" in window) {
     new IntersectionObserver((es) => es.forEach((e) => { const m = $("#car-quote .hl"); if (e.isIntersecting && m) drawHl(m); }), { threshold: 0.4 }).observe($("#te-pasa"));
   }
+  // Apoyo: el resaltado naranja del texto de arriba se pinta igual que en "¿Te pasa?" cada vez que se ve
+  $$(".ap-hl").forEach((apHl) => {
+    if ("IntersectionObserver" in window) new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) drawHl(apHl); }), { threshold: 0.6 }).observe(apHl);
+    else apHl.classList.add("on");
+  });
   let car = 0;
   const dotsEl = $("#car-dots");
   situations.forEach((s, i) => {
@@ -1408,6 +1413,17 @@
       desc: "La tapa y la contratapa del cuadernillo, en un archivo aparte para imprimirlas en un papel más grueso.",
       file: "portada-cuadernillo.pdf", meta: "PDF · 2 páginas A4", label: "Descargar portada", howto: "howto-portada",
       pages: [`${IMG}cuadernillo/portada.webp`, `${IMG}cuadernillo/contraportada.webp`] },
+    // Cuadernillo para docentes (mandado por Ale, 2026-11-27), con su portada aparte, igual que el de estudiantes
+    bookDoc: { id: "cuadernillo-docentes", title: "Entender para enseñar y acompañar", line: "Guía para docentes",
+      desc: "Una guía para docentes de la FAU con herramientas para un aula diversa: pequeños cambios en la forma de enseñar que quitan barreras y ayudan a todo el curso.",
+      file: "cuadernillo-docentes.pdf", cover: `${IMG}docentes/portada.webp`, meta: "PDF · 16 páginas A4",
+      label: "Descargar cuadernillo para docentes", howto: "howto-docentes",
+      topics: ["¿Qué son las neurodivergencias?", "Mito vs realidad", "Diseño universal: 8 prácticas", "La consigna clara", "Diagnósticos, certificados y ajustes", "Confidencialidad", "Checklist para revisar la cursada", "Preguntas que pueden surgir", "Acompañar el proceso de aprendizaje"],
+      pages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((n) => `${IMG}docentes/pagina-${n}.webp`) },
+    portadaDoc: { id: "portada-docentes", title: "Portada y contraportada", line: "Para la tapa del cuadernillo para docentes",
+      desc: "La tapa y la contratapa del cuadernillo para docentes, en un archivo aparte para imprimirlas en un papel más grueso.",
+      file: "portada-cuadernillo-docentes.pdf", meta: "PDF · 2 páginas A4", label: "Descargar portada", howto: "howto-portada-docentes",
+      pages: [`${IMG}docentes/portada.webp`, `${IMG}docentes/contraportada.webp`] },
     kit: [
       { id: "desglosar", title: "Ficha para desglosar tareas", line: "Una consigna, varios pasos", desc: "Qué hay que entregar, qué pide la consigna, qué materiales necesitás, los pasos, la primera acción y un check list final.", file: "ficha-desglosar-tareas.pdf", pages: [IMG + "ficha-desglosar-tareas.webp"] },
       { id: "organizador", title: "Organizador de entregas y proyectos", line: "Anticipar también es una forma de avanzar", desc: "Cada proyecto con su materia, etapas o entregas parciales, fechas, estado y próximo paso.", file: "organizador-entregas.pdf?v=2", pages: [IMG + "organizador-entregas.webp?v=2"] },
@@ -1418,16 +1434,17 @@
     ],
     // Planchas de stickers sobre el TDAH y el proyecto (mandadas por Ale, 2026-11-26). "wide": la hoja va apaisada.
     stickers: [
-      { id: "stickers", title: "Plancha de stickers", line: "Para la compu, la carpeta o el termo", desc: "Una hoja A4 llena de stickers: el logo, “Está bien pedir ayuda”, hiperfoco, “Club del diagnóstico tardío”, “Mi cerebro tiene demasiadas pestañas abiertas” y el QR para tener las herramientas a mano.", file: "stickers-unpovdiferente.pdf", meta: "PDF · 1 página A4 vertical", label: "Descargar plancha de stickers", pages: [IMG + "stickers-unpovdiferente.webp"] },
-      { id: "stickers-doble", title: "Stickers para compartir", line: "Dos juegos iguales en una hoja", desc: "Una hoja A4 apaisada con dos juegos iguales de stickers, entre ellos “TDAH y las to-do lists”: uno para vos y otro para regalar.", file: "stickers-plancha-doble.pdf", meta: "PDF · 1 página A4 apaisada", label: "Descargar stickers para compartir", wide: true, pages: [IMG + "stickers-plancha-doble.webp"] }
+      { id: "stickers-doble", title: "Plancha de stickers", line: "Dos juegos iguales en una hoja", desc: "Una hoja A4 apaisada con dos juegos iguales de stickers, entre ellos “TDAH y las to-do lists”: uno para vos y otro para regalar.", file: "stickers-plancha-doble.pdf", meta: "PDF · 1 página A4 apaisada", label: "Descargar plancha de stickers", wide: true, pages: [IMG + "stickers-plancha-doble.webp"] }
     ]
   };
-  const dlBook = $("#dl-book"), dlKit = $("#dl-kit"), dlStk = $("#dl-stickers"), dlDialog = $("#dl-dialog");
+  const dlBookDoc = $("#dl-book-doc"), dlBook = $("#dl-book"), dlKit = $("#dl-kit"), dlStk = $("#dl-stickers"), dlDialog = $("#dl-dialog");
   if (dlBook && dlKit && dlDialog) {
-    const all = [DESCARGABLES.book, DESCARGABLES.portada, ...DESCARGABLES.kit, ...DESCARGABLES.stickers];
+    const BD = DESCARGABLES.bookDoc, PD = DESCARGABLES.portadaDoc;
+    const isBookish = (d) => [DESCARGABLES.book, DESCARGABLES.portada, BD, PD].includes(d);
+    const all = [DESCARGABLES.book, DESCARGABLES.portada, BD, PD, ...DESCARGABLES.kit, ...DESCARGABLES.stickers];
     const isStk = (d) => DESCARGABLES.stickers.includes(d);
     const color = (d) => (isStk(d) ? (DESCARGABLES.stickers.indexOf(d) % 2 ? "t-blue" : "t-orange")
-      : d === DESCARGABLES.book || d === DESCARGABLES.portada || DESCARGABLES.kit.indexOf(d) % 2 ? "t-orange" : "t-blue");
+      : isBookish(d) || DESCARGABLES.kit.indexOf(d) % 2 ? "t-orange" : "t-blue");
     const num = (d) => (d === DESCARGABLES.book ? "6 en 1" : String(DESCARGABLES.kit.indexOf(d) + 1).padStart(2, "0"));
     const cover = (d, page) => {
       const src = page || (d.cover !== undefined ? d.cover : d.pages[0]);
@@ -1435,11 +1452,14 @@
         : `<span class="dl-brand">unpovdiferente</span><span class="dl-num">${num(d)}</span><span class="dl-ttl">${esc(d.title)}</span><span class="dl-rules"><i></i><i></i><i></i></span>`) + "</div>";
     };
     const card = (d) => `<button class="dl-card ${color(d)}" type="button" data-dl="${d.id}" aria-haspopup="dialog">${cover(d)}`
-      + (d === DESCARGABLES.book ? "" : `<span class="dl-name">${esc(d.title)}</span><span class="dl-line">${esc(d.line)}</span>`) + "</button>";
+      + (d === DESCARGABLES.book || d === BD ? "" : `<span class="dl-name">${esc(d.title)}</span><span class="dl-line">${esc(d.line)}</span>`) + "</button>";
     const B = DESCARGABLES.book;
     dlBook.innerHTML = `<div class="dl-book">${card(B)}<div class="dl-book-info"><span class="eyebrow">Cuadernillo</span><h3>${esc(B.title)}</h3><p>${esc(B.desc)}</p>`
       + `<ul class="plain-list">${DESCARGABLES.kit.map((k) => `<li>${esc(k.title)}</li>`).join("")}</ul>`
       + `<div class="row"><button class="btn" type="button" data-dl="${B.id}" aria-haspopup="dialog">Vistas previas</button></div></div></div>`;
+    if (dlBookDoc) dlBookDoc.innerHTML = `<div class="dl-book dl-book-doc">${card(BD)}<div class="dl-book-info"><span class="eyebrow">Para docentes</span><h3>${esc(BD.title)}</h3><p>${esc(BD.desc)}</p>`
+      + `<ul class="plain-list">${BD.topics.map((k) => `<li>${esc(k)}</li>`).join("")}</ul>`
+      + `<div class="row"><button class="btn" type="button" data-dl="${BD.id}" aria-haspopup="dialog">Vistas previas</button></div></div></div>`;
     dlKit.innerHTML = DESCARGABLES.kit.map(card).join("");
     if (dlStk) dlStk.innerHTML = DESCARGABLES.stickers.map(card).join("");
 
@@ -1451,7 +1471,7 @@
     let timers = [];
     const stopSlides = () => { timers.forEach(clearInterval); timers = []; };
     const slides = (box, d) => {
-      const n = d.pages.length, what = d === B ? "del cuadernillo" : "de la portada y contraportada";
+      const n = d.pages.length, what = d === B ? "del cuadernillo" : d === BD ? "del cuadernillo para docentes" : "de la portada y contraportada";
       let i = 0, timer = 0;
       d.pages.forEach((p) => { const im = new Image(); im.src = p; });
       box.innerHTML = `<div class="dl-slides">${cover(d, d.pages[0])}<div class="dl-step-nav">${ARROWS("Página")}</div></div>`;
@@ -1503,19 +1523,19 @@
       el.className = "dl-panel";
       const label = d.label || "Descargar " + d.title.charAt(0).toLowerCase() + d.title.slice(1);
       el.innerHTML = `<div class="dl-d-view"></div><div class="dl-d-info">`
-        + `<span class="eyebrow">${d === B || d === DESCARGABLES.portada ? "Cuadernillo" : isStk(d) ? "Stickers" : `Kit de herramientas · ${num(d)}`}</span>`
+        + `<span class="eyebrow">${d === BD || d === PD ? "Cuadernillo para docentes" : d === B || d === DESCARGABLES.portada ? "Cuadernillo" : isStk(d) ? "Stickers" : `Kit de herramientas · ${num(d)}`}</span>`
         + `<h3>${esc(d.title)}</h3><p>${esc(d.desc)}</p><p class="small muted">${esc(d.meta || (d.file ? "PDF" : "PDF · Borrador"))}</p>`
         + `<div class="row dl-d-actions">` + (d.file ? `<a class="btn" href="assets/descargables/${esc(d.file)}" download>${esc(label)}</a>`
           : `<button class="btn" type="button" disabled>${esc(label)}</button><span class="example-tag">${d.soon ? "Próximamente" : "Falta el archivo"}</span>`)
         + `</div><div class="dl-d-howto"></div></div>`;
       const view = $(".dl-d-view", el);
-      if ((d === B || d === DESCARGABLES.portada) && d.pages.length > 1) slides(view, d);
+      if (isBookish(d) && d.pages.length > 1) slides(view, d);
       else view.innerHTML = d.pages.length > 1 ? d.pages.slice(0, 2).map((p) => cover(d, p)).join("") : cover(d);
       howtoIn($(".dl-d-howto", el), d);
       return el;
     };
     // El cuadernillo abre sus dos vistas previas juntas (interior y portada), una sobre la otra
-    const GROUPS = { [B.id]: [B.id, "portada"] };
+    const GROUPS = { [B.id]: [B.id, "portada"], [BD.id]: [BD.id, PD.id] };
     const show = (id, from) => {
       const list = (GROUPS[id] || [id]).map((x) => all.find((d) => d.id === x)).filter(Boolean);
       if (!list.length) return;
@@ -1525,7 +1545,7 @@
       body.innerHTML = "";
       list.forEach((d) => body.appendChild(panel(d)));
       dlDialog.classList.toggle("multi", list.length > 1);
-      dlDialog.setAttribute("aria-label", list.length > 1 ? "Vistas previas del cuadernillo" : `Vista previa: ${list[0].title}`);
+      dlDialog.setAttribute("aria-label", list.length > 1 ? (list[0] === BD ? "Vistas previas del cuadernillo para docentes" : "Vistas previas del cuadernillo") : `Vista previa: ${list[0].title}`);
       dlDialog.showModal();
       dlDialog.scrollTop = 0;
       $("#dl-d-close").focus();

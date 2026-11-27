@@ -16,7 +16,7 @@
 <!-- Rediseño inspirado en DoxWorks: grilla, bandas de color y componentes rectos. Va después de estilos.css y lo pisa. -->
 <link rel="stylesheet" href="css/rediseno.css?v=151">
 <!-- Sistema de diseño general (ver DESIGN.md): va último y unifica tarjetas, campos, títulos y cabecera. -->
-<link rel="stylesheet" href="css/sistema.css?v=7">
+<link rel="stylesheet" href="css/sistema.css?v=30">
 
 <!-- Filtro "borroneado" para los óvalos naranjas: ondula el trazo y lo deja con huecos, como marcador seco. -->
 <svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -101,7 +101,7 @@
           <button class="way-card" type="button" data-go="entender">
             <span class="way-tag">Informar</span>
             <h3>Entender el por qué</h3>
-            <ul class="way-list"><li>Qué es el TDAH</li><li>Tres conceptos para entender</li><li>Neurotípico vs Neurodivergente</li></ul>
+            <ul class="way-list"><li>Qué es el TDAH</li><li>Tres conceptos</li><li>Neurotípico vs Neurodivergente</li></ul>
             <span class="way-num" aria-hidden="true">01</span>
           </button>
           <button class="way-card" type="button" data-go="consignas">
@@ -175,10 +175,10 @@
 
     <div class="screen band band-pad" id="entender-tdah">
       <button class="scroll-cue up" type="button" data-cue="que-es"><span aria-hidden="true">↑</span> ¿Qué es el TDAH?</button>
-      <h2 class="title-circled">Entender el TDAH</h2>
+      <h2 class="title-circled"><mark class="hl">Entender el TDAH</mark></h2>
       <div class="drops">
-        <details class="drop">
-          <summary>En términos científicos...</summary>
+        <details class="drop dc">
+          <summary><span class="dc-title">En términos científicos...</span><span class="dc-desc">Qué muestran las investigaciones sobre el cerebro y las funciones ejecutivas.</span><span class="go-corner" aria-hidden="true"><span class="go-arrow">→</span></span></summary>
           <div class="drop-body">
             <p>Las investigaciones muestran diferencias en redes cerebrales relacionadas con las <b>funciones ejecutivas</b>, que son las capacidades que permiten:</p>
             <ul class="scribble-list">
@@ -192,8 +192,8 @@
             </ul>
           </div>
         </details>
-        <details class="drop">
-          <summary>Una forma sencilla de entenderlo</summary>
+        <details class="drop dc">
+          <summary><span class="dc-title">Una forma sencilla de entenderlo</span><span class="dc-desc">El cerebro como una orquesta: qué pasa con su director en el TDAH.</span><span class="go-corner" aria-hidden="true"><span class="go-arrow">→</span></span></summary>
           <div class="drop-body">
             <p>Si imaginamos que el cerebro es una orquesta, en la mayoría de las personas <span class="orange">el director coordina</span> cuándo empieza cada instrumento y cuándo debe bajar el volumen.</p>
             <p><b>En el TDAH</b>, los instrumentos están ahí y funcionan, <span class="orange">pero el director tiene más dificultad para coordinar</span> el momento adecuado.</p>
@@ -212,20 +212,20 @@
 
     <div class="screen band band-pad band-gray" id="tres-conceptos">
       <button class="scroll-cue up" type="button" data-cue="entender-tdah"><span aria-hidden="true">↑</span> Entender el TDAH</button>
-      <h2>Tres conceptos para entender</h2>
-      <div class="concepts" id="concepts">
-        <div class="concept t-blue">
-          <button class="concept-title" type="button" aria-expanded="false" aria-controls="concepto-1">Neurotípico</button>
-          <div class="concept-body" id="concepto-1" hidden><p>Describe a quienes no presentan las divergencias neurocognitivas en cuestión. No significa «normal», «sano» ni «mejor adaptado».</p></div>
-        </div>
-        <div class="concept t-orange">
-          <button class="concept-title" type="button" aria-expanded="false" aria-controls="concepto-2">Neurodivergente</button>
-          <div class="concept-body" id="concepto-2" hidden><p>Se utiliza para referirse a una persona cuyo funcionamiento neurológico o neurocognitivo se aparta de las normas consideradas predominantes. Dentro de esta categoría entra el <b class="circled">TDAH</b>.</p></div>
-        </div>
-        <div class="concept t-blue">
-          <button class="concept-title" type="button" aria-expanded="false" aria-controls="concepto-3">Neurodiversidad</button>
-          <div class="concept-body" id="concepto-3" hidden><p>Es la variación neurocognitiva entre los seres humanos. Pertenece al conjunto, no solo a quienes tienen una condición.</p></div>
-        </div>
+      <h2>Tres conceptos</h2>
+      <div class="concepts cbs">
+        <details class="drop cb cb-blue">
+          <summary><span class="cb-fill" aria-hidden="true"><svg viewBox="0 0 1024 1024" focusable="false"><path d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"/><path d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"/></svg></span><span class="cb-label">Neurotípico</span></summary>
+          <div class="drop-body"><p>Describe a quienes no presentan las divergencias neurocognitivas en cuestión. No significa «normal», «sano» ni «mejor adaptado».</p></div>
+        </details>
+        <details class="drop cb">
+          <summary><span class="cb-fill" aria-hidden="true"><svg viewBox="0 0 1024 1024" focusable="false"><path d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"/><path d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"/></svg></span><span class="cb-label">Neurodivergente</span></summary>
+          <div class="drop-body"><p>Se utiliza para referirse a una persona cuyo funcionamiento neurológico o neurocognitivo se aparta de las normas consideradas predominantes. Dentro de esta categoría entra el <b class="circled">TDAH</b>.</p></div>
+        </details>
+        <details class="drop cb cb-blue">
+          <summary><span class="cb-fill" aria-hidden="true"><svg viewBox="0 0 1024 1024" focusable="false"><path d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"/><path d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"/></svg></span><span class="cb-label">Neurodiversidad</span></summary>
+          <div class="drop-body"><p>Es la variación neurocognitiva entre los seres humanos. Pertenece al conjunto, no solo a quienes tienen una condición.</p></div>
+        </details>
       </div>
       <button class="scroll-cue" type="button" data-cue="nt-vs-nd">Neurotípico vs Neurodivergente <span aria-hidden="true">↓</span></button>
     </div>
@@ -416,9 +416,10 @@
     <div class="lead">
       <span class="eyebrow">04 · Llevar</span>
       <h2>Imprimibles</h2>
-      <p>Las herramientas en papel, para imprimir, completar a mano y tener a la vista. Tocá una para ver cómo es y descargarla.</p>
+      <p class="dl-intro">Las herramientas en papel, para imprimir, completar a mano y tener a la vista.<br><mark class="hl ap-hl"><span class="ap-ink">Tocá una para ver cómo es y descargarla.</span></mark></p>
     </div>
     <div id="dl-book"></div>
+    <div id="dl-book-doc"></div>
     </div>
     <div class="dl-kit band band-pad band-gray">
       <div class="lead">
@@ -431,7 +432,7 @@
     <div class="dl-stickers band band-pad">
       <div class="lead">
         <h3>Stickers</h3>
-        <p>Para pegar en la compu, la carpeta o el termo. Imprimilos en papel autoadhesivo y recortalos.</p>
+        <p>Para pegar en la compu, la carpeta o el termo.<br><mark class="hl ap-hl"><span class="ap-ink">Imprimilos en papel autoadhesivo y recortalos.</span></mark></p>
       </div>
       <div class="dl-grid dl-grid-stickers" id="dl-stickers"></div>
     </div>
@@ -501,8 +502,11 @@ Entrega</textarea></label>
     <div class="band band-pad" id="apoyo-areas">
     <div class="lead">
       <span class="eyebrow">Áreas pedagógicas</span>
+      <div class="ap-intro">
+        <p><b>No tenés que resolver todo solo/a.</b> Estas áreas acompañan a estudiantes con dificultades para organizarse, cursar o rendir. <mark class="hl ap-hl"><span class="ap-ink">Pedir ayuda es parte de cursar.</span></mark></p>
+      </div>
       <h2>A quién podés recurrir en la universidad</h2>
-      <p>No tenés que resolver todo sola o solo. Estas áreas acompañan a estudiantes con dificultades para organizarse, cursar o rendir. Pedir ayuda es parte de cursar.</p>
+
     </div>
     <div class="grid-2" id="areas"></div>
     <div class="note">
@@ -514,8 +518,10 @@ Entrega</textarea></label>
     <div class="band band-pad band-gray contact" id="contacto" role="region" aria-labelledby="ct-title">
   <div class="lead">
       <span class="eyebrow">Contacto</span>
+      <div class="ap-intro">
+        <p><b>Completá lo que quieras:</b> no hace falta contar todo ni tener un diagnóstico. <mark class="hl ap-hl"><span class="ap-ink">Este formulario no envía nada por sí solo:</span></mark> <b>solo te arma el mensaje</b> para que lo mandes desde tu correo o lo copies. <em class="ap-aside">(El borrador queda guardado solo en tu navegador).</em></p>
+      </div>
       <h2 id="ct-title">Escribirle a un psicopedagogo</h2>
-      <p class="small muted">Completá lo que quieras: no hace falta contar todo ni tener un diagnóstico. Este formulario no envía nada por sí solo: te arma el mensaje para que lo mandes desde tu correo o lo copies. El borrador queda guardado solo en tu navegador.</p>
     </div>
   <div class="panel">
     <div class="grid-2">
@@ -719,5 +725,26 @@ Entrega</textarea></label>
     <p class="dl-tip"><b>Recomendación:</b> si querés más durabilidad, podés agregarle a la portada un laminado o una tapa transparente.</p>
   </div>
 </template>
-<script src="js/app.js?v=145"></script>
+<template id="howto-docentes">
+  <div class="dl-step">
+    <h4>Descargá el interior del cuadernillo para docentes</h4>
+    <p>Este archivo PDF contiene las páginas interiores de la guía “Entender para enseñar y acompañar”, en hojas tamaño A4. Está pensado para docentes de la FAU: explica qué son las neurodivergencias y propone prácticas concretas para que la cursada sea accesible para todo el curso.</p>
+  </div>
+  <div class="dl-step" hidden>
+    <h4>Para imprimirlo</h4>
+    <ul class="scribble-list">
+      <li>Abrí el PDF y elegí Imprimir.</li>
+      <li>Seleccioná el tamaño de hoja A4 y la escala 100 % o “Tamaño real”.</li>
+      <li>Activá la opción Doble faz y elegí girar por el borde largo.</li>
+    </ul>
+    <p>Una vez impreso, podés anillarlo o abrocharlo para tenerlo a mano en la cursada.</p>
+  </div>
+</template>
+<template id="howto-portada-docentes">
+  <div class="dl-step">
+    <h4>Descargá la portada y contraportada del cuadernillo para docentes</h4>
+    <p>Este archivo PDF contiene la portada y la contraportada de la guía para docentes, en hojas tamaño A4. Están en un archivo aparte para que puedas imprimirlas en un papel más grueso y resistente.</p>
+  </div>
+</template>
+<script src="js/app.js?v=152"></script>
 <script src="js/movimiento.js?v=137"></script>

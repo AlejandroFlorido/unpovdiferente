@@ -277,6 +277,177 @@ html.calm .way-card, html.calm .way-card:hover { transition: none; transform: no
 .tab { overflow: hidden; }
 
 /* Imprimibles: planchas de stickers, dos tarjetas (una vertical y una apaisada) alineadas abajo */
-.dl-grid.dl-grid-stickers { grid-template-columns: 0.72fr 1fr; align-items: end; max-width: 52rem; margin-inline: auto; }
+.dl-grid.dl-grid-stickers { grid-template-columns: minmax(0, 1fr); align-items: end; max-width: 30rem; margin-inline: auto; }
 @media (max-width: 600px) { .dl-grid.dl-grid-stickers { grid-template-columns: 1fr; max-width: 24rem; } }
 .dl-cover.has-img.wide img { width: 100%; height: auto; }
+
+/* ---------- 13. Cada sección ocupa la pantalla completa (pedido de Ale, 2026-11-27) ----------
+   Como "¿Qué es el TDAH?": cada parte de cada pestaña llena el alto de la ventana (menos la cabecera)
+   y su contenido queda centrado en vertical. La última parte de cada pestaña queda con su alto natural
+   para que el "Siguiente" y el pie se vean con ella. En celular se mantienen compactas (sin huecos vacíos). */
+@media (min-width: 601px) {
+  main > section:not(#entender) > :is(.band, .screen):has(~ :is(.band, .screen)):not(#inicio-docentes, #te-pasa),
+  #equipo > .band-pad:has(~ .band-pad) {
+    min-height: calc(100svh - var(--top-h, 4.25rem)) !important;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  #inicio .hero.screen { min-height: calc(100svh - var(--top-h, 4.25rem)) !important; }
+}
+
+/* Pie más chico (pedido de Ale, 2026-11-27): menos aire, logo más chico y letra más chica */
+.foot-grid { padding-top: clamp(1.25rem, 2.5vw, 1.75rem) !important; padding-bottom: 0.9rem !important; row-gap: 0.9rem !important; }
+.foot-nav { font-size: 0.85rem !important; row-gap: 0.3rem !important; }
+.foot-legal { font-size: 0.78rem; gap: 0.3rem; }
+.foot-logo { max-width: 12.5rem !important; align-self: center !important; justify-self: end !important; }
+@media (max-width: 860px) { .foot-logo { max-width: 9.5rem !important; justify-self: end !important; } }
+/* Secciones del pie en dos renglones: Inicio, Entender, Herramientas, Imprimibles / Docentes, Apoyo, Equipo */
+.foot-nav { grid-template-columns: repeat(4, max-content) !important; column-gap: 1.75rem !important; grid-column: 1 / 6 !important; }
+@media (max-width: 600px) { .foot-nav { grid-template-columns: repeat(4, auto) !important; column-gap: 0.9rem !important; font-size: 0.8rem !important; justify-content: start; } }
+
+/* ---------- 14. Entender el TDAH (pedido de Ale, 2026-11-27) ---------- */
+/* El título va sin el óvalo naranja */
+#entender-tdah h2.title-circled { padding: 0; margin-left: 0 !important; }
+#entender-tdah h2.title-circled::before, #entender-tdah h2.title-circled::after { display: none; }
+/* Desplegables como tarjeta con esquina: un círculo azul sale de la esquina y llena la tarjeta al pasar el mouse;
+   al abrirla queda azul y debajo aparece la información. */
+.drop.dc { position: relative; overflow: hidden; padding: 0; background: var(--surface) !important; }
+.drop.dc summary {
+  position: relative; isolation: isolate; overflow: hidden; display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem;
+  padding: clamp(1.4rem, 2.5vw, 2rem) clamp(3.5rem, 6vw, 4.5rem) clamp(1.4rem, 2.5vw, 2rem) clamp(1.4rem, 2.5vw, 2rem);
+  border-radius: var(--r-card); color: var(--ink); cursor: pointer; transition: color 0.3s ease-out;
+}
+.drop.dc summary::after { display: none !important; }
+.drop.dc summary::before {
+  content: ""; position: absolute; z-index: -1; top: -16px; right: -16px; width: 32px; height: 32px; border-radius: 50%;
+  background: var(--blue); transform: scale(1); transform-origin: 50% 50%; transition: transform 0.4s ease-out;
+}
+.drop.dc .dc-title { font-family: var(--f-title); font-weight: 700; letter-spacing: -0.02em; font-size: calc(clamp(1.15rem, 1.6vw, 1.4rem) + 4pt); line-height: var(--lh-sub); }
+.drop.dc .dc-desc { font-family: var(--f-body); font-weight: 400; letter-spacing: 0; font-size: 0.95rem; line-height: 1.45; color: var(--muted); transition: color 0.3s ease-out; max-width: 38ch; }
+.go-corner { position: absolute; top: 0; right: 0; width: 2.75rem; height: 2.75rem; display: grid; place-items: center;
+  background: var(--blue); border-radius: 0 var(--r-card) 0 2rem; overflow: hidden; }
+.go-arrow { color: #fff; font-family: var(--f-display); font-size: 1.1rem; margin: -0.25rem -0.25rem 0 0; transition: transform 0.3s ease; }
+@media (hover: hover) {
+  .drop.dc summary:hover::before { transform: scale(80); }
+  .drop.dc summary:hover, .drop.dc summary:hover .dc-desc { color: #fff; }
+}
+.drop.dc[open]:not(.is-closing) summary::before { transform: scale(80); }
+.drop.dc[open]:not(.is-closing) summary, .drop.dc[open]:not(.is-closing) summary .dc-desc { color: #fff; }
+.drop.dc[open]:not(.is-closing) .go-arrow { transform: rotate(90deg); }
+.drop.dc summary:focus-visible { box-shadow: var(--ring) !important; }
+.drop.dc .drop-body { padding: clamp(1.2rem, 2.4vw, 1.8rem); }
+html.calm .drop.dc summary::before, html.calm .go-arrow { transition: none; }
+/* Dentro de las tarjetas abiertas de Entender el TDAH: puntos simples, sin garabatos (pedido de Ale) */
+.drop.dc .scribble-list { list-style: disc !important; padding-left: 1.3em !important; }
+.drop.dc .scribble-list li { padding-left: 0.2em !important; }
+.drop.dc .scribble-list li::before { display: none !important; }
+#entender-tdah h2 .hl { padding: 0.02em 0.22em 0.08em; border-radius: 0.14em; }
+/* Resaltado del título en negro (pedido de Ale); en modo oscuro se invierte para que se vea */
+#entender-tdah h2 .hl { background: #000; color: #fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #entender-tdah h2 .hl { background: #fff; color: #000; } }
+:root[data-theme="dark"] #entender-tdah h2 .hl { background: #fff; color: #000; }
+
+/* Tres conceptos (pedido de Ale): botón blanco con un bloque naranja y flecha a la izquierda que se estira al pasar
+   el mouse; al tocarlo se abre hacia abajo como los desplegables de Entender el TDAH. */
+#tres-conceptos .cbs { align-items: start; }
+.drop.cb { position: relative; overflow: hidden; padding: 0; background: var(--surface) !important; border-color: transparent !important; box-shadow: var(--shadow-card); }
+.drop.cb summary { position: relative; display: flex; align-items: center; justify-content: center; min-height: 4.5rem; padding: 0.4rem 1rem 0.4rem 5rem;
+  border-radius: var(--r-card); color: #000; }
+.drop.cb summary::after { display: none !important; }
+.cb-fill { position: absolute; left: 6px; top: 6px; bottom: 6px; width: 3.8rem; border-radius: calc(var(--r-card) - 6px);
+  background: var(--brand, #FF6E2B); display: grid; place-items: center; transition: width 0.5s ease; }
+.cb-fill svg { width: 1.5rem; height: 1.5rem; fill: #000; transform: scaleX(-1); transition: transform 0.35s ease; }
+.cb-label { position: relative; z-index: 1; font-family: var(--f-title); font-weight: 700; letter-spacing: -0.02em;
+  font-size: calc(clamp(1.15rem, 1.6vw, 1.4rem) + 4pt); line-height: var(--lh-sub); color: var(--ink); transition: color 0.3s ease; }
+@media (hover: hover) {
+  .drop.cb summary:hover .cb-fill { width: calc(100% - 12px); }
+  .drop.cb summary:hover .cb-label { color: #000; }
+}
+.drop.cb[open]:not(.is-closing) .cb-fill { width: calc(100% - 12px); }
+.drop.cb[open]:not(.is-closing) .cb-label { color: #000; }
+.drop.cb[open]:not(.is-closing) .cb-fill svg { transform: scaleX(-1) rotate(-90deg); }
+.drop.cb summary:focus-visible { box-shadow: var(--ring) !important; }
+.drop.cb .drop-body { margin: 0; padding: clamp(1.1rem, 2.2vw, 1.6rem); border-top: 0; }
+html.calm .cb-fill, html.calm .cb-fill svg { transition: none; }
+.cb-fill { place-items: center start; padding-left: 1.15rem; }
+/* Neurotípico y Neurodiversidad en azul, Neurodivergente en naranja (pedido de Ale) */
+.drop.cb-blue .cb-fill { background: var(--blue); }
+.drop.cb-blue .cb-fill svg { fill: #fff; }
+@media (hover: hover) { .drop.cb-blue summary:hover .cb-label { color: #fff; } }
+.drop.cb-blue[open]:not(.is-closing) .cb-label { color: #fff; }
+
+/* ---------- 15. Apoyo (pedido de Ale, 2026-11-27) ---------- */
+/* Más cerca de la cabecera */
+#apoyo-areas { padding-top: 0.75rem !important; justify-content: flex-start !important; }
+/* Listas con puntos simples, sin garabatos */
+#apoyo .scribble-list { list-style: disc !important; padding-left: 1.3em !important; }
+#apoyo .scribble-list li { padding-left: 0.2em !important; }
+#apoyo .scribble-list li::before { display: none !important; }
+/* Texto de arriba como en la imagen de Ale, con la flecha que sale de él hacia las tarjetas */
+#apoyo-areas .lead > .ap-intro { grid-column: 5 / 9; position: relative; padding-bottom: clamp(3.5rem, 6vw, 5rem); }
+#apoyo-areas .ap-intro p { font-family: var(--f-body); font-size: clamp(1.05rem, 1.35vw, 1.3rem); line-height: 1.5; color: var(--ink); max-width: none; margin: 0; }
+#apoyo-areas .ap-intro b { font-weight: 700; color: var(--ink); }
+#apoyo-areas .ap-aside { font-size: 0.82em; font-style: italic; }
+.ap-hl { color: #000; background-color: transparent; background-image: linear-gradient(#FF6E2B, #FF6E2B);
+  background-repeat: no-repeat; background-size: 0% 100%; background-position: 0 0; padding: 0 0.1em 0.02em; margin: 0 -0.04em;
+  border-radius: 0.14em; -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  transition: background-size 0.9s cubic-bezier(0.65, 0, 0.35, 1); }
+.ap-hl.on { background-size: 100% 100%; }
+html.calm .ap-hl { transition: none; }
+.ap-arrow { position: absolute; left: 8%; bottom: -1.5rem; width: clamp(4rem, 6.5vw, 6rem); height: auto; pointer-events: none; }
+@media (max-width: 860px) {
+  #apoyo-areas .lead > .ap-intro { grid-column: 1 / -1; }
+  .ap-arrow { left: auto; right: 12%; }
+}
+/* Texto de Apoyo alineado a la izquierda, debajo del título (pedido de Ale) */
+#apoyo-areas .lead > .ap-intro { grid-column: 1 / 7; text-align: left; }
+#apoyo-areas .lead > .ap-intro p { max-width: 46rem; }
+.ap-arrow { left: auto; right: 22%; }
+@media (max-width: 860px) { #apoyo-areas .lead > .ap-intro { grid-column: 1 / -1; } .ap-arrow { right: 12%; } }
+/* Orden en Apoyo: eyebrow, texto, flechita sutil hacia el título grande, título sobre los paneles */
+#apoyo-areas .lead > .ap-intro { grid-column: 1 / 7; padding-bottom: 2.4rem; }
+#apoyo-areas .lead > h2 { grid-column: 1 / -1; }
+.ap-arrow { width: 1.9rem; left: 0.4rem; right: auto; bottom: 0.1rem; opacity: 0.75; }
+@media (max-width: 860px) { .ap-arrow { left: 0.4rem; right: auto; } }
+/* Flechita del otro lado del texto, espejada (pedido de Ale) */
+#apoyo-areas .lead > .ap-intro { justify-self: start; max-width: 46rem; }
+#apoyo-areas .ap-arrow { left: auto; right: 0.4rem; transform: scaleX(-1); }
+/* Apoyo: resaltados en azul con letra blanca; Contacto con el mismo orden que Áreas (pedido de Ale) */
+.ap-hl { color: #fff !important; background-image: linear-gradient(#1D58FE, #1D58FE) !important; }
+#contacto .lead > .ap-intro { grid-column: 1 / 7; justify-self: start; max-width: 46rem; position: relative; padding-bottom: 2.4rem; }
+#contacto .lead > h2 { grid-column: 1 / -1; }
+#contacto .ap-intro p { font-family: var(--f-body); font-size: clamp(1.05rem, 1.35vw, 1.3rem); line-height: 1.5; color: var(--ink); max-width: none; margin: 0; }
+#contacto .ap-intro b { font-weight: 700; color: var(--ink); }
+#contacto .ap-aside { font-size: 0.82em; font-style: italic; }
+#contacto .ap-arrow { width: 1.9rem; left: auto; right: 0.4rem; bottom: 0.1rem; opacity: 0.75; transform: scaleX(-1); }
+@media (max-width: 860px) { #contacto .lead > .ap-intro { grid-column: 1 / -1; } }
+/* Apoyo (pedido de Ale): sin flechas; resaltado negro que se dibuja y el texto pasa de negro a blanco a medida que avanza */
+#apoyo .lead > .ap-intro { padding-bottom: 0.5rem !important; }
+.ap-arrow { display: none !important; }
+#apoyo { --aphl-bg: #000; --aphl-fg: #fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #apoyo { --aphl-bg: #fff; --aphl-fg: #000; } }
+:root[data-theme="dark"] #apoyo { --aphl-bg: #fff; --aphl-fg: #000; }
+.ap-hl { background-image: linear-gradient(var(--aphl-bg), var(--aphl-bg)) !important; -webkit-box-decoration-break: slice; box-decoration-break: slice; }
+.ap-hl .ap-ink { color: transparent; -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(var(--aphl-fg), var(--aphl-fg)), linear-gradient(var(--ink), var(--ink));
+  background-repeat: no-repeat; background-size: 0% 100%, 100% 100%; background-position: 0 0;
+  -webkit-background-clip: text; background-clip: text;
+  transition: background-size 0.9s cubic-bezier(0.65, 0, 0.35, 1); }
+.ap-hl.on .ap-ink { background-size: 100% 100%, 100% 100%; }
+.ap-hl:not(.on) .ap-ink, html.calm .ap-hl .ap-ink { transition: none; }
+/* Resaltado de Apoyo en azul (pedido de Ale); el texto pasa de negro a blanco */
+#apoyo, :root[data-theme="dark"] #apoyo { --aphl-bg: #1D58FE; --aphl-fg: #fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #apoyo { --aphl-bg: #1D58FE; --aphl-fg: #fff; } }
+/* Stickers: texto debajo del título y resaltado naranja con el mismo efecto (pedido de Ale) */
+#descargables .dl-stickers .lead > p { grid-column: 1 / -1; align-self: start; max-width: 40rem; }
+.dl-stickers, :root[data-theme="dark"] .dl-stickers { --aphl-bg: #FF6E2B; --aphl-fg: #000; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .dl-stickers { --aphl-bg: #FF6E2B; --aphl-fg: #000; } }
+.dl-stickers .ap-hl { white-space: nowrap; }
+@media (max-width: 480px) { .dl-stickers .ap-hl { white-space: normal; } }
+/* Imprimibles y Kit con el mismo orden que Stickers: título y el texto debajo (pedido de Ale) */
+#descargables :is(#dl-top, .dl-kit) .lead > p { grid-column: 1 / -1; align-self: start; max-width: 44rem; }
+#dl-top, :root[data-theme="dark"] #dl-top { --aphl-bg: #FF6E2B; --aphl-fg: #000; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #dl-top { --aphl-bg: #FF6E2B; --aphl-fg: #000; } }
+#dl-top .ap-hl { white-space: nowrap; }
+@media (max-width: 480px) { #dl-top .ap-hl { white-space: normal; } }
+/* Cuadernillo para docentes: mismo bloque que el de estudiantes, debajo y con un poco de aire */
+#dl-book-doc { margin-top: clamp(1.5rem, 3vw, 2.5rem); }
