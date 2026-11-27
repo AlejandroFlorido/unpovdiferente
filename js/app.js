@@ -399,11 +399,10 @@
     new IntersectionObserver((es) => es.forEach((e) => { const m = $("#car-quote .hl"); if (e.isIntersecting && m) drawHl(m); }), { threshold: 0.4 }).observe($("#te-pasa"));
   }
   // Apoyo: el resaltado naranja del texto de arriba se pinta igual que en "¿Te pasa?" cada vez que se ve
-  const apHl = $(".ap-hl");
-  if (apHl) {
+  $$(".ap-hl").forEach((apHl) => {
     if ("IntersectionObserver" in window) new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) drawHl(apHl); }), { threshold: 0.6 }).observe(apHl);
     else apHl.classList.add("on");
-  }
+  });
   let car = 0;
   const dotsEl = $("#car-dots");
   situations.forEach((s, i) => {
