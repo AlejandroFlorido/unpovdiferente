@@ -497,44 +497,29 @@
       const c = card.getBoundingClientRect(), e = el.getBoundingClientRect();
       return { left: `${e.left - c.left}px`, top: `${e.top - c.top}px`, width: `${e.width}px`, height: `${e.height}px` };
     };
-    // Recorrido como un trazo (pedido de Ale): la pastilla se recoge hacia su punta izquierda, esa punta baja dibujando
-    // una curva que rodea por la izquierda, la cola la sigue y se "absorbe" en "Realidad", donde la pastilla se abre azul.
-    // Al cerrar, el mismo recorrido al revés.
+    // Recorrido como un trazo (pedido de Ale): la pastilla entera, sin estirarse ni achicarse, viaja por una curva que
+    // rodea por la izquierda desde "Mito" hasta "Realidad" y en el camino pasa de naranja a azul. Al cerrar, al revés.
     const a = rel(tm), z = rel(tr), px = (v) => parseFloat(v);
-    const h = px(a.height), x1 = px(a.left), y1 = px(a.top), x2 = px(z.left), y2 = px(z.top);
-    const sx = x1 + h / 2, sy = y1 + h / 2, ex = x2 + h / 2, ey = y2 + h / 2, bow = Math.max(18, (ey - sy) * 0.32);
-    const O = "#FF6E2B", B = "#1D58FE", D = 950;
+    const s = open ? a : z, e = open ? z : a, h = px(s.height);
+    const sx = px(s.left), sy = px(s.top) + h / 2, ex = px(e.left), ey = px(e.top) + h / 2;
+    const cx = Math.min(Math.abs(ey - sy) * 0.5, Math.max(0, (Math.min(sx, ex) - 4) / 0.75)); // sin salirse de la tarjeta
+    const bez = (t, p0, p1, p2, p3) => { const u = 1 - t; return u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t * p3; };
+    const O = [255, 110, 43], B = [29, 88, 254], c0 = open ? O : B, c1 = open ? B : O, D = 760, N = 30;
+    const kf = [];
+    for (let i = 0; i <= N; i++) {
+      const t = i / N, x = bez(t, sx, sx - cx, ex - cx, ex), y = bez(t, sy, sy, ey, ey);
+      const w = px(s.width) + (px(e.width) - px(s.width)) * t, k = Math.min(1, Math.max(0, (t - 0.25) / 0.5));
+      const col = c0.map((v, n) => Math.round(v + (c1[n] - v) * k));
+      kf.push({ left: `${x}px`, top: `${y - h / 2}px`, width: `${w}px`, height: `${h}px`, backgroundColor: `rgb(${col})` });
+    }
     if (card.pill) card.pill.remove();
-    if (card.trail) card.trail.remove();
     const pill = card.pill = document.createElement("span");
     pill.className = "myth-pill";
-    const svg = card.trail = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("class", "myth-trail");
-    const cx = Math.min(bow * 1.6, Math.max(0, (Math.min(sx, ex) - h / 2 - 4) / 0.75)); // sin salirse de la tarjeta
-    svg.innerHTML = `<path d="M${sx} ${sy} C${sx - cx} ${sy}, ${ex - cx} ${ey}, ${ex} ${ey}" stroke-width="${h}" />`;
-    card.append(svg, pill);
-    const path = svg.firstChild, len = Math.ceil(path.getTotalLength());
+    card.append(pill);
     card.classList.add("flying");
     card.classList.toggle("is-open", open);
-    const opts = { duration: D, fill: "forwards", direction: open ? "normal" : "reverse" };
-    const fly = pill.animate([
-      { left: a.left, top: a.top, width: a.width, height: a.height, backgroundColor: O, opacity: 1, offset: 0, easing: "cubic-bezier(.5,0,.3,1)" },
-      { left: a.left, top: a.top, width: `${h}px`, height: a.height, backgroundColor: O, opacity: 1, offset: 0.22 },
-      { left: a.left, top: a.top, width: `${h}px`, height: a.height, backgroundColor: O, opacity: 0, offset: 0.23 },
-      { left: z.left, top: z.top, width: `${h}px`, height: z.height, backgroundColor: B, opacity: 0, offset: 0.77 },
-      { left: z.left, top: z.top, width: `${h}px`, height: z.height, backgroundColor: B, opacity: 1, offset: 0.78, easing: "cubic-bezier(.3,0,.2,1)" },
-      { left: z.left, top: z.top, width: z.width, height: z.height, backgroundColor: B, opacity: 1, offset: 1 }
-    ], opts);
-    path.animate([
-      { strokeDasharray: `0.01 ${len * 3}`, strokeDashoffset: 0, stroke: O, opacity: 0, offset: 0 },
-      { strokeDasharray: `0.01 ${len * 3}`, strokeDashoffset: 0, stroke: O, opacity: 0, offset: 0.22 },
-      { strokeDasharray: `0.01 ${len * 3}`, strokeDashoffset: 0, stroke: O, opacity: 1, offset: 0.23, easing: "cubic-bezier(.45,0,.35,1)" },
-      { strokeDasharray: `${len} ${len * 3}`, strokeDashoffset: 0, stroke: "#8E63A0", opacity: 1, offset: 0.52, easing: "cubic-bezier(.45,0,.35,1)" },
-      { strokeDasharray: `0.01 ${len * 3}`, strokeDashoffset: -len, stroke: B, opacity: 1, offset: 0.77 },
-      { strokeDasharray: `0.01 ${len * 3}`, strokeDashoffset: -len, stroke: B, opacity: 0, offset: 0.78 },
-      { strokeDasharray: `0.01 ${len * 3}`, strokeDashoffset: -len, stroke: B, opacity: 0, offset: 1 }
-    ], opts);
-    fly.onfinish = () => { pill.remove(); svg.remove(); if (card.pill === pill) { card.pill = null; card.trail = null; card.classList.remove("flying"); } };
+    const fly = pill.animate(kf, { duration: D, easing: "cubic-bezier(.55,0,.35,1)", fill: "forwards" });
+    fly.onfinish = () => { if (card.pill === pill) { card.classList.remove("flying"); card.pill = null; } pill.remove(); };
     // Despliega o pliega la realidad de a poco: alto, relleno y opacidad juntos.
     const cs = getComputedStyle(r);
     const full = { height: r.offsetHeight + "px", paddingTop: cs.paddingTop, paddingBottom: cs.paddingBottom, opacity: 1 };
