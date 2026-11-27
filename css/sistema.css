@@ -420,3 +420,17 @@ html.calm .ap-hl { transition: none; }
 #contacto .ap-aside { font-size: 0.82em; font-style: italic; }
 #contacto .ap-arrow { width: 1.9rem; left: auto; right: 0.4rem; bottom: 0.1rem; opacity: 0.75; transform: scaleX(-1); }
 @media (max-width: 860px) { #contacto .lead > .ap-intro { grid-column: 1 / -1; } }
+/* Apoyo (pedido de Ale): sin flechas; resaltado negro que se dibuja y el texto pasa de negro a blanco a medida que avanza */
+#apoyo .lead > .ap-intro { padding-bottom: 0.5rem !important; }
+.ap-arrow { display: none !important; }
+#apoyo { --aphl-bg: #000; --aphl-fg: #fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #apoyo { --aphl-bg: #fff; --aphl-fg: #000; } }
+:root[data-theme="dark"] #apoyo { --aphl-bg: #fff; --aphl-fg: #000; }
+.ap-hl { background-image: linear-gradient(var(--aphl-bg), var(--aphl-bg)) !important; -webkit-box-decoration-break: slice; box-decoration-break: slice; }
+.ap-hl .ap-ink { color: transparent; -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(var(--aphl-fg), var(--aphl-fg)), linear-gradient(var(--ink), var(--ink));
+  background-repeat: no-repeat; background-size: 0% 100%, 100% 100%; background-position: 0 0;
+  -webkit-background-clip: text; background-clip: text;
+  transition: background-size 0.9s cubic-bezier(0.65, 0, 0.35, 1); }
+.ap-hl.on .ap-ink { background-size: 100% 100%, 100% 100%; }
+.ap-hl:not(.on) .ap-ink, html.calm .ap-hl .ap-ink { transition: none; }
