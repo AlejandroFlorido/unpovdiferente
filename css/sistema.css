@@ -434,3 +434,6 @@ html.calm .ap-hl { transition: none; }
   transition: background-size 0.9s cubic-bezier(0.65, 0, 0.35, 1); }
 .ap-hl.on .ap-ink { background-size: 100% 100%, 100% 100%; }
 .ap-hl:not(.on) .ap-ink, html.calm .ap-hl .ap-ink { transition: none; }
+/* Resaltado de Apoyo en azul (pedido de Ale); el texto pasa de negro a blanco */
+#apoyo, :root[data-theme="dark"] #apoyo { --aphl-bg: #1D58FE; --aphl-fg: #fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #apoyo { --aphl-bg: #1D58FE; --aphl-fg: #fff; } }
