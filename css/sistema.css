@@ -451,3 +451,40 @@ html.calm .ap-hl { transition: none; }
 @media (max-width: 480px) { #dl-top .ap-hl { white-space: normal; } }
 /* Cuadernillo para docentes: mismo bloque que el de estudiantes, debajo y con un poco de aire */
 #dl-book-doc { margin-top: clamp(1.5rem, 3vw, 2.5rem); }
+/* Mitos y realidades (pedido de Ale): "Mito" en pastilla naranja con letra blanca; al abrir, la pastilla baja a
+   "Realidad" y se vuelve azul. Durante el viaje la dibuja .myth-pill (js/app.js). */
+.myth { position: relative; }
+.myth .tag { position: relative; z-index: 1; align-self: flex-start; display: inline-block; padding: 0.3em 0.75em 0.25em; border-radius: 999px;
+  line-height: 1.1; transition: color 0.35s ease, background-color 0.2s ease; }
+#myths .myth .tag.m { background: #FF6E2B; color: #fff; }
+#myths .myth .tag.r { background: var(--blue); color: #fff; }
+#myths .myth.is-open .tag.m { background: transparent; color: var(--brand); }
+#myths .myth.flying .tag { background: transparent; }
+.myth-pill { position: absolute; z-index: 0; border-radius: 999px; background: #FF6E2B; pointer-events: none;
+  transition: left 0.5s cubic-bezier(0.65, 0, 0.35, 1), top 0.5s cubic-bezier(0.65, 0, 0.35, 1), width 0.5s cubic-bezier(0.65, 0, 0.35, 1),
+    height 0.5s cubic-bezier(0.65, 0, 0.35, 1), background-color 0.5s ease; }
+.myth-pill.blue { background: var(--blue); }
+.myth button { position: relative; z-index: 1; }
+#myths .myth:not(.is-open) .tag.m { transition-delay: 0.3s; }
+.myth-pill { transition: none; }
+#myths .myth:not(.is-open) .tag.m { transition-delay: 0.6s; }
+#myths .myth.is-open .tag.r { transition: color 0.3s ease 0.55s; }
+.myth-trail { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 0; }
+.myth-trail path { fill: none; stroke-linecap: round; }
+#myths .myth:not(.is-open) .tag.m { transition-delay: 0.75s; }
+#myths .myth.is-open .tag.r { transition: color 0.3s ease 0.7s; }
+/* Letras de las pastillas de Mitos: cambian de color justo cuando la pastilla sale o llega (nunca blanco sobre blanco) */
+#myths .myth .tag { transition: color 0.18s ease, background-color 0s; }
+#myths .myth.is-open .tag.m { transition-delay: 0.05s; }
+#myths .myth:not(.is-open) .tag.m { transition-delay: 0.62s; }
+#myths .myth .tag.r { color: #fff !important; transition: none !important; }
+#myths .myth .tag.m { transition-property: color, background-color; transition-duration: 0.18s, 0s; }
+#myths .myth.is-open .tag.m { transition-delay: 0.05s, 0s; }
+#myths .myth:not(.is-open) .tag.m { transition-delay: 0.62s, 0s; }
+.myth-goo { position: absolute; inset: 0; z-index: 0; pointer-events: none; filter: url(#goo); }
+.myth-goo .myth-pill { position: absolute; }
+#myths .myth:not(.is-open) .tag.m { transition-delay: 0.85s, 0s; }
+/* Mitos: los colores de las letras cambian sin transición, sincronizados por JS con el final del recorrido */
+#myths .myth .tag.m { transition: none !important; }
+/* Los botones de Mitos no se agrandan ni se achican al tocarlos: así "Mito" queda quieto y la gota llega justo */
+#myths .myth button, #myths .myth button:hover, #myths .myth button:active { transform: none !important; }
