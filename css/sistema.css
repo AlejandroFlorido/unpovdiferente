@@ -340,3 +340,4 @@ html.calm .drop.dc summary::before, html.calm .go-arrow { transition: none; }
 .drop.dc .scribble-list { list-style: disc !important; padding-left: 1.3em !important; }
 .drop.dc .scribble-list li { padding-left: 0.2em !important; }
 .drop.dc .scribble-list li::before { display: none !important; }
+#entender-tdah h2 .hl { padding: 0.02em 0.22em 0.08em; border-radius: 0.14em; }

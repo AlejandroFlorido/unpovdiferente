@@ -16,7 +16,7 @@
 <!-- Rediseño inspirado en DoxWorks: grilla, bandas de color y componentes rectos. Va después de estilos.css y lo pisa. -->
 <link rel="stylesheet" href="css/rediseno.css?v=151">
 <!-- Sistema de diseño general (ver DESIGN.md): va último y unifica tarjetas, campos, títulos y cabecera. -->
-<link rel="stylesheet" href="css/sistema.css?v=13">
+<link rel="stylesheet" href="css/sistema.css?v=14">
 
 <!-- Filtro "borroneado" para los óvalos naranjas: ondula el trazo y lo deja con huecos, como marcador seco. -->
 <svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -101,7 +101,7 @@
           <button class="way-card" type="button" data-go="entender">
             <span class="way-tag">Informar</span>
             <h3>Entender el por qué</h3>
-            <ul class="way-list"><li>Qué es el TDAH</li><li>Tres conceptos para entender</li><li>Neurotípico vs Neurodivergente</li></ul>
+            <ul class="way-list"><li>Qué es el TDAH</li><li>Tres conceptos</li><li>Neurotípico vs Neurodivergente</li></ul>
             <span class="way-num" aria-hidden="true">01</span>
           </button>
           <button class="way-card" type="button" data-go="consignas">
@@ -175,7 +175,7 @@
 
     <div class="screen band band-pad" id="entender-tdah">
       <button class="scroll-cue up" type="button" data-cue="que-es"><span aria-hidden="true">↑</span> ¿Qué es el TDAH?</button>
-      <h2 class="title-circled">Entender el TDAH</h2>
+      <h2 class="title-circled"><mark class="hl">Entender el TDAH</mark></h2>
       <div class="drops">
         <details class="drop dc">
           <summary><span class="dc-title">En términos científicos...</span><span class="dc-desc">Qué muestran las investigaciones sobre el cerebro y las funciones ejecutivas.</span><span class="go-corner" aria-hidden="true"><span class="go-arrow">→</span></span></summary>
@@ -212,7 +212,7 @@
 
     <div class="screen band band-pad band-gray" id="tres-conceptos">
       <button class="scroll-cue up" type="button" data-cue="entender-tdah"><span aria-hidden="true">↑</span> Entender el TDAH</button>
-      <h2>Tres conceptos para entender</h2>
+      <h2>Tres conceptos</h2>
       <div class="concepts" id="concepts">
         <div class="concept t-blue">
           <button class="concept-title" type="button" aria-expanded="false" aria-controls="concepto-1">Neurotípico</button>
