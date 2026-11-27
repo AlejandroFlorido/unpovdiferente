@@ -346,29 +346,26 @@ html.calm .drop.dc summary::before, html.calm .go-arrow { transition: none; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #entender-tdah h2 .hl { background: #fff; color: #000; } }
 :root[data-theme="dark"] #entender-tdah h2 .hl { background: #fff; color: #000; }
 
-/* Tres conceptos con el mismo estilo que las tarjetas de Entender el TDAH */
-#tres-conceptos .concept, #tres-conceptos .concept:nth-child(n) {
-  --c: var(--blue); border-radius: var(--r-card) !important; border: 1px solid var(--line); background: var(--surface);
-  box-shadow: var(--shadow-card); overflow: hidden;
-}
-#tres-conceptos.band-gray .concept { border-color: transparent; }
-#tres-conceptos .concept::before { display: none; }
-#tres-conceptos .concept-title {
-  position: relative; isolation: isolate; overflow: hidden; color: var(--ink); border-radius: 0;
-  padding: clamp(1.6rem, 2.8vw, 2.2rem) clamp(3.2rem, 5vw, 4rem); transition: color 0.3s ease-out;
-}
-#tres-conceptos .concept-title::before {
-  content: ""; position: absolute; z-index: -1; top: -16px; right: -16px; width: 32px; height: 32px; border-radius: 50%;
-  background: var(--blue); transform: scale(1); transition: transform 0.4s ease-out;
-}
-#tres-conceptos .concept .go-corner { pointer-events: none; z-index: 1; }
+/* Tres conceptos (pedido de Ale): botón blanco con un bloque naranja y flecha a la izquierda que se estira al pasar
+   el mouse; al tocarlo se abre hacia abajo como los desplegables de Entender el TDAH. */
+#tres-conceptos .cbs { align-items: start; }
+.drop.cb { position: relative; overflow: hidden; padding: 0; background: var(--surface) !important; border-color: transparent !important; box-shadow: var(--shadow-card); }
+.drop.cb summary { position: relative; display: flex; align-items: center; justify-content: center; min-height: 4.5rem; padding: 0.4rem 1rem 0.4rem 5rem;
+  border-radius: var(--r-card); color: #000; }
+.drop.cb summary::after { display: none !important; }
+.cb-fill { position: absolute; left: 6px; top: 6px; bottom: 6px; width: 3.8rem; border-radius: calc(var(--r-card) - 6px);
+  background: var(--brand, #FF6E2B); display: grid; place-items: center; transition: width 0.5s ease; }
+.cb-fill svg { width: 1.5rem; height: 1.5rem; fill: #000; transform: scaleX(-1); transition: transform 0.35s ease; }
+.cb-label { position: relative; z-index: 1; font-family: var(--f-title); font-weight: 700; letter-spacing: -0.02em;
+  font-size: calc(clamp(1.15rem, 1.6vw, 1.4rem) + 4pt); line-height: var(--lh-sub); color: var(--ink); transition: color 0.3s ease; }
 @media (hover: hover) {
-  #tres-conceptos .concept-title:hover::before { transform: scale(60); }
-  #tres-conceptos .concept-title:hover { color: #fff; }
+  .drop.cb summary:hover .cb-fill { width: calc(100% - 12px); }
+  .drop.cb summary:hover .cb-label { color: #000; }
 }
-#tres-conceptos .concept.open .concept-title::before { transform: scale(80); }
-#tres-conceptos .concept.open .concept-title { color: #fff; }
-#tres-conceptos .concept.open .go-corner { display: none; }
-#tres-conceptos .concept-body { padding-top: clamp(1.2rem, 2.4vw, 1.8rem); }
-#tres-conceptos .concept-body .circled { color: inherit; }
-html.calm #tres-conceptos .concept-title::before { transition: none; }
+.drop.cb[open]:not(.is-closing) .cb-fill { width: calc(100% - 12px); }
+.drop.cb[open]:not(.is-closing) .cb-label { color: #000; }
+.drop.cb[open]:not(.is-closing) .cb-fill svg { transform: scaleX(-1) rotate(-90deg); }
+.drop.cb summary:focus-visible { box-shadow: var(--ring) !important; }
+.drop.cb .drop-body { margin: 0; padding: clamp(1.1rem, 2.2vw, 1.6rem); border-top: 0; }
+html.calm .cb-fill, html.calm .cb-fill svg { transition: none; }
+.cb-fill { place-items: center start; padding-left: 1.15rem; }

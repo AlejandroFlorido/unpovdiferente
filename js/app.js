@@ -84,7 +84,7 @@
     ["#dc-copy", "docentes: copiar plantilla"],
     ["#ct-mail", "contacto: abrir correo"], ["#ct-copy", "contacto: copiar mensaje"],
     ["[data-dl]", "imprimibles: vista previa"],
-    ["#myths .myth button", "mitos y realidades"], [".concept-title", "tres conceptos"], ["#car-prev, #car-next", "carrusel ¿te pasa?"],
+    ["#myths .myth button", "mitos y realidades"], [".cb summary", "tres conceptos"], ["#car-prev, #car-next", "carrusel ¿te pasa?"],
     ["#pref-size", "ajuste: tamaño de texto"], ["#pref-space", "ajuste: espaciado"], ["#pref-calm", "ajuste: sin animaciones"], ["#pref-theme", "ajuste: modo oscuro"]
   ];
   document.addEventListener("click", (e) => {
