@@ -386,14 +386,17 @@
   // Dibuja el resaltado: arranca vacío y se llena de izquierda a derecha (con "Sin animaciones" aparece entero).
   function drawHl(m) {
     if (isCalm()) { m.classList.add("on"); return; }
+    // Se vacía de golpe (sin transición) para que la animación arranque siempre desde el principio, no solo el final
+    clearTimeout(m._t);
+    m.style.transition = "none";
     m.classList.remove("on");
     void m.offsetWidth;
-    setTimeout(() => m.classList.add("on"), 350);
+    m.style.transition = "";
+    m._t = setTimeout(() => m.classList.add("on"), 350);
   }
-  // La primera vez que la banda se ve, el resaltado se dibuja. Una vez dibujado queda quieto aunque subas y vuelvas a bajar:
-  // solo se redibuja cuando el carrusel pasa a otra situación (ahí la frase y su resaltado son nuevos). Pedido de Ale.
+  // Cada vez que la banda vuelve a verse, el resaltado se dibuja completo de nuevo (pedido de Ale).
   if ("IntersectionObserver" in window) {
-    new IntersectionObserver((es) => es.forEach((e) => { const m = $("#car-quote .hl"); if (e.isIntersecting && m && !m.dataset.drawn) { m.dataset.drawn = "1"; drawHl(m); } }), { threshold: 0.4 }).observe($("#te-pasa"));
+    new IntersectionObserver((es) => es.forEach((e) => { const m = $("#car-quote .hl"); if (e.isIntersecting && m) drawHl(m); }), { threshold: 0.4 }).observe($("#te-pasa"));
   }
   let car = 0;
   const dotsEl = $("#car-dots");
@@ -414,7 +417,7 @@
       qEl.append(m, s.q.slice(i0 + s.h.length));
       // Si la banda está a la vista se dibuja ya; si no, lo dibuja el observador cuando aparezca.
       const r = $("#te-pasa").getBoundingClientRect();
-      if (r.bottom > 0 && r.top < innerHeight && r.height) { m.dataset.drawn = "1"; drawHl(m); }
+      if (r.bottom > 0 && r.top < innerHeight && r.height) drawHl(m);
     }
     $("#car-title").textContent = "Qué puede haber detrás: " + s.t.toLowerCase();
     $("#car-text").textContent = s.x;
