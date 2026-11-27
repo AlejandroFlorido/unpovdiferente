@@ -280,3 +280,63 @@ html.calm .way-card, html.calm .way-card:hover { transition: none; transform: no
 .dl-grid.dl-grid-stickers { grid-template-columns: 0.72fr 1fr; align-items: end; max-width: 52rem; margin-inline: auto; }
 @media (max-width: 600px) { .dl-grid.dl-grid-stickers { grid-template-columns: 1fr; max-width: 24rem; } }
 .dl-cover.has-img.wide img { width: 100%; height: auto; }
+
+/* ---------- 13. Cada sección ocupa la pantalla completa (pedido de Ale, 2026-11-27) ----------
+   Como "¿Qué es el TDAH?": cada parte de cada pestaña llena el alto de la ventana (menos la cabecera)
+   y su contenido queda centrado en vertical. La última parte de cada pestaña queda con su alto natural
+   para que el "Siguiente" y el pie se vean con ella. En celular se mantienen compactas (sin huecos vacíos). */
+@media (min-width: 601px) {
+  main > section:not(#entender) > :is(.band, .screen):has(~ :is(.band, .screen)):not(#inicio-docentes, #te-pasa),
+  #equipo > .band-pad:has(~ .band-pad) {
+    min-height: calc(100svh - var(--top-h, 4.25rem)) !important;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  #inicio .hero.screen { min-height: calc(100svh - var(--top-h, 4.25rem)) !important; }
+}
+
+/* Pie más chico (pedido de Ale, 2026-11-27): menos aire, logo más chico y letra más chica */
+.foot-grid { padding-top: clamp(1.25rem, 2.5vw, 1.75rem) !important; padding-bottom: 0.9rem !important; row-gap: 0.9rem !important; }
+.foot-nav { font-size: 0.85rem !important; row-gap: 0.3rem !important; }
+.foot-legal { font-size: 0.78rem; gap: 0.3rem; }
+.foot-logo { max-width: 12.5rem !important; align-self: center !important; justify-self: end !important; }
+@media (max-width: 860px) { .foot-logo { max-width: 9.5rem !important; justify-self: end !important; } }
+/* Secciones del pie en dos renglones: Inicio, Entender, Herramientas, Imprimibles / Docentes, Apoyo, Equipo */
+.foot-nav { grid-template-columns: repeat(4, max-content) !important; column-gap: 1.75rem !important; grid-column: 1 / 6 !important; }
+@media (max-width: 600px) { .foot-nav { grid-template-columns: repeat(4, auto) !important; column-gap: 0.9rem !important; font-size: 0.8rem !important; justify-content: start; } }
+
+/* ---------- 14. Entender el TDAH (pedido de Ale, 2026-11-27) ---------- */
+/* El título va sin el óvalo naranja */
+#entender-tdah h2.title-circled { padding: 0; margin-left: 0 !important; }
+#entender-tdah h2.title-circled::before, #entender-tdah h2.title-circled::after { display: none; }
+/* Desplegables como tarjeta con esquina: un círculo azul sale de la esquina y llena la tarjeta al pasar el mouse;
+   al abrirla queda azul y debajo aparece la información. */
+.drop.dc { position: relative; overflow: hidden; padding: 0; background: var(--surface) !important; }
+.drop.dc summary {
+  position: relative; isolation: isolate; overflow: hidden; display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem;
+  padding: clamp(1.4rem, 2.5vw, 2rem) clamp(3.5rem, 6vw, 4.5rem) clamp(1.4rem, 2.5vw, 2rem) clamp(1.4rem, 2.5vw, 2rem);
+  border-radius: var(--r-card); color: var(--ink); cursor: pointer; transition: color 0.3s ease-out;
+}
+.drop.dc summary::after { display: none !important; }
+.drop.dc summary::before {
+  content: ""; position: absolute; z-index: -1; top: -16px; right: -16px; width: 32px; height: 32px; border-radius: 50%;
+  background: var(--blue); transform: scale(1); transform-origin: 50% 50%; transition: transform 0.4s ease-out;
+}
+.drop.dc .dc-title { font-family: var(--f-title); font-weight: 700; letter-spacing: -0.02em; font-size: calc(clamp(1.15rem, 1.6vw, 1.4rem) + 4pt); line-height: var(--lh-sub); }
+.drop.dc .dc-desc { font-family: var(--f-body); font-weight: 400; letter-spacing: 0; font-size: 0.95rem; line-height: 1.45; color: var(--muted); transition: color 0.3s ease-out; max-width: 38ch; }
+.go-corner { position: absolute; top: 0; right: 0; width: 2.75rem; height: 2.75rem; display: grid; place-items: center;
+  background: var(--blue); border-radius: 0 var(--r-card) 0 2rem; overflow: hidden; }
+.go-arrow { color: #fff; font-family: var(--f-display); font-size: 1.1rem; margin: -0.25rem -0.25rem 0 0; transition: transform 0.3s ease; }
+@media (hover: hover) {
+  .drop.dc summary:hover::before { transform: scale(80); }
+  .drop.dc summary:hover, .drop.dc summary:hover .dc-desc { color: #fff; }
+}
+.drop.dc[open]:not(.is-closing) summary::before { transform: scale(80); }
+.drop.dc[open]:not(.is-closing) summary, .drop.dc[open]:not(.is-closing) summary .dc-desc { color: #fff; }
+.drop.dc[open]:not(.is-closing) .go-arrow { transform: rotate(90deg); }
+.drop.dc summary:focus-visible { box-shadow: var(--ring) !important; }
+.drop.dc .drop-body { padding: clamp(1.2rem, 2.4vw, 1.8rem); }
+html.calm .drop.dc summary::before, html.calm .go-arrow { transition: none; }
+/* Dentro de las tarjetas abiertas de Entender el TDAH: puntos simples, sin garabatos (pedido de Ale) */
+.drop.dc .scribble-list { list-style: disc !important; padding-left: 1.3em !important; }
+.drop.dc .scribble-list li { padding-left: 0.2em !important; }
+.drop.dc .scribble-list li::before { display: none !important; }
