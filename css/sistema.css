@@ -488,3 +488,5 @@ html.calm .ap-hl { transition: none; }
 #myths .myth .tag.m { transition: none !important; }
 /* Los botones de Mitos no se agrandan ni se achican al tocarlos: así "Mito" queda quieto y la gota llega justo */
 #myths .myth button, #myths .myth button:hover, #myths .myth button:active { transform: none !important; }
+/* Celular: el logo del pie va a la izquierda para que el botón flotante "subir" no lo tape */
+@media (max-width: 600px) { .foot-logo { justify-self: start !important; } }
