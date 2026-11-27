@@ -437,3 +437,7 @@ html.calm .ap-hl { transition: none; }
 /* Resaltado de Apoyo en azul (pedido de Ale); el texto pasa de negro a blanco */
 #apoyo, :root[data-theme="dark"] #apoyo { --aphl-bg: #1D58FE; --aphl-fg: #fff; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #apoyo { --aphl-bg: #1D58FE; --aphl-fg: #fff; } }
+/* Stickers: texto debajo del título y resaltado naranja con el mismo efecto (pedido de Ale) */
+#descargables .dl-stickers .lead > p { grid-column: 1 / -1; align-self: start; max-width: 40rem; }
+.dl-stickers, :root[data-theme="dark"] .dl-stickers { --aphl-bg: #FF6E2B; --aphl-fg: #000; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .dl-stickers { --aphl-bg: #FF6E2B; --aphl-fg: #000; } }
