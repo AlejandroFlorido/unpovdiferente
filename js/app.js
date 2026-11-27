@@ -1423,8 +1423,7 @@
     ],
     // Planchas de stickers sobre el TDAH y el proyecto (mandadas por Ale, 2026-11-26). "wide": la hoja va apaisada.
     stickers: [
-      { id: "stickers", title: "Plancha de stickers", line: "Para la compu, la carpeta o el termo", desc: "Una hoja A4 llena de stickers: el logo, “Está bien pedir ayuda”, hiperfoco, “Club del diagnóstico tardío”, “Mi cerebro tiene demasiadas pestañas abiertas” y el QR para tener las herramientas a mano.", file: "stickers-unpovdiferente.pdf", meta: "PDF · 1 página A4 vertical", label: "Descargar plancha de stickers", pages: [IMG + "stickers-unpovdiferente.webp"] },
-      { id: "stickers-doble", title: "Stickers para compartir", line: "Dos juegos iguales en una hoja", desc: "Una hoja A4 apaisada con dos juegos iguales de stickers, entre ellos “TDAH y las to-do lists”: uno para vos y otro para regalar.", file: "stickers-plancha-doble.pdf", meta: "PDF · 1 página A4 apaisada", label: "Descargar stickers para compartir", wide: true, pages: [IMG + "stickers-plancha-doble.webp"] }
+      { id: "stickers-doble", title: "Plancha de stickers", line: "Dos juegos iguales en una hoja", desc: "Una hoja A4 apaisada con dos juegos iguales de stickers, entre ellos “TDAH y las to-do lists”: uno para vos y otro para regalar.", file: "stickers-plancha-doble.pdf", meta: "PDF · 1 página A4 apaisada", label: "Descargar plancha de stickers", wide: true, pages: [IMG + "stickers-plancha-doble.webp"] }
     ]
   };
   const dlBook = $("#dl-book"), dlKit = $("#dl-kit"), dlStk = $("#dl-stickers"), dlDialog = $("#dl-dialog");
