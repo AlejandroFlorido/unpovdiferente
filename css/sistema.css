@@ -441,3 +441,5 @@ html.calm .ap-hl { transition: none; }
 #descargables .dl-stickers .lead > p { grid-column: 1 / -1; align-self: start; max-width: 40rem; }
 .dl-stickers, :root[data-theme="dark"] .dl-stickers { --aphl-bg: #FF6E2B; --aphl-fg: #000; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .dl-stickers { --aphl-bg: #FF6E2B; --aphl-fg: #000; } }
+.dl-stickers .ap-hl { white-space: nowrap; }
+@media (max-width: 480px) { .dl-stickers .ap-hl { white-space: normal; } }
