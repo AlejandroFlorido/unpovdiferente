@@ -481,3 +481,6 @@ html.calm .ap-hl { transition: none; }
 #myths .myth .tag.m { transition-property: color, background-color; transition-duration: 0.18s, 0s; }
 #myths .myth.is-open .tag.m { transition-delay: 0.05s, 0s; }
 #myths .myth:not(.is-open) .tag.m { transition-delay: 0.62s, 0s; }
+.myth-goo { position: absolute; inset: 0; z-index: 0; pointer-events: none; filter: url(#goo); }
+.myth-goo .myth-pill { position: absolute; }
+#myths .myth:not(.is-open) .tag.m { transition-delay: 0.85s, 0s; }
