@@ -341,3 +341,34 @@ html.calm .drop.dc summary::before, html.calm .go-arrow { transition: none; }
 .drop.dc .scribble-list li { padding-left: 0.2em !important; }
 .drop.dc .scribble-list li::before { display: none !important; }
 #entender-tdah h2 .hl { padding: 0.02em 0.22em 0.08em; border-radius: 0.14em; }
+/* Resaltado del título en negro (pedido de Ale); en modo oscuro se invierte para que se vea */
+#entender-tdah h2 .hl { background: #000; color: #fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #entender-tdah h2 .hl { background: #fff; color: #000; } }
+:root[data-theme="dark"] #entender-tdah h2 .hl { background: #fff; color: #000; }
+
+/* Tres conceptos con el mismo estilo que las tarjetas de Entender el TDAH */
+#tres-conceptos .concept, #tres-conceptos .concept:nth-child(n) {
+  --c: var(--blue); border-radius: var(--r-card) !important; border: 1px solid var(--line); background: var(--surface);
+  box-shadow: var(--shadow-card); overflow: hidden;
+}
+#tres-conceptos.band-gray .concept { border-color: transparent; }
+#tres-conceptos .concept::before { display: none; }
+#tres-conceptos .concept-title {
+  position: relative; isolation: isolate; overflow: hidden; color: var(--ink); border-radius: 0;
+  padding: clamp(1.6rem, 2.8vw, 2.2rem) clamp(3.2rem, 5vw, 4rem); transition: color 0.3s ease-out;
+}
+#tres-conceptos .concept-title::before {
+  content: ""; position: absolute; z-index: -1; top: -16px; right: -16px; width: 32px; height: 32px; border-radius: 50%;
+  background: var(--blue); transform: scale(1); transition: transform 0.4s ease-out;
+}
+#tres-conceptos .concept .go-corner { pointer-events: none; z-index: 1; }
+@media (hover: hover) {
+  #tres-conceptos .concept-title:hover::before { transform: scale(60); }
+  #tres-conceptos .concept-title:hover { color: #fff; }
+}
+#tres-conceptos .concept.open .concept-title::before { transform: scale(80); }
+#tres-conceptos .concept.open .concept-title { color: #fff; }
+#tres-conceptos .concept.open .go-corner { display: none; }
+#tres-conceptos .concept-body { padding-top: clamp(1.2rem, 2.4vw, 1.8rem); }
+#tres-conceptos .concept-body .circled { color: inherit; }
+html.calm #tres-conceptos .concept-title::before { transition: none; }
