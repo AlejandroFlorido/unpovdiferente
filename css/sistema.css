@@ -403,3 +403,8 @@ html.calm .ap-hl { transition: none; }
 #apoyo-areas .lead > .ap-intro p { max-width: 46rem; }
 .ap-arrow { left: auto; right: 22%; }
 @media (max-width: 860px) { #apoyo-areas .lead > .ap-intro { grid-column: 1 / -1; } .ap-arrow { right: 12%; } }
+/* Orden en Apoyo: eyebrow, texto, flechita sutil hacia el título grande, título sobre los paneles */
+#apoyo-areas .lead > .ap-intro { grid-column: 1 / 7; padding-bottom: 2.4rem; }
+#apoyo-areas .lead > h2 { grid-column: 1 / -1; }
+.ap-arrow { width: 1.9rem; left: 0.4rem; right: auto; bottom: 0.1rem; opacity: 0.75; }
+@media (max-width: 860px) { .ap-arrow { left: 0.4rem; right: auto; } }
