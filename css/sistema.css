@@ -398,3 +398,8 @@ html.calm .ap-hl { transition: none; }
   #apoyo-areas .lead > .ap-intro { grid-column: 1 / -1; }
   .ap-arrow { left: auto; right: 12%; }
 }
+/* Texto de Apoyo alineado a la izquierda, debajo del título (pedido de Ale) */
+#apoyo-areas .lead > .ap-intro { grid-column: 1 / 7; text-align: left; }
+#apoyo-areas .lead > .ap-intro p { max-width: 46rem; }
+.ap-arrow { left: auto; right: 22%; }
+@media (max-width: 860px) { #apoyo-areas .lead > .ap-intro { grid-column: 1 / -1; } .ap-arrow { right: 12%; } }
