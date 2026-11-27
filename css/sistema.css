@@ -374,3 +374,27 @@ html.calm .cb-fill, html.calm .cb-fill svg { transition: none; }
 .drop.cb-blue .cb-fill svg { fill: #fff; }
 @media (hover: hover) { .drop.cb-blue summary:hover .cb-label { color: #fff; } }
 .drop.cb-blue[open]:not(.is-closing) .cb-label { color: #fff; }
+
+/* ---------- 15. Apoyo (pedido de Ale, 2026-11-27) ---------- */
+/* Más cerca de la cabecera */
+#apoyo-areas { padding-top: 0.75rem !important; justify-content: flex-start !important; }
+/* Listas con puntos simples, sin garabatos */
+#apoyo .scribble-list { list-style: disc !important; padding-left: 1.3em !important; }
+#apoyo .scribble-list li { padding-left: 0.2em !important; }
+#apoyo .scribble-list li::before { display: none !important; }
+/* Texto de arriba como en la imagen de Ale, con la flecha que sale de él hacia las tarjetas */
+#apoyo-areas .lead > .ap-intro { grid-column: 5 / 9; position: relative; padding-bottom: clamp(3.5rem, 6vw, 5rem); }
+#apoyo-areas .ap-intro p { font-family: var(--f-body); font-size: clamp(1.05rem, 1.35vw, 1.3rem); line-height: 1.5; color: var(--ink); max-width: none; margin: 0; }
+#apoyo-areas .ap-intro b { font-weight: 700; color: var(--ink); }
+#apoyo-areas .ap-aside { font-size: 0.82em; font-style: italic; }
+.ap-hl { color: #000; background-color: transparent; background-image: linear-gradient(#FF6E2B, #FF6E2B);
+  background-repeat: no-repeat; background-size: 0% 100%; background-position: 0 0; padding: 0 0.1em 0.02em; margin: 0 -0.04em;
+  border-radius: 0.14em; -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  transition: background-size 0.9s cubic-bezier(0.65, 0, 0.35, 1); }
+.ap-hl.on { background-size: 100% 100%; }
+html.calm .ap-hl { transition: none; }
+.ap-arrow { position: absolute; left: 8%; bottom: -1.5rem; width: clamp(4rem, 6.5vw, 6rem); height: auto; pointer-events: none; }
+@media (max-width: 860px) {
+  #apoyo-areas .lead > .ap-intro { grid-column: 1 / -1; }
+  .ap-arrow { left: auto; right: 12%; }
+}
