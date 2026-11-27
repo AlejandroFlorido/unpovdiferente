@@ -489,14 +489,33 @@
     $(".hint", b).textContent = open ? "Ocultar" : "Ver la realidad";
     const r = document.getElementById(b.getAttribute("aria-controls"));
     if (r.anim) r.anim.cancel();
+    const card = b.closest(".myth");
     r.hidden = false;
-    if (isCalm()) { r.hidden = !open; return; }
+    if (isCalm()) { r.hidden = !open; card.classList.toggle("is-open", open); return; }
+    // La pastilla de "Mito" baja hasta "Realidad" y se vuelve azul (y al cerrar, vuelve a subir y a ser naranja)
+    const tm = $(".tag.m", card), tr = $(".tag.r", r), rel = (el) => {
+      const c = card.getBoundingClientRect(), e = el.getBoundingClientRect();
+      return { left: `${e.left - c.left}px`, top: `${e.top - c.top}px`, width: `${e.width}px`, height: `${e.height}px` };
+    };
+    const from = open ? rel(tm) : rel(tr), to = open ? rel(tr) : rel(tm);
+    if (card.pill) card.pill.remove();
+    const pill = card.pill = document.createElement("span");
+    pill.className = "myth-pill" + (open ? "" : " blue");
+    Object.assign(pill.style, from);
+    card.appendChild(pill);
+    card.classList.add("flying");
+    card.classList.toggle("is-open", open);
+    pill.getBoundingClientRect();
+    Object.assign(pill.style, to);
+    pill.classList.toggle("blue", open);
+    clearTimeout(card.flyT);
+    card.flyT = setTimeout(() => { pill.remove(); if (card.pill === pill) card.pill = null; card.classList.remove("flying"); }, 560);
     // Despliega o pliega la realidad de a poco: alto, relleno y opacidad juntos.
     const cs = getComputedStyle(r);
     const full = { height: r.offsetHeight + "px", paddingTop: cs.paddingTop, paddingBottom: cs.paddingBottom, opacity: 1 };
     const zero = { height: "0px", paddingTop: "0px", paddingBottom: "0px", opacity: 0 };
     r.style.overflow = "hidden";
-    r.anim = r.animate(open ? [zero, full] : [full, zero], { duration: 320, easing: "cubic-bezier(.4,0,.2,1)" });
+    r.anim = r.animate(open ? [zero, full] : [full, zero], { duration: 480, easing: "cubic-bezier(.4,0,.2,1)" });
     r.anim.onfinish = () => { r.style.overflow = ""; r.hidden = !open; r.anim = null; };
   });
 
