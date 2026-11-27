@@ -369,3 +369,8 @@ html.calm .drop.dc summary::before, html.calm .go-arrow { transition: none; }
 .drop.cb .drop-body { margin: 0; padding: clamp(1.1rem, 2.2vw, 1.6rem); border-top: 0; }
 html.calm .cb-fill, html.calm .cb-fill svg { transition: none; }
 .cb-fill { place-items: center start; padding-left: 1.15rem; }
+/* Neurotípico y Neurodiversidad en azul, Neurodivergente en naranja (pedido de Ale) */
+.drop.cb-blue .cb-fill { background: var(--blue); }
+.drop.cb-blue .cb-fill svg { fill: #fff; }
+@media (hover: hover) { .drop.cb-blue summary:hover .cb-label { color: #fff; } }
+.drop.cb-blue[open]:not(.is-closing) .cb-label { color: #fff; }
