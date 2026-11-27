@@ -508,7 +508,7 @@
     const bez = (t, p0, p1, p2, p3) => { const u = 1 - t; return u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t * p3; };
     const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
     const clamp = (v) => Math.min(1, Math.max(0, v));
-    const C0 = open ? "#FF6E2B" : "#1D58FE", C1 = open ? "#1D58FE" : "#FF6E2B", D = 900, N = 60;
+    const C0 = open ? "#FF6E2B" : "#1D58FE", C1 = open ? "#1D58FE" : "#FF6E2B", D = open ? 900 : 1250, N = 70; // la vuelta, más lenta
     const make = (style) => { const el = document.createElement("span"); el.className = "myth-pill"; Object.assign(el.style, style); return el; };
     const track = (el, fn) => el.animate(Array.from({ length: N + 1 }, (_, i) => ({ ...fn(i / N), offset: i / N })), { duration: D, fill: "forwards" });
     if (card.pill) card.pill.remove();

@@ -486,3 +486,5 @@ html.calm .ap-hl { transition: none; }
 #myths .myth:not(.is-open) .tag.m { transition-delay: 0.85s, 0s; }
 /* Mitos: los colores de las letras cambian sin transición, sincronizados por JS con el final del recorrido */
 #myths .myth .tag.m { transition: none !important; }
+/* Los botones de Mitos no se agrandan ni se achican al tocarlos: así "Mito" queda quieto y la gota llega justo */
+#myths .myth button, #myths .myth button:hover, #myths .myth button:active { transform: none !important; }
